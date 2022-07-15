@@ -42,6 +42,7 @@
 		var makers=[];
 		var now_src;
 		var has_gps=0;
+		var cat_color;
 		
 		function monitor_ver_check(melem)
 		{
@@ -63,6 +64,7 @@
 		
 		function do_resize()
 		{
+			console.log('do resize');
 			if($('#main_box').length)
 			{
 				$('#main_box').css(main_box_resize());
@@ -104,6 +106,16 @@
 			{
 				//console.log(map_resize());
 				$('#map').css(map_resize());
+			}
+			
+			for(let ver_index=0;ver_index<3;ver_index++)
+			{
+				let ver_list=[7,6,6];
+				for(let color_index=0;color_index<ver_list[ver_index];color_index++)
+				{
+					let box_id = '#'+(ver_index+1)+'_'+(color_index+1);
+					$(box_id).css(catColor_box_resize(ver_index,color_index));
+				}
 			}
 		}
 		
@@ -152,6 +164,7 @@
 		{
 			let len = $('.menu_btn').length
 			const t=500;
+			cat_color='';
 			//console.log($('.menu_btn')[0].zIndex);
 			if(menu_z<2)
 			{
@@ -442,7 +455,7 @@
 			let css_dict = sec_box_resize();
 			let btn_css = catform_btn_resize(1,$('.catform_btn').length);
 			//console.log(btn_css);
-			make_thr_box(btn_css.top+btn_css.height/2,btn_css.left+btn_css.width/2,function(){console.log('test')});
+			make_thr_box(btn_css.top+btn_css.height/2,btn_css.left+btn_css.width/2,make_catColor_box);
 		}
 		
 		function tnr_func()
@@ -633,6 +646,7 @@
 		function readURL(input)
 		{
 			$('.catform_btn').removeClass('isok');
+			cat_color='';
 			if(input.files && input.files[0])
 			{
 				has_gps=0;
@@ -728,6 +742,140 @@
 		function test2_func(input)
 		{
 			console.log(input);
+		}
+		
+		function make_catColor_box()
+		{
+			let ver_count = 3;
+			let color_count=[7,6,6];
+			let css_dict = sec_box_resize();
+			let btn_css = catform_btn_resize(1,$('.catform_btn').length);
+			
+			let top = btn_css.top+btn_css.height/2;
+			let left = btn_css.left+btn_css.width/2;
+			
+			for(let ver=0;ver<ver_count;ver++)
+			{
+				for(let color=0;color<color_count[ver];color++)
+				{
+					let img_name = (ver+1)+"_"+(color+1);
+					let src = "img/color/"+img_name+".png";
+					let img_box = $('<div class="abs color_img" id="'+img_name+'" style="top:'+top+'px;left:'+left+'px;width:0px;height:0px;"><img src="'+src+'"></div>');
+					//let img_box = $('<img src="'+src+'" class="abs color_img" id="'+img_name+'" style="top:'+top+'px;left:'+left+'px;width:0px;height:0px;border:2px green">');
+					$('#thr_box').append(img_box);
+					switch(ver)
+					{
+						case 0:
+							img_box.addClass('ver_one');
+							break;
+							
+						case 1:
+							img_box.addClass('ver_two');
+							break;
+							
+						case 2:
+							img_box.addClass('ver_thr');
+							break;
+					}
+					
+					if(ver<2 || color<5)
+					{
+						img_box.animate(catColor_box_resize(ver,color),500,function(e){
+							let elem = $(this);
+							elem.click(check_catColor);
+						});
+					}
+					else
+					{
+						img_box.animate(catColor_box_resize(ver,color),500,function(){
+							let elem = $(this);
+							elem.click(check_catColor);
+							do_resize();
+							if(cat_color!='')
+							{
+								$('#'+cat_color).addClass('color_check');
+								$('#color').addClass('isok');
+							}
+						});
+					}
+				}
+			}
+		}
+		
+		function check_catColor()
+		{
+			$('.color_img').removeClass('color_check');
+			let elem = $(this);
+			elem.addClass('color_check');
+			cat_color = elem.attr('id');
+			$('#color').addClass('isok');
+		}
+		
+		function catColor_box_resize(ver_index,color_index)
+		{
+			let mbox_css = thr_box_resize();
+			let mbox_width = mbox_css.width;
+			let mbox_height = mbox_css.height;
+			let color_len;
+			
+			if(ver_index==0)
+			{
+				color_len = 7;
+			}
+			else
+			{
+				color_len = 6;
+			}
+			
+			if(monitor_ver_check())
+			{
+				let box_size = mbox_width*0.95/10;
+				if(box_size*3>mbox_height*0.6)
+				{
+					box_size = mbox_height*0.2;
+				}
+				let w_padding = box_size/2;
+				let w_start = (mbox_width-(box_size*color_len)-(w_padding*(color_len-1)))/2;
+				let h_padding = (mbox_height*0.7-(box_size*3))/2;
+				let h_start = (mbox_height-(box_size*3)-(h_padding*2))/2;
+				
+				let top = h_start+((box_size+h_padding)*ver_index);
+				let left = w_start+((box_size+w_padding)*color_index);
+				
+				let css_dict = {
+					'top':top,
+					'left':left,
+					'width':box_size,
+					'height':box_size					
+				}				
+				return(css_dict);
+			}
+			else
+			{
+				console.log('test');
+				let box_size = mbox_height*0.95/10;
+				if(box_size*3>mbox_width*0.6)
+				{
+					console.log('test2');
+					box_size = mbox_width*0.2;
+				}
+				let h_padding = box_size/2;
+				let h_start = (mbox_height-(box_size*color_len)-(h_padding*(color_len-1)))/2;
+				let w_padding = (mbox_width*0.7-(box_size*3))/2;
+				let w_start = (mbox_width-(box_size*3)-(w_padding*2))/2;
+				
+				
+				let top = h_start+((box_size+h_padding)*color_index);
+				let left = w_start+((box_size+w_padding)*ver_index);
+				
+				let css_dict = {
+					'top':top,
+					'left':left,
+					'width':box_size,
+					'height':box_size					
+				}				
+				return(css_dict);
+			}			
 		}
 		
 		
