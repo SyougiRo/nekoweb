@@ -162,6 +162,7 @@
 		
 		function case_cat_form()
 		{
+			$('*').finish();
 			let len = $('.menu_btn').length
 			const t=500;
 			cat_color='';
@@ -216,6 +217,7 @@
 		
 		function case_tnr_log()
 		{
+			$('*').finish();
 			menu_z=2;
 			let len = $('.menu_btn').length
 			let css_dect = menu_unit_resize(1,len)
@@ -230,6 +232,7 @@
 		
 		function case_count_glf()
 		{
+			$('*').finish();
 			menu_z=2;
 			let len = $('.menu_btn').length
 			let css_dect = menu_unit_resize(2,len)
@@ -244,6 +247,7 @@
 		
 		function case_my_acc()
 		{
+			$('*').finish();
 			menu_z=2;
 			let len = $('.menu_btn').length
 			let css_dect = menu_unit_resize(3,len)
@@ -433,6 +437,7 @@
 		//写真登録
 		function imgup_func()
 		{
+			$('*').finish();
 			menu_z=3;
 			$('.catform_btn').removeClass('check');
 			$(this).addClass('check');
@@ -448,6 +453,7 @@
 		
 		function color_func()
 		{
+			$('*').finish();
 			menu_z=3;
 			$('.catform_btn').removeClass('check');
 			$(this).addClass('check');
@@ -460,6 +466,7 @@
 		
 		function tnr_func()
 		{
+			$('*').finish();
 			menu_z=3;
 			$('.catform_btn').removeClass('check');
 			$(this).addClass('check');
@@ -473,6 +480,7 @@
 		//googleマップ
 		function gps_func()
 		{
+			$('*').finish();
 			menu_z=3;
 			$('.catform_btn').removeClass('check');
 			$(this).addClass('check');
@@ -805,10 +813,19 @@
 		function check_catColor()
 		{
 			$('.color_img').removeClass('color_check');
+			
 			let elem = $(this);
-			elem.addClass('color_check');
-			cat_color = elem.attr('id');
-			$('#color').addClass('isok');
+			if(elem.hasClass('color_check'))
+			{
+				cat_color = '';
+				$('#color').removeClass('isok');
+			}
+			else
+			{
+				elem.addClass('color_check');
+				cat_color = elem.attr('id');
+				$('#color').addClass('isok');
+			}			
 		}
 		
 		function catColor_box_resize(ver_index,color_index)

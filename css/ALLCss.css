@@ -30,7 +30,17 @@
 	align-items: center;
 }
 
-img{
+#color_img{
+	margin: 0px;
+	padding: 0px;
+	text-align : center;
+	background: #726F6F;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#show_img{
 	margin: 0px;
 	padding: 0px;
 	max-height: 100%;  
@@ -53,8 +63,14 @@ img{
     
 }
 
-.color_check{
-    border: 10px solid rgba(113,255,0,1.00);
+.color_img img{    
+	height: 100%;
+	width: 100%;
+	object-fit :cover;
+}
+
+.color_check img{
+	border:2px rgba(113,255,0,1.00) solid;
 }
 
 #upcheck{
