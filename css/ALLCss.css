@@ -30,7 +30,16 @@
 	align-items: center;
 }
 
-#show_img{
+img{
+	margin: 0px;
+	padding: 0px;
+	max-height: 100%;  
+    max-width: 100%;
+	width: auto;
+    height: auto;
+}
+
+#testshow_img{
 	margin: 0px;
 	padding: 0px;
 	max-height: 100%;  
