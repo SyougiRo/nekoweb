@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<!-- Required meta tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+	<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>-->
+<title>無標題文件</title>
+	</head>
+
+	<body>
+		<div id="form_data">
+			
+			<form action="" method="post" id="post_data">
+			  	<div>
+					<div>
+						<img id="show_img" src="#" alt="写真をアップしてください" style="width:400px;height:400">
+					</div>
+					<input type="file" id="get_image" accept="image/png, image/jpeg" onchange="readURL(this)">
+				</div>
+				<div id="chose_color">
+					<p>毛の色を選択してください</p>
+					<div>
+						<input type="checkbox" name="color" checked="true">
+						<p>分からない</p>
+					</div>
+					<div>
+						<input type="checkbox" name="color">
+						<p>白</p>
+					</div>
+					<div>
+						<input type="checkbox" name="color">
+						<p>オレンジ/赤</p>
+					</div>
+					<div>
+						<input type="checkbox" name="color">
+						<p>黒</p>
+					</div>
+				</div>
+				<div>
+					<p>耳カットがありますか</p>
+					<div>
+						<input type="radio" name="tnr" checked="true">
+						<p>分からない</p>
+					</div>
+					<div>
+						<input type="radio" name="tnr">
+						<p>無し</p>
+					</div>
+					<div>
+						<input type="radio" name="tnr">
+						<p>アリ</p>					
+					</div>
+						<input type="">
+				</div>
+			</form>
+		</div>
+		<script>
+			function readURL(input)
+			{
+				if(input.files && input.files[0])
+				{
+					var input_img_id = input.querySelector("#get_image");
+					var reader = new FileReader();
+					reader.onload = function(e){pred_img(e)}
+					reader.readAsDataURL(input.files[0]);					
+				}
+			}
+			
+			function pred_img(e)
+			{
+				var img = document.querySelector("#show_img");
+				img.setAttribute("src", e.target.result);
+			}
+		</script>
+	</body>
+</html>

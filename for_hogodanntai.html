@@ -1,0 +1,495 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<title>test</title> 
+
+		
+
+		<!-- jQueryui CSS -->
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+		
+		<!-- jQueryui -->
+		<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+		<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+		<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+		
+		<!-- Bootstrap -->
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+		
+		<!-- google map API -->
+		<script async defer	src="https://maps.googleapis.com/maps/api/js?language=ja&key=AIzaSyCa4_UlQEyMwWxm4PGQpBMEPeHeg4YgsSs"></script>
+		
+		<script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
+		
+		<!--chart.js 可視化表示-->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.js"></script>
+		
+		<!-- mycss and myjs -->
+		<link href="css/ForHogodanntai.css" rel="stylesheet" type="text/css">
+		
+		
+		<title>一般ユーザ向け</title>
+	</head>
+
+	<body>
+		<div class="container box">
+			<div class="row box">
+				<div class="col-2 box">
+					<div class="box" id="chose_block">
+						<button type="button" id="btn_1" class="btn btn-outline-primary btn-lg" for_taget="vul_1">ねこ</button>
+						<button type="button" id="btn_2" class="btn btn-outline-secondary btn-lg" for_taget="vul_2">目撃情報</button>
+						<button type="button" id="btn_3" class="btn btn-outline-success btn-lg" for_taget="vul_3">可視化</button>
+					</div>
+				</div>
+				<div class="col box">
+					<div class="col box" id="print_val">
+						<div class="row box print_val " id="main">
+							<samp>最初に表示する画面</samp>
+						</div>
+						<div class="row box print_val vul_1" id="print_1">
+							<samp>ねこのデータ表示</samp>
+						</div>
+						<div class="row box print_val vul_2" id="print_2">
+							<div class="row box">
+								<samp id="show_time"></samp>
+								<button id="reset_btn" type="button" class="btn btn-danger">更新</button>
+							</div>
+							<div class="row box">
+								<select id="address1" class="col-4 selectpicker show-menu-arrow" data-width="auto" title="県を選んでください" data-display="static">
+									<option hidden>---</option>
+								</select>
+								<select id="address2" class="col-4 selectpicker show-menu-arrow" data-width="auto" title="市、特区を選んでください" data-display="static">
+									<option hidden>---</option>
+								</select>
+								<select id="address3" class="col-4 selectpicker show-menu-arrow" data-width="auto" title="区を選んでください" data-display="static">
+									<option hidden>---</option>
+								</select>
+							</div>
+						</div>
+						<div class="row box print_val vul_3" id="print_3">
+							<samp>可視化表示</samp>
+							<div id="myChart_box" style="width:99%"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script>
+		var address_data=null;
+		function get_poj(data_json,index)
+		{
+			const poj = data_json[index]['log_address_txt'];
+			let output_txt = poj;
+			return(output_txt);
+		}
+		
+		function get_id(data_json,index)
+		{
+			const id = data_json[String(index)]['log_id'];
+			let output_txt = id;
+			return(id);
+		}
+		
+		function get_time(data_json,index)
+		{
+			const the_time = data_json[index]['log_time'];
+			let output_txt = the_time;
+			return(output_txt);
+		}
+		
+		function get_month(time)
+		{
+			let month =  time.getMonth()+1;
+			if(month<10)
+			{
+				month = '0'+month;
+			}
+			return(month);
+		}
+		
+		function get_date(time)
+		{
+			let date =  time.getDate();
+			if(date<10)
+			{
+				date = '0'+date;
+			}
+			return(date);
+		}
+		
+		function get_week(time)
+		{
+			let week =  time.getDay();
+			switch(week)
+			{
+				case 0:
+					week = '(日)'
+					break;
+				case 1:
+					week = '(月)'
+					break;
+				case 2:
+					week = '(火)'
+					break;
+				case 3:
+					week = '(水)'
+					break;
+				case 4:
+					week = '(木)'
+					break;
+				case 5:
+					week = '(金)'
+					break;
+				case 6:
+					week = '(土)'
+					break;
+			}
+			return(week);
+		}
+		
+		function get_hour(time)
+		{
+			let hours =  time.getHours();
+			if(hours<10)
+			{
+				hours = '0'+hours;
+			}
+			return(hours);
+		}
+		
+		function get_minu(time)
+		{
+			let minu =  time.getMinutes();
+			if(minu<10)
+			{
+				minu = '0'+minu;
+			}
+			return(minu);
+		}
+		
+		function get_sec(time)
+		{
+			let sec =  time.getSeconds();
+			if(sec<10)
+			{
+				sec = '0'+sec;
+			}
+			return(sec);
+		}
+		
+		function get_date_and_time()
+		{
+			const now_date_time = new Date();
+			
+			const year  = now_date_time.getFullYear();
+			const month = get_month(now_date_time);
+			const day   = get_date(now_date_time);
+			const week  = get_week(now_date_time);
+			const hour  = get_hour(now_date_time);
+			const minu  = get_minu(now_date_time);
+			const sec   = get_sec(now_date_time);
+			
+			return('更新時間：'+year+'/'+month+'/'+day+week+'  '+hour+':'+minu+':'+sec); 
+		}
+		
+		function show_mokugeki_info()
+		{
+			
+		}
+		
+		function make_list(data_json){
+			//console.log(data_json);
+			
+			$(".mokugeki_btn").remove();
+			$("#show_time").text(get_date_and_time());
+			for(let cont=0; cont<data_json.length;cont++)
+			{
+				const id = get_id(data_json,cont);
+				const the_poj = get_poj(data_json,cont);
+				const the_time = get_time(data_json,cont);
+				const elem_txt = '<button type="button" class="btn btn-outline-secondary btn-lg btn-block mokugeki_btn '+data_json[cont]['address1']+' '+data_json[cont]['address2']+' '+data_json[cont]['address3']+'" data_id="'+id+'" all_address="'+data_json[cont]['address1']+'-'+data_json[cont]['address2']+'-'+data_json[cont]['address3']+'" onclick="mokugeki_func(this)">目撃情報データ'+the_time+'　　'+the_poj+'</button>';
+				$('#print_2').append(elem_txt);
+			}			
+		}
+		
+		function to_dict(input)
+		{
+			//console.log(input);
+			const jsondata = JSON.parse(input);
+			return(jsondata);
+		}
+
+		function get_data(post_data,work_func)
+		{
+			const php_path = 'myfunc.php';
+			
+			$.ajax({
+				url:php_path,
+				data:post_data,
+				type:'post',
+				success:function(output){
+					//console.log(output);
+					const mydata = to_dict(output);
+					work_func(mydata);
+				},
+				error: function(jqXHR){ alert(jqXHR); }
+			});
+			
+			/*
+			data model:
+			{
+				action:'test_func',
+				val_a:'asd',
+				val_b:123
+			}
+			
+			use
+			get_data(転送するデータ,帰り値の処理関数)
+			*/
+		}
+		
+		function conture_print(input)
+		{
+			$(".print_val").hide();
+			$('.show_info').remove();
+			$('#show_img').remove();
+			
+			const taget_txt = $(input).attr("for_taget");
+			let taget_vul = $("."+taget_txt);
+			//console.log(taget_txt);
+			//console.log(taget_vul.hasClass("show"));
+			if(!taget_vul.hasClass("show"))
+			{
+				$(".print_val").removeClass("show");
+				taget_vul.addClass("show");
+				taget_vul.show();
+			}
+			else if(taget_vul.hasClass("show"))
+			{
+				$(".print_val").removeClass("show");
+				$("#main").show();
+			}
+			else
+			{
+				alert("print erro");
+			}
+		}
+		
+		function get_nekodata()
+		{
+			let post_data=
+			{
+				action:'get_nekodata',
+			}
+			get_data(post_data,make_list);
+		}
+		
+		function ImgId_get_ImgSrc(img_id)
+		{
+			let post_data=
+			{
+				action:'get_src',
+				img_id:img_id
+			}
+			
+			get_data(post_data,show_img);
+		}
+		
+		function get_address_list()
+		{
+			let post_data=
+			{
+				action:'get_address_list',
+			}
+			
+			get_data(post_data,make_address_list);
+		}
+		
+		function make_address_list(input)
+		{
+			//console.log(Object.keys(input));
+			const address_key0 = Object.keys(input)
+			address_data = input;
+			//console.log(address_key0);
+			for (const address1 in input)
+			{
+				//console.log(input[address1]);
+				$('#address1').append('<optgroup id="'+address1+'" label="'+address1+'" data-divider="true"></optgroup>');
+				
+				for(const address2 in input[address1])
+				{
+					$('#'+address1).append('<option>'+address2+'</option>');					
+				}
+			}
+			$('#address1').selectpicker('refresh');
+			//
+		}
+		
+		function show_img(input)
+		{
+			//console.log(input);
+			$('#show_img').attr('src',input);
+		}
+		
+		function mokugeki_func(elem)
+		{
+			let tag_elem = $(elem);
+			$('.show_info').remove();
+			$('#show_img').remove();
+			$(".print_val").removeClass("show");
+			$(".print_val").hide();
+			//console.log(tag_elem.attr('data_id'));
+			$('#print_val').append("<h3 class='show_info'>"+"猫の目撃情報ナンバー："+tag_elem.attr('data_id')+"</h3>");
+			$('#print_val').append("<img id='show_img' src='#' style='width:500px'>");
+			ImgId_get_ImgSrc(tag_elem.attr('data_id'));
+		}
+		
+		function make_grp()
+		{
+			let width = $('#print_val').width();
+			$('#print_3').css('width','100%');
+			$('#myChart_box').append('<canvas id="myChart_1"></canvas>');
+			let ctx = document.getElementById('myChart_1').getContext('2d');
+			let config = {
+				type:'pie',
+				data:{
+					labels:['test1','test2'],
+					datasets:[
+						{
+							backgroundColor:['rgba(255, 99, 132,1)','rgba(54, 162, 235, 1)'],
+							data:[50,100],
+						}
+					]
+				},
+				options:{
+						responsive:true,
+					}
+			}
+			
+			//console.log(ctx.canvas.width);
+			//let width = $('#print_val').width();
+			
+			
+			new Chart(ctx,config);
+			ctx.canvas.parentNode.style.width = width;
+			//console.log(ctx.canvas.width);
+		}
+		
+		function do_selectpicker(elem)
+		{
+			//console.log($(elem).attr('id'));
+			let is_address1 = $(elem).attr('id')=='address1';
+			let is_address2 = $(elem).attr('id')=='address2';
+			//console.log($(elem).val());
+			let address1_input = $('#address1').val();
+			let address2_input = $('#address2').val();
+			//$(this).selectpicker('refresh');destroy
+			//console.log(address_data);render
+			if(is_address1)
+			{
+				//$('#address2').selectpicker('destroy');
+				//$('#address3').selectpicker('destroy');
+				$('#address2').selectpicker('render');
+				$('#address3').selectpicker('render');
+				$('#address2 optgroup').remove();
+				$('#address3 optgroup').remove();
+			}
+			else if(is_address2)
+			{
+				//$('#address3').selectpicker('destroy');
+				$('#address3').selectpicker('render');
+				$('#address3 optgroup').remove();
+			}
+			
+			//console.log(address1_input);
+			
+			for(const address0 in address_data)
+			{
+				//console.log(address_data[address0]);
+				let address1_array = address_data[address0];
+				for(const address1 in address1_array)
+				{
+					if(address1_input.includes(address1))
+					{
+						let address2_array = address1_array[address1]
+						//console.log(address1_array[address1]);
+						if(is_address1){$('#address2').append('<optgroup id="'+address1+'" label="'+address1+'" data-divider="true"></optgroup>');}
+						
+						for(const address2 in address2_array)
+						{
+							//console.log(address2_array[address2]);
+							if(is_address1){$('#'+address1).append('<option>'+address2+'</option>');}
+							
+							let address3_array = address2_array[address2];
+							
+							if(address3_array!=null)
+							{
+								$('#address3').append('<optgroup id="'+address2+'" label="'+address2+'" data-divider="true"></optgroup>');
+								for(const address3 in address3_array)
+								{
+									if(address3!=null)
+									{
+										if(is_address2 && address2_input.includes(address2))
+										{
+											//console.log('do test');
+											$('#'+address2).append('<option>'+address3+'</option>');
+										}
+										else if(is_address1 || address2_input.length==0)
+										{
+											$('#'+address2).append('<option>'+address3+'</option>');
+										}										
+									}
+								}
+							}												
+						}						
+					}
+				}
+			}
+			$('#address2').selectpicker('refresh');
+			$('#address3').selectpicker('refresh');
+			reshow_taglog_list();
+		}
+		
+		function reshow_taglog_list()
+		{
+			let address1_input = $('#address1').val();
+			let address2_input = $('#address2').val();
+			let address3_input = $('#address3').val();
+			
+			$('.mokugeki_btn').hide();
+			
+			let class_txt = '.'+address1_input;
+			if(address2_input!=''){class_txt = class_txt+'.'+address2_input}
+			if(address3_input!=''){class_txt = class_txt+'.'+address3_input}
+			
+			
+			//console.log(class_txt);
+			$(class_txt).show();
+			
+			//$('.大阪府.大阪市').show();
+		}
+			
+		
+		$(function(){
+			get_nekodata();
+			make_grp();
+			get_address_list();
+			//console.log($('.dropdown-menu li'));
+			$("#chose_block .btn").click(function(){ conture_print(this); });
+			$("#reset_btn").click(function(){ get_nekodata(); })
+			$("#print_2 .mokugeki_btn").click(function(){ console.log('test'); });
+			$('.selectpicker').on('changed.bs.select',function(){ do_selectpicker(this); });
+			//$('.dropdown-menu li').click(function(){ console.log('this'); });
+		});		
+	</script>
+</html>

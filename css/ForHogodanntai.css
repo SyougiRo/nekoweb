@@ -1,0 +1,41 @@
+body{
+	width: 100%;
+}
+.container{
+	width: 100%;
+	max-width: none;
+	background: #F559FF;
+}
+.box{
+	padding: 0px;
+	margin: 0px;
+}
+.print_val:not(#main){
+	display: none;
+}
+#chose_block .btn:not(#btn_1){
+	margin-top: 10px;
+}
+#chose_block{
+	background: #FFF4BD;
+}
+#print_val{
+	background: #FFD543;
+}
+#chose_block{
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+#chose_block .btn{
+	width: 80%;
+}
+#print_2 div{
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	flex-direction: column;
+}
+#reset_btn{
+    float: right;	
+}

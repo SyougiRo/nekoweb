@@ -1,0 +1,542 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<title>test</title> 
+
+		<!-- jQueryui CSS -->
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+		
+		<!-- jQueryui -->
+		<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+		<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+		<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+		
+		<!-- Bootstrap -->
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>		
+		
+		<!-- google map API -->
+		<script src="http://maps.google.com/maps/api/js?key=AIzaSyB-9a0T7sfcoJUoCR2Avg6dv7j_5qJCgXg&language=ja"></script>
+		
+		<!-- mycss and myjs -->
+		<link href="css/ForUserCss.css" rel="stylesheet" type="text/css">
+		
+		<!--exif-->
+		<script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
+		
+		
+		<title>一般ユーザ向け</title>
+	</head>
+
+	<body>
+		<div id="mainpage" class="container">
+			<div class="row">
+				<!--使用者情報ブロック-->
+				<div class="col-2" id="user_block">
+					<samp>user block</samp>
+				</div>
+				<!--内容表示ブロック-->
+				<div class="col" id="val_block">
+					<!--機能選択ブロック-->
+					<div class="row" id="chose_block">
+						<div class="col" id="form_block">
+							<input id="form_button" class="chose_button" type="button" value="form button">
+						</div>
+						<div class="col" id="corekustion_block">
+							<input id="corekustion_button" class="chose_button" type="button" value="corekustion button">
+						</div>
+					</div>
+					<div class="row" id="print_val">
+						<!--目撃情報登録画面-->
+						<div id="show_form" class="print_val" style="width: 100%;height: 100%">
+							<div id="form_data" class="container " style="width: 100%;height: 100%">								
+								<div class="row align-items-start " style="width: 100%;height: 100%">
+									<div id="get_file_div" class="col-4 " style="height: 90%;">
+										<div id="img_block">
+											<img id="show_img" src="img/IMG_1409.jpg" alt="写真をアップしてください" />
+										</div>
+										<div>
+											<input type="file" id="get_image" accept="image/png, image/jpeg" onchange="readURL(this)">
+										</div>
+									</div>
+									<div id="chose_color" class="col-4 ">
+										<div>写真位置</div>
+										<div id="form_map" style="width: 99%;height: 400px"></div>
+									</div>
+									<div class="col-4">
+										<span>GPS:</span>
+										<input id="gps_input" type="text" value="">
+										<input id="gps_get" type="button" value="GPS変更">
+										
+										<p>毛の色を選択してください</p>
+										<li>
+											<input type="checkbox" name="color" checked="true">
+											<span>分からない</span>
+										</li>
+										<li>
+											<input type="checkbox" name="color">
+											<span>白</span>
+										</li>
+										<li>
+											<input type="checkbox" name="color">
+											<span>オレンジ/赤</span>
+										</li>
+										<li>
+											<input type="checkbox" name="color">
+											<span>黒</span>
+										</li>
+										<br>
+										<p>耳カットがありますか</p>
+										<li>
+											<input type="radio" name="tnr" checked="true">
+											<span>分からない</span>
+										</li>
+										<li>
+											<input type="radio" name="tnr">
+											<span>無し</span>
+										</li>
+										<li>
+											<input type="radio" name="tnr">
+											<span>アリ</span>					
+										</li>
+										<input id="submitlog" type="submit" value="転送">
+									</div>
+									
+								</div>								
+							</div>
+						</div>
+						
+						<!--コレクション画面-->
+						<div id="show_corekustion" class="print_val">
+							<div id="corekustion_map"></div>
+							<input type="button" value="マーカ表示" onClick="open_maker()">
+							<input type="button" value="マーカ消去" onClick="close_maker()">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>		
+
+		<!-- 登録画面 -->
+		<form method="post">
+			<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="background: #FFE500">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content" >
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">使用者登録　　<samp id="erro_txt"></samp></h5>
+							<button id="close_btn" type="button" class="close" data-dismiss="modal" aria-label="Close" hidden>
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<div class="container">
+								<div class="row">
+									<div class="col-4">
+										<samp class="login_txt">e-mail</samp>
+									</div>
+									<div class="col-8">
+										<input type="email" name="email_input" class="login_input email_input" id="email_input" placeholder="sample@gmail.com">
+									</div>
+								</div>
+								<br>
+								<div class="row">
+									<div class="col-4">
+										<samp class="login_txt">パスワード</samp>
+									</div>
+									<div class="col-8">
+										<input type="password" name="password_input" class="login_input password_input" id="password_input" placeholder="password">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" id="new_player_btn" >新規登録</button>
+							<button type="button" class="btn btn-primary" id="login_btn" >login</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</body>
+	<script>
+		var map;
+		var infowindows=[];
+		var makers=[];
+		const php_path = 'myfunc.php';
+		var now_GPSLatitude = 34.7577336;
+		var now_GPSLongitude = 134.966988;
+		
+		function readURL(input)
+		{
+			if(input.files && input.files[0])
+			{
+				const reader = new FileReader();
+				reader.onload = function(e){pred_img(e)}
+				reader.readAsDataURL(input.files[0]);
+				
+				//set_height();
+				remove_maker();
+				subminimg();
+				const post_data = {action:"read_gps"};
+				const work_func = test2_func;
+				get_data(post_data,work_func);
+			}
+		}
+		
+		function test2_func(input)
+		{
+			console.log(input);
+		}
+		
+		function set_height()
+		{
+			var img = document.querySelector("#show_img");
+			var h_h = img.offsetHeight/2;
+			
+			//console.log(img.style.marginTop);
+			console.log(img.clientHeight);
+			//console.log(img.src);
+			img.style.marginTop = "-"+h_h+"px";
+		}
+
+		function pred_img(e)
+		{
+			//console.log(e);
+			const img = document.querySelector("#show_img");
+			img.setAttribute("src", e.target.result);
+		}
+		
+		function check_login()
+		{
+			const input_mail = $('#email_input').val();
+			const input_passw = $('#password_input').val();
+			const post_data = {action:'check_login',input_mail:input_mail,input_passw:input_passw};
+			let output = get_data(post_data,check_login_func);
+			console.log("do login");
+		}
+		
+		function check_login_func(input)
+		{
+			const user_id = input['user_id'].$oid
+			
+			if(user_id>'0')
+			{
+				$('#exampleModal').modal('hide');
+			}
+			else
+			{
+				$('#erro_txt').text('E-mailやパスワードが存在しない');
+			}
+			
+		}
+
+		function open_print()
+		{
+			$("#print_val").show();
+			$(".chose_button").animate({
+				width:"100px",
+				height:"100px"
+			},10);
+		}
+
+		function closs_print()
+		{
+			$("#print_val").hide();
+			$(".chose_button").animate({
+				width:"400px",
+				height:"400px"
+			},10);
+		}
+
+
+		function show_form_val()
+		{
+			const form_block = $("#show_form");
+
+			if(form_block.hasClass("is_show"))
+			{
+				form_block.hide();
+				form_block.removeClass("is_show");
+				closs_print();
+				return;
+			}
+			else
+			{
+				$(".print_val").hide();
+				$(".print_val").removeClass("is_show");
+				open_print();
+				form_block.show();
+				form_block.addClass("is_show");
+			}
+		}
+
+		function show_corekustion_val()
+		{
+			const corekusion_block = $("#show_corekustion")
+
+			if(corekusion_block.hasClass("is_show"))
+			{
+				corekusion_block.hide();
+				corekusion_block.removeClass("is_show");
+				closs_print();
+				return;
+			}
+			else
+			{
+				$(".print_val").hide();
+				$(".print_val").removeClass("is_show");
+				open_print();
+				corekusion_block.show();
+				corekusion_block.addClass("is_show");
+			}
+		}
+
+		function to_dict(input)
+		{
+			const jsondata = JSON.parse(input);
+			return(jsondata);
+		}
+
+		function get_data(post_data,work_func)
+		{
+			$.ajax({
+				url:php_path,
+				data:post_data,
+				type:'post',
+				success:function(output){
+					const mydata = to_dict(output);
+					work_func(mydata);
+				},
+				error: function(jqXHR){ alert(jqXHR); }
+			});
+		}
+
+		function do_div_txt(txt)
+		{
+			var div_txt = '';
+			div_txt += 	'<div style="width:100px;height:50px;background:rgb(0,255,0)">';
+			div_txt += 		'<samp>'+txt+'</samp>';
+			div_txt += 	'</div>';
+			
+			return(div_txt);
+		}
+		
+		function make_maker(x,y,title,txt)
+		{
+			
+			const latlng = new google.maps.LatLng(x,y);
+			const marker = new google.maps.Marker({
+				position: latlng,
+				title: title,
+				mapTypeId: google.maps.MapTypeId.ROADMAP,
+				map: map,
+				draggable:true
+			});
+
+			infowindow = new google.maps.InfoWindow({
+				content: do_div_txt(txt),
+				position: latlng
+			});
+			marker.setMap(map);
+			google.maps.event.addListener(marker, 'click', function(event) {
+				infowindow.open(map, marker);
+			});
+			if(map.getZoom()<10)
+			{
+				map.setZoom(15);
+			}
+			
+			infowindows.push(infowindow);
+			makers.push(marker);
+		}
+		
+		function remove_maker()
+		{
+			makers.forEach(function(maker){
+				maker.setMap(null);
+			});
+			makers=[];
+		}
+		
+		function open_maker()
+		{
+			for (let i = 0; i < infowindows.length; i++)
+			{
+				infowindows[i].open(map);
+			}
+			
+		}
+		
+		function close_maker()
+		{
+			for (let i = 0; i < infowindows.length; i++)
+			{
+				infowindows[i].close();
+			}
+		}
+		
+		function initMap(){
+			var MyLatLng = new google.maps.LatLng(now_GPSLatitude, now_GPSLongitude);
+			var Options = {
+				zoom: 8,      //地図の縮尺値
+				center: MyLatLng,    //地図の中心座標
+				mapTypeId: 'roadmap'   //地図の種類
+			};
+			map = new google.maps.Map(document.getElementById('map'), Options);
+			map.addListener("click", clickAction);
+		}
+		
+		function clickAction(overlay)
+		{
+			console.log('overlay:',overlay.latLng.lat());
+			remove_maker();
+			let latlng = overlay.latLng;
+			make_maker(latlng.lat(),latlng.lng(),'test',null);
+			//map.panTo(new google.maps.LatLng(GPSLatitude_only_t,GPSLongitude_only_t));
+			map.panTo(latlng);
+		}
+		
+		function subminimg(){
+			var formData = new FormData($("#post_data")[0]);
+			var imageFile = $("#get_image")[0].files[0];
+			
+			getexif(imageFile);
+			console.log(imageFile);
+		}
+		
+		function getexif(imageFile)
+		{
+			EXIF.getData(imageFile,function(){
+				//時間
+				var DateTimeOriginal = EXIF.getTag(this,'DateTimeOriginal');
+				if(DateTimeOriginal != undefined){
+					let date_txt = '';
+					for(let i=0 ; i<DateTimeOriginal.length;i++)
+					{
+						let s_txt = DateTimeOriginal[i];
+						if(i<10 && s_txt==':')
+						{
+							s_txt = '/'
+						}
+						date_txt = date_txt + s_txt;
+						console.log(i,s_txt);
+					}
+					
+					
+					const date = new Date(date_txt).valueOf();
+					console.log('DateTimeOriginal',date_txt);
+					console.log('date',date);
+				}
+				else
+				{
+					console.log('DateTimeOriginal is not find');
+				}
+				
+				//緯度
+				const GPSLatitude = EXIF.getTag(this,'GPSLatitude');
+				const GPSLongitude = EXIF.getTag(this,'GPSLongitude');
+				if((GPSLatitude != undefined) && (GPSLongitude != undefined)){
+					var GPSLatitude_t = GPSLatitude[0]['numerator'];
+					var GPSLatitude_m = GPSLatitude[1]['numerator']/GPSLatitude[1]['denominator'];
+					let GPSLatitude_only_t = GPSLatitude_t+GPSLatitude_m/60;
+					
+					var GPSLongitude_t = GPSLongitude[0]['numerator'];
+					var GPSLongitude_m = GPSLongitude[1]['numerator']/GPSLatitude[1]['denominator'];
+					let GPSLongitude_only_t = GPSLongitude_t+GPSLongitude_m/60;
+					
+					$('#gps_input').attr('value',GPSLatitude_only_t+','+GPSLongitude_only_t);
+					map.panTo(new google.maps.LatLng(GPSLatitude_only_t,GPSLongitude_only_t));
+					make_maker(GPSLatitude_only_t,GPSLongitude_only_t,'test2','test test 2 txt')
+				}
+				else
+				{
+					console.log('GPSLatitude is not find');
+					console.log('GPSLongitude is not find');
+					alert('写真にGPSデータがない\n写真を撮った位置を入力してください。');
+				}
+				
+				
+				
+				
+			});
+		}
+		
+		function get_position_error(err) {
+			console.warn(`ERROR(${err.code}): ${err.message}`);
+		}
+		
+		function now_position()
+		{
+			const options = {
+				enableHighAccuracy: true,
+				timeout: 5000,
+				maximumAge: 0
+			}
+			
+			navigator.geolocation.getCurrentPosition( 
+				function(position){ 
+					now_GPSLatitude = position['coords']['latitude'];
+					now_GPSLongitude = position['coords']['longitude'];
+				},
+				get_position_error,
+				options
+			);
+		}
+		
+		function totest()
+		{
+			alert('test');
+		}
+		
+		function test_func(input)
+		{
+			console.log(input);
+		}
+		
+		function gps_get()
+		{
+			console.log(makers[0].getPosition());
+			$('#gps_input').attr('value',makers[0].getPosition().lat()+','+makers[0].getPosition().lng());
+		}
+		
+		$(function(){
+			now_position();
+			$('#exampleModal').modal({
+				backdrop: false,
+				keyboard: false
+			}).modal('show');
+			var outputdata = get_data({
+					action:'test_func',
+					val_a:'asd',
+					val_b:123
+				},test_func);
+			
+			$("#form_button").click(function(){ 
+				
+				$('#map').remove();
+				$('#form_map').append('<div id="map" style="height: 100%;width: 110%;"></div>');
+				
+				initMap();
+				show_form_val();
+			});
+
+			$("#corekustion_button").click(function(){
+				
+				$('#map').remove();
+				$('#corekustion_map').append('<div id="map"></div>');
+				initMap();
+				show_corekustion_val();
+				//infowindow.open(map);
+			});
+			
+			$('#login_btn').click(function(){
+				check_login();
+			});
+			
+			$('#gps_get').click(gps_get);
+		});
+	</script>
+</html>

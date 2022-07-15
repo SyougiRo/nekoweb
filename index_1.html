@@ -1,0 +1,503 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>ALL</title>
+	<!-- jQueryui CSS -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+
+	<!-- jQueryui -->
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+	<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>		
+
+	<!-- google map API -->
+	<script src="http://maps.google.com/maps/api/js?key=AIzaSyB-9a0T7sfcoJUoCR2Avg6dv7j_5qJCgXg&language=ja"></script>
+
+	<!-- mycss and myjs -->
+	<link href="css/ALLCss.css" rel="stylesheet" type="text/css">
+
+	<!--exif-->
+	<script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
+</head>
+
+<body>
+</body>
+	<script>
+		var map;
+		var now_GPSLatitude = 34.7577336;
+		var now_GPSLongitude = 134.966988;
+		var makers=[];
+		var infowindows=[];
+		var gps_list=[];
+		const php_path = 'myfunc.php';
+		var size_data={};
+		//elemのサイズ設定
+		function menu_resize(elem,size_rat = 0.98)
+		{
+			let menu = $('#main');
+			let window_width = $(window).width();
+			let window_height = $(window).height();
+			//console.log(size_rat);
+			menu.css('background-color', '#C13D3F');
+			menu.css('width',window_width*size_rat).css('left',window_width*((1-size_rat)/2)).css('top',window_width*((1-size_rat)/2)).css('height',window_height-window_width*(1-size_rat));
+			
+				$('.menu_btn').each(function(index){
+					let btn_len = $('.menu_btn').length;
+					let menu_width = $('#main').width();
+					let menu_height = $('#main').height();
+					
+					if(window_width>window_height)
+					{
+						let btn_width_heigth = menu_width*(0.95/btn_len);
+						let btn_padding = (menu_width-(btn_width_heigth*btn_len))/(btn_len+1);
+						let btn_elemt = $($('.menu_btn')[index]);
+						
+						if(btn_width_heigth>(menu_height-(btn_padding*2)))
+						{
+							btn_width_heigth = menu_height-(btn_padding*2);
+							btn_padding = (menu_width-(btn_width_heigth*btn_len))/(btn_len+1);
+						}
+
+						//console.log(btn_elemt);
+						btn_elemt.css('width',btn_width_heigth)
+							.css('height',btn_width_heigth)
+							.css('top',(menu_height/2)-(btn_width_heigth/2))
+							.css('left',btn_padding+(btn_width_heigth+btn_padding)*index);
+						
+					}
+					else
+					{
+						let btn_width_heigth;
+						if(menu_height*(0.95/btn_len)<(menu_width*0.95))
+						{
+							btn_width_heigth = menu_height*(0.95/btn_len);
+						}
+						else
+						{
+							btn_width_heigth = menu_width*0.95;
+						}
+						
+						let btn_padding = (menu_height-(btn_width_heigth*btn_len))/(btn_len+1);
+						let btn_elemt = $($('.menu_btn')[index]);
+						
+						btn_elemt.css('position','absolute');
+						btn_elemt.css('width',btn_width_heigth)
+							.css('height',btn_width_heigth)
+							.css('top',btn_padding+(btn_width_heigth+btn_padding)*index)
+							.css('left',(menu_width/2)-(btn_width_heigth/2));
+					}
+			
+				});
+			
+		}
+		
+		//メニューを作る
+		function make_menu()
+		{
+			$('body').append('<div id="main" class="box abs" ></div>');
+			make_unit();
+		}
+		
+		//メニューのユニットを作る
+		function make_unit()
+		{
+			$('#main *').remove();
+			const nuit_list = ['猫を登録','TNRの記録','猫数の変化'];
+			const id_list = ['cat_form','TNR_log','count_glf'];
+			const func_list = [case_cat_form,case_tnr_log,case_count_glf];
+			for(let index=0;index<nuit_list.length;index++)
+			{
+				let btn = $('<input type="button" id="'+id_list[index]+'" class="menu_btn abs" value="'+nuit_list[index]+'">');
+				$('#main').append(btn);
+				btn.click(func_list[index]);
+			}
+			menu_resize();
+		}
+		
+		function case_cat_form()
+		{
+			//$('.menu_btn').remove();
+			//make_output_btn();
+			make_return_btn();
+			make_CatForm_box();
+			//make_img_box();
+			//make_map();
+			//make_color_sel();
+		}
+		
+		function case_tnr_log()
+		{
+			$('.menu_btn').remove();
+			make_return_btn();
+		}
+		
+		function case_count_glf()
+		{
+			$('.menu_btn').remove();
+			make_return_btn();
+		}
+		
+		function make_CatForm_box()
+		{
+			let btn_elem = $('.menu_btn');
+			console.log(btn_elem.length);
+			for(let index=0;index<btn_elem.length;index++)
+			{
+				let elem = $(btn_elem[index]);
+				console.log(elem.val());
+			}
+			$('#main').append('<div id="CatForm_box" class="box abs" ></div>');
+		}
+		
+		function make_map()
+		{
+			let map_box = $('<div id="map" class="abs"></div>');
+			$('#main').append(map_box);
+			map_resize(map_box);
+			initMap();
+		}
+		
+		function make_return_btn()
+		{
+			let retrun_btn = $('<input type="button" class="abs elem_go_center" id="return_btn" value="<--">');
+			
+			$('#main').append(retrun_btn);
+			return_btn_resize(retrun_btn);
+			$('#return_btn').click(make_unit);
+			
+		}
+		
+		function make_img_box()
+		{
+			let img_box = $('<div id="img_block" class="abs"></div>');
+			
+			$('#main').append(img_box);
+			resize_img_box(img_box);
+			let show_img_box = $('<img id="show_img" src="img/IMG_1409.jpg" alt="写真をアップしてください" />');
+			img_box.append(show_img_box);
+			
+		}
+		
+		function make_output_btn()
+		{
+			let btn = $('<input type="file" class="abs" id="get_image" accept="image/png, image/jpeg" onchange="readURL(this)">');
+			$('#main').append(btn);
+			resize_output_btn(btn);
+		}
+		
+		function make_color_sel()
+		{
+			let sel_elem = $('<select id="color_sel"></select>');
+			let color_data = {
+				'全身模様':['白猫（白地×全身模様）','黒猫（黒地×全身模様）','グレー猫（グレー地×全身模様）','茶トラ猫（茶トラ地×全身模様）','キジトラ猫（キジトラ地×全身模様）','サバトラ猫（サバトラ地×全身模様）','サビ猫（サビ地×全身模様）'],
+				'白混ざり':['白黒猫（黒地×白混ざり）','グレー白猫（グレー地×白混ざり）','茶白猫（茶トラ地×白混ざり）','キジ白猫（キジトラ地×白混ざり）','サバ白猫（サバトラ地×白混ざり）','ミケ猫（ミケ地×白混ざり）'],
+				'トビ柄':['白黒トビ猫（黒地×トビ柄）','グレートビ猫（グレー地×トビ柄）','茶白トビ猫（茶トラ地×トビ柄）','トビキジ猫（キジトラ地×トビ柄）','サバ白トビ猫（サバトラ地×トビ柄）','トビミケ猫（ミケ地×トビ柄）'],
+				'薄模様':['クリーム猫（茶トラ地×薄模様）','グレートラ猫（キジトラ地×薄模様）','グレートラ猫（サバトラ地×薄模様）','パステルミケ猫（ミケ地×薄模様）','グレーサビ猫（サビ地×薄模様）']
+			}
+			
+			for(let key in color_data)
+			{
+				//console.log(color_data[key]);
+				for(let val in color_data[key])
+				{
+					console.log(color_data[key][val]);
+				}
+			}
+			
+		}
+		
+		function map_resize(elem)
+		{
+			let menu_width = $('#main').width();
+			let menu_height = $('#main').height();
+			let box_width = menu_width*(0.9/2);
+			elem.css('width',box_width).css('height',box_width/3*2).css('top',menu_height*0.1*(menu_width/menu_height)).css('right',menu_width*0.01);
+		}
+		
+		function resize_img_box(elem)
+		{
+			let menu_width = $('#main').width();
+			let menu_height = $('#main').height();
+			let box_width = menu_width*(0.9/2);
+			elem.css('width',box_width).css('height',box_width/3*2).css('top',menu_height*0.1*(menu_width/menu_height)).css('left',menu_width*0.01);
+		}
+		
+		function resize_output_btn(elem)
+		{
+			let menu_width = $('#main').width();
+			let menu_height = $('#main').height();
+			
+			let btn_width = menu_width*(0.7/2);;
+			
+			elem.css('width',btn_width)
+				.css('top',menu_height*0.07*(menu_width/menu_height))
+				.css('left',menu_width*0.01)
+				.css('font-size',(menu_width+menu_height)/2000+'em');
+			
+		}
+		
+		function return_btn_resize(elem)
+		{
+			
+			let menu_width = $('#main').width();
+			let menu_height = $('#main').height();
+			let btn_size;
+			if(menu_width>menu_height)
+			{
+				btn_size = menu_width*0.05;
+			}
+			else
+			{
+				btn_size = menu_height*0.05;
+			}
+			
+			elem.css('width',btn_size)
+				.css('height',btn_size)
+				.css('top',menu_width*0.01)
+				.css('left',menu_width*0.01);
+		}
+		
+		function testfunc()
+		{
+			console.log('test');
+		}
+		
+		function readURL(input)
+		{
+			if(input.files && input.files[0])
+			{
+				const reader = new FileReader();
+				reader.onload = function(e){pred_img(e)}
+				reader.readAsDataURL(input.files[0]);
+				
+				//set_height();
+				//remove_maker();
+				subminimg();
+				const post_data = {action:"read_gps"};
+				const work_func = test2_func;
+				get_data(post_data,work_func);
+			}
+		}
+		
+		function pred_img(e)
+		{
+			//console.log(e);
+			const img = document.querySelector("#show_img");
+			img.setAttribute("src", e.target.result);
+		}
+		
+		function subminimg(){
+			var formData = new FormData($("#post_data")[0]);
+			var imageFile = $("#get_image")[0].files[0];
+			
+			getexif(imageFile);
+			console.log(imageFile);
+		}
+		
+		function test2_func(input)
+		{
+			console.log(input);
+		}
+		
+		function get_data(post_data,work_func)
+		{
+			$.ajax({
+				url:php_path,
+				data:post_data,
+				type:'post',
+				success:function(output){
+					const mydata = to_dict(output);
+					work_func(mydata);
+				},
+				error: function(jqXHR){ alert(jqXHR); }
+			});
+		}
+		
+		function all_reszie()
+		{
+			//console.log($('#main').width());
+			menu_resize();
+			if($('#return_btn').length)
+			{
+				return_btn_resize($('#return_btn'));
+			}
+			
+			if($('#img_block').length)
+			{
+				resize_img_box($('#img_block'));
+			}
+			
+			if($('#get_image').length)
+			{
+				resize_output_btn($('#get_image'));
+			}
+			
+			if($('#map').length)
+			{
+				map_resize($('#map'));
+			}
+		}
+		
+		//写真からGPSデータを取る
+		function getexif(imageFile)
+		{
+			EXIF.getData(imageFile,function(){
+				//時間
+				var DateTimeOriginal = EXIF.getTag(this,'DateTimeOriginal');
+				if(DateTimeOriginal != undefined){
+					let date_txt = '';
+					for(let i=0 ; i<DateTimeOriginal.length;i++)
+					{
+						let s_txt = DateTimeOriginal[i];
+						if(i<10 && s_txt==':')
+						{
+							s_txt = '/'
+						}
+						date_txt = date_txt + s_txt;
+						console.log(i,s_txt);
+					}
+					
+					
+					const date = new Date(date_txt).valueOf();
+					console.log('DateTimeOriginal',date_txt);
+					console.log('date',date);
+				}
+				else
+				{
+					console.log('DateTimeOriginal is not find');
+				}
+				
+				//緯度
+				const GPSLatitude = EXIF.getTag(this,'GPSLatitude');
+				const GPSLongitude = EXIF.getTag(this,'GPSLongitude');
+				if((GPSLatitude != undefined) && (GPSLongitude != undefined)){
+					var GPSLatitude_t = GPSLatitude[0]['numerator'];
+					var GPSLatitude_m = GPSLatitude[1]['numerator']/GPSLatitude[1]['denominator'];
+					let GPSLatitude_only_t = GPSLatitude_t+GPSLatitude_m/60;
+					
+					var GPSLongitude_t = GPSLongitude[0]['numerator'];
+					var GPSLongitude_m = GPSLongitude[1]['numerator']/GPSLatitude[1]['denominator'];
+					let GPSLongitude_only_t = GPSLongitude_t+GPSLongitude_m/60;
+					
+					$('#gps_input').attr('value',GPSLatitude_only_t+','+GPSLongitude_only_t);
+					map.panTo(new google.maps.LatLng(GPSLatitude_only_t,GPSLongitude_only_t));
+					make_maker(GPSLatitude_only_t,GPSLongitude_only_t,'test2','test test 2 txt')
+				}
+				else
+				{
+					console.log('GPSLatitude is not find');
+					console.log('GPSLongitude is not find');
+					alert('写真にGPSデータがない\n写真を撮った位置を入力してください。');
+				}
+			});
+		}
+		
+		//map
+		function initMap(){
+			var MyLatLng = new google.maps.LatLng(now_GPSLatitude, now_GPSLongitude);
+			var Options = {
+				zoom: 8,      //地図の縮尺値
+				center: MyLatLng,    //地図の中心座標
+				mapTypeId: 'roadmap'   //地図の種類
+			};
+			map = new google.maps.Map(document.getElementById('map'), Options);
+			map.addListener("click", clickAction);
+		}
+		
+		function clickAction(overlay)
+		{
+			console.log('overlay:',overlay.latLng.lat());
+			remove_maker();
+			let latlng = overlay.latLng;
+			make_maker(latlng.lat(),latlng.lng(),'test',null);
+			//map.panTo(new google.maps.LatLng(GPSLatitude_only_t,GPSLongitude_only_t));
+			map.panTo(latlng);
+		}
+		
+		function remove_maker()
+		{
+			makers.forEach(function(maker){
+				maker.setMap(null);
+			});
+			makers=[];
+		}
+		
+		function now_position()
+		{
+			const options = {
+				enableHighAccuracy: true,
+				timeout: 5000,
+				maximumAge: 0
+			}
+			
+			navigator.geolocation.getCurrentPosition( 
+				function(position){ 
+					now_GPSLatitude = position['coords']['latitude'];
+					now_GPSLongitude = position['coords']['longitude'];
+				},
+				get_position_error,
+				options
+			);
+		}
+		
+		function make_maker(x,y,title,txt)
+		{
+			
+			const latlng = new google.maps.LatLng(x,y);
+			const marker = new google.maps.Marker({
+				position: latlng,
+				title: title,
+				mapTypeId: google.maps.MapTypeId.ROADMAP,
+				map: map,
+				draggable:true
+			});
+
+			infowindow = new google.maps.InfoWindow({
+				content: do_div_txt(txt),
+				position: latlng
+			});
+			marker.setMap(map);
+			google.maps.event.addListener(marker, 'click', function(event) {
+				infowindow.open(map, marker);
+			});
+			if(map.getZoom()<10)
+			{
+				map.setZoom(15);
+			}
+			
+			infowindows.push(infowindow);
+			makers.push(marker);
+			gps_list.push([x,y,title,txt]);
+		}
+		
+		function do_div_txt(txt)
+		{
+			var div_txt = '';
+			div_txt += 	'<div style="width:100px;height:50px;background:rgb(0,255,0)">';
+			div_txt += 		'<samp>'+txt+'</samp>';
+			div_txt += 	'</div>';
+			
+			return(div_txt);
+		}
+		
+		function to_dict(input)
+		{
+			const jsondata = JSON.parse(input);
+			return(jsondata);
+		}
+		
+		$(function(){
+			make_menu();
+			$(window).resize(all_reszie);
+			make_color_sel();
+			
+		});
+	</script>
+</html>

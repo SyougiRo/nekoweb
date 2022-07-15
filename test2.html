@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<title>test</title> 
+
+		
+
+		<!-- jQueryui CSS -->
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+		
+		<!-- jQueryui -->
+		<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+		<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+		<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+		
+		<!-- Bootstrap -->
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>		
+		
+		<!-- google map API -->
+		<script async defer	src="https://maps.googleapis.com/maps/api/js?language=ja&key=AIzaSyCa4_UlQEyMwWxm4PGQpBMEPeHeg4YgsSs"></script>
+		
+		<script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
+		
+		<!-- mycss and myjs -->
+		<link href="css/ForHogodanntai.css" rel="stylesheet" type="text/css">
+		
+		
+		<title>一般ユーザ向け</title>
+	</head>
+
+	<body>
+		<button type="button" id="test" value="test button">test</button>
+		<button type="button" id="test2" value="test button">test</button>
+	</body>
+	<script>
+		const php_path = 'php_func/myfunc.php';
+		
+		function test(){
+			get_data({action:'ajax_test'},work_func);
+		}
+		function test2(){
+			get_data({action:'ajax_test2'},work_func);
+		}
+		function to_dict(input)
+		{
+			const jsondata = JSON.parse(input);
+			return(jsondata);
+		}
+		function get_data(post_data,work_func)
+		{
+			$.ajax({
+				url:php_path,
+				data:post_data,
+				type:'post',
+				success:function(output){
+					const mydata = to_dict(output);
+					work_func(mydata);
+				},
+				error: function(jqXHR){ alert(jqXHR); }
+			});
+		}
+		function work_func(input){
+			console.log(input);
+		}
+		$(function(){
+			$('#test').click(function(){ test(); });
+			$('#test2').click(function(){ test2(); });
+		});
+	</script>
+</html>

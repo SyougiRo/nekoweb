@@ -1,0 +1,85 @@
+body{
+    background-color: #9D95FD;
+}
+#mainpage{
+	max-width: none;
+}
+
+#user_block{
+	background: #02FF00;
+}
+
+#chose_block .col{
+	display: flex;
+	justify-content: center;
+}
+
+#chose_block input{
+    height: 400px;
+    width: 400px;
+	background: #FF2DFD;
+}
+
+#print_val{
+    height: 500px;
+    width: 100%;
+    margin: 0 auto;
+    background-color: #FFFD00;
+	justify-content: center;
+	align-items: center;
+    display: none;
+}
+
+#img_block{
+	margin: 0px;
+	padding: 0px;
+	text-align : center;
+	height : 90%;
+	background: #726F6F;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#show_img{
+	margin: 0px;
+	padding: 0px;
+	max-height: 100%;  
+    max-width: 100%;
+	width: auto;
+    height: auto;
+}
+
+#gps_input{
+	width: 100%;
+}
+
+#post_data{
+	padding-top: 10px;
+}
+
+#map{
+	width:80%;
+	height:500px;
+}
+
+#submitlog{
+	float: right;
+}
+
+.print_val{
+	display: none;
+	
+}
+
+.login_txt{
+	width: 100px;
+}
+
+.login_input{
+	width: 100%;
+}
+
+.box{
+	padding: 0
+}
