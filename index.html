@@ -811,17 +811,17 @@
 		}
 		
 		function check_catColor()
-		{
-			$('.color_img').removeClass('color_check');
-			
+		{		
 			let elem = $(this);
 			if(elem.hasClass('color_check'))
 			{
+				elem.removeClass('color_check');
 				cat_color = '';
 				$('#color').removeClass('isok');
 			}
 			else
 			{
+				$('.color_img').removeClass('color_check');
 				elem.addClass('color_check');
 				cat_color = elem.attr('id');
 				$('#color').addClass('isok');
