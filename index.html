@@ -163,56 +163,58 @@
 		function case_cat_form()
 		{
 			$('*').finish();
-			let len = $('.menu_btn').length
-			const t=500;
 			cat_color='';
 			//console.log($('.menu_btn')[0].zIndex);
+			$('.menu_btn').removeClass('check');
+			$(this).addClass('check');
+			$('#sec_box').remove();
 			if(menu_z<2)
 			{
-				$('.menu_btn').removeClass('check');
-				$(this).addClass('check');
-				$('#sec_box').remove();
 				menu_z=2;
-				let css_dect = menu_unit_resize(0,len)
-				let btn_top = css_dect.height/2+css_dect.top;
-				let btn_left = css_dect.width/2+css_dect.left;
-				
-				for(let index=0;index<len;index++)
-				{
-					let elem = $($('.menu_btn')[index]);
-					css_dect = menu_unit_resize(index,len)
-					if(index<len-1)
-					{
-						
-						elem.animate(css_dect,t);
-					}
-					else
-					{
-						elem.animate(css_dect,t,function(){
-							make_sec_box(btn_top,btn_left,make_CatForm_menu);
-							do_resize();
-						});
-					}				
-				}
+				fir_box_animet(make_CatForm_menu);	
 			}
 			else
 			{
-				let css_dect = menu_unit_resize(0,len)
+				let len = $('.menu_btn').length;
+				const t=500;
+
+
+				let css_dect = menu_unit_resize(0,len);
 				let btn_top = css_dect.height/2+css_dect.top;
 				let btn_left = css_dect.width/2+css_dect.left;
-				$('.menu_btn').removeClass('check');
-				$(this).addClass('check');
-				$('#sec_box').remove();
 				make_sec_box(btn_top,btn_left,make_CatForm_menu);
-				
-			}
-			
-			//console.log('test');
+			}			
 		}
 		
-		function test()
+		function fir_box_animet(func)
 		{
-			$($('.catform_btn')[0]).click();
+			let len = $('.menu_btn').length;
+			const t=500;
+			
+
+			let css_dect = menu_unit_resize(0,len);
+			let btn_top = css_dect.height/2+css_dect.top;
+			let btn_left = css_dect.width/2+css_dect.left;
+
+			for(let index=0;index<len;index++)
+			{
+				let elem = $($('.menu_btn')[index]);
+				css_dect = menu_unit_resize(index,len);
+				if(index<len-1)
+				{
+
+					elem.animate(css_dect,t);
+					console.log('test1');
+				}
+				else
+				{
+					console.log('test2');
+					elem.animate(css_dect,t,function(){
+						make_sec_box(btn_top,btn_left,func);
+						do_resize();
+					});
+				}				
+			}
 		}
 		
 		function case_tnr_log()
