@@ -16,11 +16,21 @@
 	align-items: center;
 }
 
-.nopritest{
+.pritest{
 	border-style:solid;
 }
 
 #img_block{
+	margin: 0px;
+	padding: 0px;
+	text-align : center;
+	background: #726F6F;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#color_img{
 	margin: 0px;
 	padding: 0px;
 	text-align : center;
@@ -39,9 +49,28 @@
     height: auto;
 }
 
+#testshow_img{
+	margin: 0px;
+	padding: 0px;
+	max-height: 100%;  
+    max-width: 100%;
+	width: auto;
+    height: auto;
+}
+
 .check{
     border-color: #FF0004;
     
+}
+
+.color_img img{    
+	height: 100%;
+	width: 100%;
+	object-fit :cover;
+}
+
+.color_check img{
+	border:2px rgba(113,255,0,1.00) solid;
 }
 
 #upcheck{
@@ -50,21 +79,22 @@
     background-color: rgba(120,120,120,0.50);
     z-index: 999;
     font-size: 10em;
-	line-height:100%;
+    line-height: 100%;
+    border-width: 10px;
 }
 
 .isok{
 	background-color: rgba(34,255,0,1.00);
 }
 
-.effect
+.neffect
 {
     position:relative;
     -webkit-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
        -moz-box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
             box-shadow:0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(0, 0, 0, 0.1) inset;
 }
-.effect:before, .effect:after
+.neffect:before, .neffect:after
 {
     content:"";
     position:absolute;
@@ -79,7 +109,7 @@
     -moz-border-radius:100px / 10px;
     border-radius:100px / 10px;
 }
-.effect:after
+.neffect:after
 {
     right:10px;
     left:auto;
