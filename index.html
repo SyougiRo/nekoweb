@@ -710,22 +710,15 @@
 		function check_btn_resize()
 		{
 			let box_css = thr_box_resize();
-			let left=box_css.width*0.9;
-			if(left<200)
-			{
-				left=box_css.width-200;
-			}
+			let right=box_css.width*0.02;
 			
-			let top = box_css.height*0.9;
-			if(top<100)
-			{
-				top = box_css.height-100;
-			}
+			
+			let bottom = box_css.height*0.02;
 			
 			let css_dict = {
-				'top':top,
-				'left':left,
-				'font-size':top/350+'em'
+				'bottom':bottom,
+				'right':right,
+				'font-size':bottom/12+'em'
 			}
 			return(css_dict);
 		}
