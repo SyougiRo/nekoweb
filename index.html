@@ -46,6 +46,8 @@
 		var gps_list   =[];
 		var makers     =[];
 		
+		var session = window.sessionStorage;
+		
 		var cat_color;
 		var img_input;
 		var now_src;
@@ -162,33 +164,53 @@
 			
 			for( let index = 0; index < nuit_list.length; index++ )
 			{
-				let btn = $('<input type="button" style="height:1px;width:1px" the_count="'+ index +'" id="'+ id_list[index] +'" class="menu_btn abs" value="'+ nuit_list[index] +'">');
-				$('#main_box').append(btn);
-				btn.animate( menu_unit_resize( index,nuit_list.length ), function(){
-					btn.click( func_list[index] );
-				});
+				if( index < nuit_list.length-1 )
+				{
+					let btn = $('<input type="button" style="height:1px;width:1px" the_count="'+ index +'" id="'+ id_list[index] +'" class="menu_btn abs" value="'+ nuit_list[index] +'">');
+					$('#main_box').append(btn);
+					btn.animate( menu_unit_resize( index,nuit_list.length ), function(){
+						btn.click( func_list[index] );
+					});
+				}
+				else
+				{
+					let btn = $('<input type="button" style="height:1px;width:1px" the_count="'+ index +'" id="'+ id_list[index] +'" class="menu_btn abs" value="'+ nuit_list[index] +'">');
+					$('#main_box').append(btn);
+					btn.animate( menu_unit_resize( index,nuit_list.length ), function(){
+						btn.click( func_list[index] );						
+					});
+				}				
 			}
 		}
 		
 		function case_cat_form()
 		{
 			$('*').finish();
-			cat_color='';
-			
 			$('.menu_btn').removeClass('check');
 			$(this).addClass('check');
 			$('#sec_box').remove();
 			
-			if( menu_z < 2)
+			cat_color='';
+			
+			if($.cookie('user_id'))
 			{
-				menu_z = 2;
-				fir_box_animet(make_CatForm_menu);	
+				console.log($.cookie('user_id'));
 			}
 			else
 			{
-				let len = $('.menu_btn').length;
-				const t = 500;
-
+				$('#my_acc').click();
+				alert('loginしてください');
+				return;
+			}
+			
+			if( menu_z < 2)
+			{
+				menu_z = 2;
+				fri_box_animet(make_CatForm_menu);	
+			}
+			else
+			{
+				let len      = $('.menu_btn').length;
 				let css_dect = menu_unit_resize( 0, len);
 				let btn_top  = css_dect.height/2+css_dect.top;
 				let btn_left = css_dect.width/2+css_dect.left;
@@ -197,11 +219,11 @@
 			}			
 		}
 		
-		function fir_box_animet(func)
+		function fri_box_animet(func)
 		{
-			let len = $('.menu_btn').length;
-			const t = 500;			
-
+			const t      = 500;
+			
+			let len      = $('.menu_btn').length;
 			let css_dect = menu_unit_resize( 0, len );
 			let btn_top  = css_dect.height/2+css_dect.top;
 			let btn_left = css_dect.width/2+css_dect.left;
@@ -233,15 +255,31 @@
 			$(this).addClass('check');
 			$('#sec_box').remove();
 			
-			menu_z = 2;
+			if($.cookie('user_id'))
+			{
+				console.log($.cookie('user_id'));
+			}
+			else
+			{
+				$('#my_acc').click();
+				alert('loginしてください');
+				return;
+			}
 			
-			let len      = $('.menu_btn').length;
-			let css_dect = menu_unit_resize( 1, len);
-			let btn_top  = css_dect.height/2+css_dect.top;
-			let btn_left = css_dect.width/2+css_dect.left;			
-			
-			make_sec_box( btn_top, btn_left );
-			//console.log('test');
+			if( menu_z < 2)
+			{
+				menu_z = 2;
+				fri_box_animet(function(){console.log('test');});	
+			}
+			else
+			{
+				let len      = $('.menu_btn').length;
+				let css_dect = menu_unit_resize( 1, len);
+				let btn_top  = css_dect.height/2+css_dect.top;
+				let btn_left = css_dect.width/2+css_dect.left;
+				
+				make_sec_box( btn_top, btn_left, function(){console.log('test');} );
+			}
 		}
 		
 		function case_count_glf()
@@ -251,15 +289,31 @@
 			$(this).addClass('check');
 			$('#sec_box').remove();
 			
-			menu_z = 2;
+			if($.cookie('user_id'))
+			{
+				console.log($.cookie('user_id'));
+			}
+			else
+			{
+				$('#my_acc').click();
+				alert('loginしてください');
+				return;
+			}
 			
-			let len      = $('.menu_btn').length;
-			let css_dect = menu_unit_resize( 2, len );
-			let btn_top  = css_dect.height/2+css_dect.top;
-			let btn_left = css_dect.width/2+css_dect.left;
-			
-			
-			make_sec_box( btn_top, btn_left );
+			if( menu_z < 2)
+			{
+				menu_z = 2;
+				fri_box_animet(function(){console.log('test');});	
+			}
+			else
+			{
+				let len      = $('.menu_btn').length;
+				let css_dect = menu_unit_resize( 2, len);
+				let btn_top  = css_dect.height/2+css_dect.top;
+				let btn_left = css_dect.width/2+css_dect.left;
+				
+				make_sec_box( btn_top, btn_left, function(){console.log('test');} );
+			}
 			//console.log('test');
 		}
 		
@@ -270,15 +324,20 @@
 			$('#sec_box').remove();
 			$('*').finish();
 			
-			menu_z = 2;
-			
-			let len      = $('.menu_btn').length;
-			let css_dect = menu_unit_resize(3,len);
-			let btn_top  = css_dect.height/2+css_dect.top;
-			let btn_left = css_dect.width/2+css_dect.left;
-			
-			make_sec_box( btn_top, btn_left );
-			//console.log('test');
+			if( menu_z < 2)
+			{
+				menu_z = 2;
+				fri_box_animet(function(){console.log('test');});	
+			}
+			else
+			{
+				let len      = $('.menu_btn').length;
+				let css_dect = menu_unit_resize( 3, len);
+				let btn_top  = css_dect.height/2+css_dect.top;
+				let btn_left = css_dect.width/2+css_dect.left;
+				
+				make_sec_box( btn_top, btn_left, function(){console.log('test');} );
+			}
 		}
 		
 		function menu_unit_resize(index,len)
@@ -1182,24 +1241,17 @@
 		}
 		
 		$(function(){
+			
 			$('body').append('<div id="data_base"></div>');
 			$(window).resize(do_resize);
 			now_position();
-			window.sessionStorage.setItem('key', 'test');
-			console.log(window.sessionStorage.getItem('key'));
+			
+			session.setItem( 'key', 'test' );
+			console.log( session.getItem('key') );
 			
 			start();
 			
-			$.cookie('user_id','test');
-			$.removeCookie('user_id');
-			if($.cookie('user_id'))
-			{
-				console.log('1');
-			}
-			else
-			{
-				console.log('0');
-			}
+			
 			
 		});
 	</script>
