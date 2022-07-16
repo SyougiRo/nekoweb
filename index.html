@@ -199,14 +199,14 @@
 			else
 			{
 				$('#my_acc').click();
-				alert('loginしてください');
+				//alert('loginしてください');
 				return;
 			}
 			
 			if( menu_z < 2)
 			{
 				menu_z = 2;
-				fri_box_animet(make_CatForm_menu);	
+				fri_box_animet( 0, make_CatForm_menu );	
 			}
 			else
 			{
@@ -219,12 +219,12 @@
 			}			
 		}
 		
-		function fri_box_animet(func)
+		function fri_box_animet(btn_index,func)
 		{
 			const t      = 500;
 			
 			let len      = $('.menu_btn').length;
-			let css_dect = menu_unit_resize( 0, len );
+			let css_dect = menu_unit_resize( btn_index, len );
 			let btn_top  = css_dect.height/2+css_dect.top;
 			let btn_left = css_dect.width/2+css_dect.left;
 
@@ -262,14 +262,14 @@
 			else
 			{
 				$('#my_acc').click();
-				alert('loginしてください');
+				//alert('loginしてください');
 				return;
 			}
 			
 			if( menu_z < 2)
 			{
 				menu_z = 2;
-				fri_box_animet(function(){console.log('test');});	
+				fri_box_animet( 1, function(){console.log('test');} );	
 			}
 			else
 			{
@@ -296,14 +296,14 @@
 			else
 			{
 				$('#my_acc').click();
-				alert('loginしてください');
+				//alert('loginしてください');
 				return;
 			}
 			
 			if( menu_z < 2)
 			{
 				menu_z = 2;
-				fri_box_animet(function(){console.log('test');});	
+				fri_box_animet( 2, function(){console.log('test');} );	
 			}
 			else
 			{
@@ -327,7 +327,7 @@
 			if( menu_z < 2)
 			{
 				menu_z = 2;
-				fri_box_animet(function(){console.log('test');});	
+				fri_box_animet( 3, acct_btn );
 			}
 			else
 			{
@@ -336,9 +336,70 @@
 				let btn_top  = css_dect.height/2+css_dect.top;
 				let btn_left = css_dect.width/2+css_dect.left;
 				
-				make_sec_box( btn_top, btn_left, function(){console.log('test');} );
+				make_sec_box( btn_top, btn_left, acct_btn );
 			}
 		}
+		
+		//now
+		function acct_btn()
+		{
+			do_resize();
+			
+			let menu_list  = [ '基本情報', '詳細', '登録済み', '登録きろ' ];
+			let ImgId_list = [ 'acct', 'more', 'up_cat_list', 'up_log' ];
+			let func_list  = [ acct_func, more_func, UpCatList_func, UpLog_func ];
+			let t          = 500;
+			
+			let main_btn_css = menu_unit_resize( 3, $('.menu_btn').length );
+			let sec_box_css  = sec_box_resize();
+			
+			let top  = main_btn_css.top+main_btn_css.height / 2-sec_box_css.top;
+			let left = main_btn_css.left+main_btn_css.width / 2-sec_box_css.left;
+			
+			for( let index=0 ; index < menu_list.length; index++ )
+			{
+				let box_css  = sec_box_resize();
+				let css_dect = catform_btn_resize( index, menu_list.length );
+				let btn      = $('<input type="button" id="'+ ImgId_list[index] +'" class="catform_btn abs" style="width:0px;height:0px;top:'+ top +'px;left:'+ left +'px" value="'+ menu_list[index] +'">');
+				
+				$('#sec_box').append(btn);
+				
+				if( index < menu_list.length-1 )
+				{
+					btn.animate( css_dect, t, function(){
+						btn.click( func_list[index] );
+					});
+				}
+				else
+				{
+					btn.animate( css_dect, t, function(){
+						btn.click( func_list[index] );
+						$('#'+ImgId_list[0]).click();
+					});
+				}				
+			}
+		}
+		
+		function acct_func()
+		{
+			
+		}
+		
+		function more_func()
+		{
+			
+		}
+		
+		function UpCatList_func()
+		{
+			
+		}
+		
+		function UpLog_func()
+		{
+			
+		}
+		
 		
 		function menu_unit_resize(index,len)
 		{
