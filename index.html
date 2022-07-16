@@ -375,13 +375,21 @@
 			let mbox = $('#main_box');
 			let mbox_width = mbox.width();
 			let mbox_height = mbox.height();
+			
+			let fir_btn_css = menu_unit_resize(0,4);
+			let btn_top = fir_btn_css.top;
+			let btn_hight = fir_btn_css.height;
+			let btn_left = fir_btn_css.left;
+			let btn_wight = fir_btn_css.width;
+			
+			
 			let css_dict;
 			if(monitor_ver_check(mbox))
 			{
 				css_dict={
 					'left':mbox_width*0.02,
 					'top':mbox_height*0.02,
-					'width':mbox_width*0.91,
+					'width':mbox_width*0.96-btn_wight,
 					'height':mbox_height*0.96
 				}
 			}
@@ -389,9 +397,9 @@
 			{
 				css_dict={
 					'left':mbox_width*0.02,
-					'top':mbox_height*0.13,
+					'top':btn_top*2+btn_hight,
 					'width':mbox_width*0.96,
-					'height':mbox_height*0.85,
+					'height':mbox_height*0.98-(btn_top*2+btn_hight),
 				}
 			}
 			return(css_dict);
@@ -562,6 +570,13 @@
 			let mbox = $('#sec_box');
 			let mbox_width = mbox.width();
 			let mbox_height = mbox.height();
+			
+			let btn_css = catform_btn_resize(0,4);
+			let btn_wight = btn_css.width;
+			let btn_top = btn_css.top;
+			let btn_height = btn_css.height;
+			
+			
 			let css_dict;
 			
 			if(monitor_ver_check(mbox))
@@ -569,7 +584,7 @@
 				css_dict={
 					'left':mbox_width*0.02,
 					'top':mbox_height*0.02,
-					'width':mbox_width*0.91,
+					'width':mbox_width*0.96-btn_wight,
 					'height':mbox_height*0.96,
 				}
 			}
@@ -577,9 +592,9 @@
 			{
 				css_dict={
 					'left':mbox_width*0.02,
-					'top':mbox_height*0.13,
+					'top':btn_top*2+btn_height,
 					'width':mbox_width*0.96,
-					'height':mbox_height*0.85,
+					'height':mbox_height*0.98-(btn_top*2+btn_height),
 				}
 			}
 			return(css_dict);
