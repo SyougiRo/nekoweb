@@ -709,19 +709,16 @@
 		
 		function check_btn_resize()
 		{
-			let btn = $('#check');
-			let width = btn.width();
-			let height = btn.height();
 			let box_css = thr_box_resize();
-			let left=box_css.width*0.9-width;
+			let right=box_css.width*0.02;
 			
 			
-			let top = box_css.height*0.98-height;
+			let bottom = box_css.height*0.02;
 			
 			let css_dict = {
-				'top':top,
-				'left':left,
-				'font-size':top/350+'em'
+				'bottom':bottom,
+				'right':right,
+				'font-size':bottom/12+'em'
 			}
 			return(css_dict);
 		}
