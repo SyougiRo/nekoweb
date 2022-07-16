@@ -64,7 +64,7 @@
 		
 		function do_resize()
 		{
-			console.log('do resize');
+			//console.log('do resize');
 			if($('#main_box').length)
 			{
 				$('#main_box').css(main_box_resize());
@@ -489,7 +489,7 @@
 			$('#thr_box').remove();
 			let css_dict = sec_box_resize();
 			let btn_css = catform_btn_resize(3,$('.catform_btn').length);
-			console.log(btn_css);
+			//console.log(btn_css);
 			make_thr_box(btn_css.top+btn_css.height/2,btn_css.left+btn_css.width/2,make_gps_box);
 		}
 		
@@ -1021,13 +1021,13 @@
 		
 		function map_resize()
 		{
-			console.log('test');
+			//console.log('test');
 			let box_size = thr_box_resize();
 			let mbox_width = box_size.width;
 			let mbox_height = box_size.height;
 			let box_width = mbox_width*0.9;
 			let css_dict;
-			console.log(box_size);
+			//console.log(box_size);
 			
 			css_dict={
 				'width':box_width,
