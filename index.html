@@ -688,23 +688,26 @@
 			}
 		}
 		
-		function make_check_btn()
+		function make_check_btn(func)
 		{
 			let btn = $('<input id="check" class="abs" type="submit" value="確認">');
 			$('#thr_box').append(btn);
 			btn.css(check_btn_resize());
-			btn.click(function(){
-				console.log(MyLatLng);
-				if(MyLatLng==1)
-				{
-					alert('map上で猫を目撃した場所でクリックしてください');
-				}
-				else
-				{
-					$('.check:not(.menu_btn)').addClass('isok');
-					$('#color').click();
-				}
-			});
+			btn.click(func);
+		}
+		
+		function map_check_btn_func()
+		{
+			//console.log(MyLatLng);
+			if(MyLatLng==1)
+			{
+				alert('map上で猫を目撃した場所でクリックしてください');
+			}
+			else
+			{
+				$('.check:not(.menu_btn)').addClass('isok');
+				$('#color').click();
+			}
 		}
 		
 		function check_btn_resize()
@@ -1003,7 +1006,7 @@
 				map.panTo(MyLatLng);
 				make_maker(MyLatLng.lat(),MyLatLng.lng(),'test2','test test 2 txt');
 			}
-			make_check_btn();
+			make_check_btn(map_check_btn_func);
 		}
 		
 		function clickAction(overlay)
