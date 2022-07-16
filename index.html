@@ -12,10 +12,10 @@
 	<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 	<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
 
-	<!-- Bootstrap -->
+	<!-- Bootstrap 
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>		
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>	-->	
 
 	<!-- google map API -->
 	<script src="https://maps.google.com/maps/api/js?key=AIzaSyB-9a0T7sfcoJUoCR2Avg6dv7j_5qJCgXg&language=ja"></script>
@@ -25,6 +25,9 @@
 
 	<!--exif-->
 	<script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
+	
+	<!--cookie-->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 </head>
 
 <body>
@@ -587,7 +590,9 @@
 			
 			let btn_css    = catform_btn_resize( 0, 4 );
 			let btn_wight  = btn_css.width;
+			let btn_left   = btn_css.left;
 			let btn_top    = btn_css.top;
+			let btn_right  = mbox_width-btn_left-btn_wight;
 			let btn_height = btn_css.height;			
 			
 			let css_dict;
@@ -597,7 +602,7 @@
 				css_dict={
 					'left'   : mbox_width*0.02,
 					'top'    : mbox_height*0.02,
-					'width'  : mbox_width*0.96-btn_wight,
+					'width'  : mbox_width*0.98-btn_right*2-btn_wight,
 					'height' : mbox_height*0.96,
 				}
 			}
@@ -1095,6 +1100,10 @@
 			);
 		}
 		
+		function get_position_error(err) {
+			console.warn(`ERROR(${err.code}): ${err.message}`);
+		}
+		
 		function remove_maker()
 		{
 			makers.forEach(function(maker){
@@ -1175,8 +1184,23 @@
 		$(function(){
 			$('body').append('<div id="data_base"></div>');
 			$(window).resize(do_resize);
+			now_position();
+			window.sessionStorage.setItem('key', 'test');
+			console.log(window.sessionStorage.getItem('key'));
 			
 			start();
+			
+			$.cookie('user_id','test');
+			$.removeCookie('user_id');
+			if($.cookie('user_id'))
+			{
+				console.log('1');
+			}
+			else
+			{
+				console.log('0');
+			}
+			
 		});
 	</script>
 </html>
