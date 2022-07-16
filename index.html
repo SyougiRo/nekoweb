@@ -94,7 +94,7 @@
 			{
 				let elem = $($('.catform_btn')[index]);
 				
-				elem.css( catform_btn_resize( index, $('.catform_btn').length ) );
+				elem.css( sec_btn_resize( index, $('.catform_btn').length ) );
 			}
 			
 			if( $('#thr_box').length )
@@ -340,7 +340,6 @@
 			}
 		}
 		
-		//now
 		function acct_btn()
 		{
 			do_resize();
@@ -359,7 +358,7 @@
 			for( let index=0 ; index < menu_list.length; index++ )
 			{
 				let box_css  = sec_box_resize();
-				let css_dect = catform_btn_resize( index, menu_list.length );
+				let css_dect = sec_btn_resize( index, menu_list.length );
 				let btn      = $('<input type="button" id="'+ ImgId_list[index] +'" class="catform_btn abs" style="width:0px;height:0px;top:'+ top +'px;left:'+ left +'px" value="'+ menu_list[index] +'">');
 				
 				$('#sec_box').append(btn);
@@ -380,9 +379,17 @@
 			}
 		}
 		
+		//now
 		function acct_func()
 		{
-			
+			if( $.cookie('user_id') )
+			{
+				console.log( $.cookie('user_id') );
+			}
+			else
+			{
+				
+			}
 		}
 		
 		function more_func()
@@ -550,7 +557,7 @@
 			
 			let main_btn_css = menu_unit_resize( 0, $('.menu_btn').length );
 			let sec_box_css  = sec_box_resize();
-			let sec_btn_css  = catform_btn_resize( 0, menu_list.length );
+			let sec_btn_css  = sec_btn_resize( 0, menu_list.length );
 			
 			let top  = main_btn_css.top+main_btn_css.height / 2-sec_box_css.top;
 			let left = main_btn_css.left+main_btn_css.width / 2-sec_box_css.left;
@@ -558,7 +565,7 @@
 			for( let index=0 ; index < menu_list.length; index++ )
 			{
 				let box_css  = sec_box_resize();
-				let css_dect = catform_btn_resize( index, menu_list.length );
+				let css_dect = sec_btn_resize( index, menu_list.length );
 				let btn      = $('<input type="button" id="'+ ImgId_list[index] +'" class="catform_btn abs" style="width:0px;height:0px;top:'+ top +'px;left:'+ left +'px" value="'+ menu_list[index] +'">');
 				
 				$('#sec_box').append(btn);
@@ -590,7 +597,7 @@
 			menu_z = 3;
 			
 			let css_dict = sec_box_resize();
-			let btn_css  = catform_btn_resize( 0, $('.catform_btn').length );
+			let btn_css  = sec_btn_resize( 0, $('.catform_btn').length );
 			
 			make_thr_box( btn_css.top+btn_css.height/2, btn_css.left+btn_css.width/2, make_img_box );
 		}
@@ -605,7 +612,7 @@
 			menu_z = 3;
 			
 			let css_dict = sec_box_resize();
-			let btn_css  = catform_btn_resize( 1, $('.catform_btn').length );
+			let btn_css  = sec_btn_resize( 1, $('.catform_btn').length );
 			
 			make_thr_box( btn_css.top+btn_css.height/2, btn_css.left+btn_css.width/2, make_catColor_box );
 		}
@@ -620,7 +627,7 @@
 			menu_z = 3;
 			
 			let css_dict = sec_box_resize();
-			let btn_css  = catform_btn_resize(2,$('.catform_btn').length);
+			let btn_css  = sec_btn_resize(2,$('.catform_btn').length);
 
 			make_thr_box( btn_css.top+btn_css.height/2, btn_css.left+btn_css.width/2, function(){ console.log('test') } );
 		}
@@ -636,12 +643,12 @@
 			menu_z = 3;
 			
 			let css_dict = sec_box_resize();
-			let btn_css  = catform_btn_resize( 3, $('.catform_btn').length );
+			let btn_css  = sec_btn_resize( 3, $('.catform_btn').length );
 
 			make_thr_box( btn_css.top+btn_css.height/2, btn_css.left+btn_css.width/2, make_gps_box );
 		}
 		
-		function catform_btn_resize(index,len)
+		function sec_btn_resize(index,len)
 		{
 			let mbox        = $('#sec_box');
 			let secBoc_css  = sec_box_resize();
@@ -708,7 +715,7 @@
 			let mbox_width  = mbox.width();
 			let mbox_height = mbox.height();
 			
-			let btn_css    = catform_btn_resize( 0, 4 );
+			let btn_css    = sec_btn_resize( 0, 4 );
 			let btn_wight  = btn_css.width;
 			let btn_left   = btn_css.left;
 			let btn_top    = btn_css.top;
@@ -742,7 +749,7 @@
 		{
 			do_resize();
 			
-			let btn_css = catform_btn_resize( 0, $('.catform_btn').length );
+			let btn_css = sec_btn_resize( 0, $('.catform_btn').length );
 			let box_css = sec_box_resize();			
 			let top     = ( btn_css.top+btn_css.height/2 )-box_css.top;
 			let left    = ( btn_css.left+btn_css.width/2 )-box_css.left;
@@ -913,7 +920,7 @@
 			let ver_count   = 3;
 			let color_count = [ 7, 6, 6 ];
 			let css_dict    = sec_box_resize();
-			let btn_css     = catform_btn_resize( 1, $('.catform_btn').length );			
+			let btn_css     = sec_btn_resize( 1, $('.catform_btn').length );			
 			let top         = btn_css.top+btn_css.height/2;
 			let left        = btn_css.left+btn_css.width/2;
 			
@@ -1125,7 +1132,7 @@
 		{
 			do_resize();
 			
-			let btn_css     = catform_btn_resize( 3, $('.catform_btn').length );
+			let btn_css     = sec_btn_resize( 3, $('.catform_btn').length );
 			let thr_box_css = thr_box_resize();
 			let top         = ( btn_css.top+btn_css.height/2 )-thr_box_css.top;
 			let left        = ( btn_css.left+btn_css.width/2 )-thr_box_css.left;
