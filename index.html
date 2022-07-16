@@ -30,33 +30,37 @@
 <body>
 </body>
 	<script>
-		var menu_z=1;
-		var img_input;
-		var now_GPSLatitude = 34.7577336;
-		var now_GPSLongitude = 134.966988;
 		const php_path = 'myfunc.php';
-		var MyLatLng=1;
-		var map;
+		
+		var menu_z   =1;
+		var has_gps  =0;
+		var MyLatLng =1;
+		
+		var now_GPSLatitude  = 34.7577336;
+		var now_GPSLongitude = 134.966988;		
+		
 		var infowindows=[];
-		var gps_list=[];
-		var makers=[];
-		var now_src;
-		var has_gps=0;
+		var gps_list   =[];
+		var makers     =[];
+		
 		var cat_color;
+		var img_input;
+		var now_src;
+		var map;
 		
 		function monitor_ver_check(melem)
 		{
 			let monitor_ver;
-			let mbox_width = $(window).width();
+			let mbox_width  = $(window).width();
 			let mbox_height = $(window).height();
 			
-			if(mbox_width>mbox_height)
+			if(mbox_width > mbox_height)
 			{
-				monitor_ver=1;
+				monitor_ver = 1;
 			}
 			else
 			{
-				monitor_ver=0;
+				monitor_ver = 0;
 			}
 			
 			return(monitor_ver);
@@ -64,57 +68,58 @@
 		
 		function do_resize()
 		{
-			//console.log('do resize');
-			if($('#main_box').length)
+			if( $('#main_box').length )
 			{
-				$('#main_box').css(main_box_resize());
+				$('#main_box').css( main_box_resize() );
 			}
 			
-			for(let index=0;index<$('.menu_btn').length;index++)
+			for( let index = 0; index<$('.menu_btn').length; index++ )
 			{
 				let elem = $($('.menu_btn')[index]);
-				elem.css(menu_unit_resize(index,$('.menu_btn').length));
+				
+				elem.css( menu_unit_resize( index, $('.menu_btn').length ) );
 			}
 			
-			if($('#sec_box').length)
+			if( $('#sec_box').length )
 			{
-				$('#sec_box').css(sec_box_resize());
+				$('#sec_box').css( sec_box_resize() );
 			}
 			
-			for(let index=0;index<$('.catform_btn').length;index++)
+			for( let index = 0; index < $('.catform_btn').length; index++ )
 			{
 				let elem = $($('.catform_btn')[index]);
-				elem.css(catform_btn_resize(index,$('.catform_btn').length));
+				
+				elem.css( catform_btn_resize( index, $('.catform_btn').length ) );
 			}
 			
-			if($('#thr_box').length)
+			if( $('#thr_box').length )
 			{
-				$('#thr_box').css(thr_box_resize());
+				$('#thr_box').css( thr_box_resize() );
 			}
 			
-			if($('#img_block').length)
+			if( $('#img_block').length )
 			{
-			   $('#img_block').css(resize_img_box());
+			   	$('#img_block').css( resize_img_box() );
 			}
 			
-			if($('#check').length)
+			if( $('#check').length )
 			{
-				$('#check').css(check_btn_resize());
+				$('#check').css( check_btn_resize() );
 			}
 			
-			if($('#map').length)
+			if( $('#map').length )
 			{
 				//console.log(map_resize());
-				$('#map').css(map_resize());
+				$('#map').css( map_resize() );
 			}
 			
-			for(let ver_index=0;ver_index<3;ver_index++)
+			for( let ver_index  =0; ver_index < 3; ver_index++ )
 			{
-				let ver_list=[7,6,6];
-				for(let color_index=0;color_index<ver_list[ver_index];color_index++)
+				let ver_list = [ 7, 6, 6 ];
+				for( let color_index = 0; color_index < ver_list[ver_index]; color_index++ )
 				{
-					let box_id = '#'+(ver_index+1)+'_'+(color_index+1);
-					$(box_id).css(catColor_box_resize(ver_index,color_index));
+					let box_id = '#'+( ver_index+1 )+'_'+( color_index+1 );
+					$(box_id).css( catColor_box_resize( ver_index, color_index ) );
 				}
 			}
 		}
@@ -124,38 +129,40 @@
 		{			
 			let box = $('<div class="abs pritest effect" id="main_box"></div>');
 			$('body').append(box);
-			box.animate(main_box_resize(),1000,make_unit);
+			box.animate( main_box_resize(), 1000, make_unit);
 			//console.log('test1');
 		}
 		
 		function main_box_resize()
 		{
-			let window_width = $(window).width();
+			let window_width  = $(window).width();
 			let window_height = $(window).height();
 			
 			let css_dict = {
-				'width' : window_width*0.98,
-				'height' : window_height*0.98,
-				'top' : window_height*0.01,
-				'left':window_width*0.01,
+				'width'  : window_width  *0.98,
+				'height' : window_height *0.98,
+				'top'    : window_height *0.01,
+				'left'   : window_width  *0.01,
 			};
-			return(css_dict);
+			return( css_dict );
 		}
 		
 		function make_unit()
 		{
 			$('#main *').remove();
 			do_resize();
-			const t=500;
-			const nuit_list = ['猫を登録','TNRの記録','猫数の変化','私のアカウント'];
-			const id_list = ['cat_form','TNR_log','count_glf','my_acc'];
-			const func_list = [case_cat_form,case_tnr_log,case_count_glf,case_my_acc];
-			for(let index=0;index<nuit_list.length;index++)
+			
+			const t         = 500;
+			const nuit_list = [ '猫を登録', 'TNRの記録', '猫数の変化', '私のアカウント' ];
+			const id_list   = [ 'cat_form', 'TNR_log', 'count_glf', 'my_acc' ];
+			const func_list = [ case_cat_form, case_tnr_log, case_count_glf, case_my_acc];
+			
+			for( let index = 0; index < nuit_list.length; index++ )
 			{
-				let btn = $('<input type="button" style="height:1px;width:1px" the_count="'+index+'" id="'+id_list[index]+'" class="menu_btn abs" value="'+nuit_list[index]+'">');
+				let btn = $('<input type="button" style="height:1px;width:1px" the_count="'+ index +'" id="'+ id_list[index] +'" class="menu_btn abs" value="'+ nuit_list[index] +'">');
 				$('#main_box').append(btn);
-				btn.animate(menu_unit_resize(index,nuit_list.length),function(){
-					btn.click(func_list[index]);
+				btn.animate( menu_unit_resize( index,nuit_list.length ), function(){
+					btn.click( func_list[index] );
 				});
 			}
 		}
@@ -164,53 +171,52 @@
 		{
 			$('*').finish();
 			cat_color='';
-			//console.log($('.menu_btn')[0].zIndex);
+			
 			$('.menu_btn').removeClass('check');
 			$(this).addClass('check');
 			$('#sec_box').remove();
-			if(menu_z<2)
+			
+			if( menu_z < 2)
 			{
-				menu_z=2;
+				menu_z = 2;
 				fir_box_animet(make_CatForm_menu);	
 			}
 			else
 			{
 				let len = $('.menu_btn').length;
-				const t=500;
+				const t = 500;
 
-
-				let css_dect = menu_unit_resize(0,len);
-				let btn_top = css_dect.height/2+css_dect.top;
+				let css_dect = menu_unit_resize( 0, len);
+				let btn_top  = css_dect.height/2+css_dect.top;
 				let btn_left = css_dect.width/2+css_dect.left;
-				make_sec_box(btn_top,btn_left,make_CatForm_menu);
+				
+				make_sec_box( btn_top, btn_left, make_CatForm_menu );
 			}			
 		}
 		
 		function fir_box_animet(func)
 		{
 			let len = $('.menu_btn').length;
-			const t=500;
-			
+			const t = 500;			
 
-			let css_dect = menu_unit_resize(0,len);
-			let btn_top = css_dect.height/2+css_dect.top;
+			let css_dect = menu_unit_resize( 0, len );
+			let btn_top  = css_dect.height/2+css_dect.top;
 			let btn_left = css_dect.width/2+css_dect.left;
 
-			for(let index=0;index<len;index++)
+			for( let index = 0; index < len; index++ )
 			{
-				let elem = $($('.menu_btn')[index]);
-				css_dect = menu_unit_resize(index,len);
-				if(index<len-1)
+				css_dect = menu_unit_resize( index, len );
+				
+				let elem = $( $('.menu_btn')[index] );
+				
+				if( index < len-1 )
 				{
-
-					elem.animate(css_dect,t);
-					console.log('test1');
+					elem.animate( css_dect, t );
 				}
 				else
 				{
-					console.log('test2');
-					elem.animate(css_dect,t,function(){
-						make_sec_box(btn_top,btn_left,func);
+					elem.animate( css_dect, t, function(){
+						make_sec_box( btn_top, btn_left, func );
 						do_resize();
 					});
 				}				
@@ -220,186 +226,191 @@
 		function case_tnr_log()
 		{
 			$('*').finish();
-			menu_z=2;
-			let len = $('.menu_btn').length
-			let css_dect = menu_unit_resize(1,len)
-			let btn_top = css_dect.height/2+css_dect.top;
-			let btn_left = css_dect.width/2+css_dect.left;
 			$('.menu_btn').removeClass('check');
 			$(this).addClass('check');
 			$('#sec_box').remove();
-			make_sec_box(btn_top,btn_left);
+			
+			menu_z = 2;
+			
+			let len      = $('.menu_btn').length;
+			let css_dect = menu_unit_resize( 1, len);
+			let btn_top  = css_dect.height/2+css_dect.top;
+			let btn_left = css_dect.width/2+css_dect.left;			
+			
+			make_sec_box( btn_top, btn_left );
 			//console.log('test');
 		}
 		
 		function case_count_glf()
 		{
 			$('*').finish();
-			menu_z=2;
-			let len = $('.menu_btn').length
-			let css_dect = menu_unit_resize(2,len)
-			let btn_top = css_dect.height/2+css_dect.top;
-			let btn_left = css_dect.width/2+css_dect.left;
 			$('.menu_btn').removeClass('check');
 			$(this).addClass('check');
 			$('#sec_box').remove();
-			make_sec_box(btn_top,btn_left);
+			
+			menu_z = 2;
+			
+			let len      = $('.menu_btn').length;
+			let css_dect = menu_unit_resize( 2, len );
+			let btn_top  = css_dect.height/2+css_dect.top;
+			let btn_left = css_dect.width/2+css_dect.left;
+			
+			
+			make_sec_box( btn_top, btn_left );
 			//console.log('test');
 		}
 		
 		function case_my_acc()
 		{
-			$('*').finish();
-			menu_z=2;
-			let len = $('.menu_btn').length
-			let css_dect = menu_unit_resize(3,len)
-			let btn_top = css_dect.height/2+css_dect.top;
-			let btn_left = css_dect.width/2+css_dect.left;
 			$('.menu_btn').removeClass('check');
 			$(this).addClass('check');
 			$('#sec_box').remove();
-			make_sec_box(btn_top,btn_left);
+			$('*').finish();
+			
+			menu_z = 2;
+			
+			let len      = $('.menu_btn').length;
+			let css_dect = menu_unit_resize(3,len);
+			let btn_top  = css_dect.height/2+css_dect.top;
+			let btn_left = css_dect.width/2+css_dect.left;
+			
+			make_sec_box( btn_top, btn_left );
 			//console.log('test');
 		}
 		
 		function menu_unit_resize(index,len)
 		{
-			let mbox_width = $('#main_box').width();
+			let mbox_width  = $('#main_box').width();
 			let mbox_height = $('#main_box').height();
 			let monitor_ver = monitor_ver_check($('#main_box'));
 
 			let css_dict;
-			if(monitor_ver)
+			
+			if( monitor_ver )
 			{
-				if(menu_z<2)
+				if( menu_z < 2 )
 				{						
-					let btn_width_hight = (mbox_width*0.95)/len;
-					let btn_padding = (mbox_width*0.05)/(len+1);
-					let start_top = 0;
-					if(btn_width_hight>mbox_height)
+					let btn_width_hight = ( mbox_width*0.95 )/len;
+					let btn_padding     = ( mbox_width*0.05 )/( len+1 );
+					let start_top       = 0;
+					if( btn_width_hight > mbox_height )
 					{
 						btn_width_hight = mbox_height*0.95;
-						start_top = (mbox_width-(btn_width_hight*len)-(btn_padding*(len-1)))/2;
+						start_top       = ( mbox_width - ( btn_width_hight*len )-( btn_padding*( len-1 ) ) )/2;
 					}					
 					
 					css_dict = {
-						'top':(mbox_height-btn_width_hight)/2,
-						'left':start_top+btn_padding+((btn_width_hight+btn_padding)*index),
-						'width':btn_width_hight,
-						'height':btn_width_hight,
-						'font-size':btn_width_hight/70+'em'
+						'top'       : ( mbox_height - btn_width_hight )/2,
+						'left'      : start_top + btn_padding + ( ( btn_width_hight+btn_padding )*index ),
+						'width'     : btn_width_hight,
+						'height'    : btn_width_hight,
+						'font-size' : btn_width_hight/70+'em'
 					};
 				}
 				else
 				{
-					let btn_width_hight = (mbox_width*0.05);
+					let btn_width_hight = mbox_width*0.05;
+					let btn_padding     = btn_width_hight/2;
+					let start_top
 
-					let btn_padding = btn_width_hight/2;
-
-					if(((btn_width_hight*len)+(btn_padding*len-1))>mbox_height)
+					if((( btn_width_hight*len )+( btn_padding*len-1 )) > mbox_height)
 					{
-						btn_width_hight = mbox_height/((3*len-1)/2);
-						btn_padding = btn_width_hight/2;
+						btn_width_hight = mbox_height/(( 3*len-1 )/2);
+						btn_padding     = btn_width_hight/2;
 					}
 
-					let start_top = (mbox_height-(btn_width_hight*len)-(btn_padding*(len-1)))/2
+					start_top = ( mbox_height-( btn_width_hight*len )-( btn_padding*( len-1 )))/2
 					
 					css_dict = {
-						'top':start_top+(btn_width_hight+btn_padding)*index,
-						'left':mbox_width*0.94,
-						'width':btn_width_hight,
-						'height':btn_width_hight,
-						'font-size':btn_width_hight/70+'em'
+						'top'       : start_top+( btn_width_hight+btn_padding )*index,
+						'left'      : mbox_width*0.94,
+						'width'     : btn_width_hight,
+						'height'    : btn_width_hight,
+						'font-size' : btn_width_hight/70+'em'
 					};
-				}
-				
+				}				
 			}
 			else
 			{
-
-				if(menu_z<2)
+				if( menu_z < 2 )
 				{
-					let btn_width_hight = (mbox_height*0.95)/len;
-					let btn_padding = (mbox_height*0.05)/(len+1);
-					let start_top=0;
-					if(btn_width_hight>mbox_width)
+					let btn_width_hight = ( mbox_height*0.95 )/len;
+					let btn_padding     = ( mbox_height*0.05 )/( len+1 );
+					let start_top       = 0;
+					
+					if( btn_width_hight > mbox_width )
 					{
 						btn_width_hight = mbox_width*0.95;
-						start_top = (mbox_height-(btn_width_hight*len)-(btn_padding*(len-1)))/2;
+						start_top       = (mbox_height-( btn_width_hight*len )-( btn_padding*( len-1 )))/2;
 					}
-
 					
-
 					css_dict = {
-						'top':start_top+btn_padding+((btn_width_hight+btn_padding)*index),
-						'left':(mbox_width-btn_width_hight)/2,
-						'width':btn_width_hight,
-						'height':btn_width_hight,
-						'font-size':btn_width_hight/70+'em'
+						'top'       : start_top+btn_padding+( ( btn_width_hight+btn_padding )*index ),
+						'left'      : ( mbox_width-btn_width_hight )/2,
+						'width'     : btn_width_hight,
+						'height'    : btn_width_hight,
+						'font-size' : btn_width_hight/70+'em'
 					};
 				}
 				else
 				{
-					//console.log(len);
-					let btn_width_hight = (mbox_width*0.60)/(((3*len)-1)/2);
-
-					let btn_padding = btn_width_hight/2;
-
-					let start_left = (mbox_width-(btn_width_hight*len)-(btn_padding*(len-1)))/2
+					let btn_width_hight = ( mbox_width*0.60 )/((( 3*len )-1 )/2 );
+					let btn_padding     = btn_width_hight/2;
+					let start_left      = ( mbox_width-( btn_width_hight*len )-( btn_padding*( len-1 ) ) )/2
 
 					css_dict = {
-						'top':mbox_height*0.01,
-						'left':start_left+(btn_width_hight+btn_padding)*index,
-						'width':btn_width_hight,
-						'height':btn_width_hight,
-						'font-size':btn_width_hight/70+'em'
+						'top'       : mbox_height*0.01,
+						'left'      : start_left+( btn_width_hight+btn_padding )*index,
+						'width'     : btn_width_hight,
+						'height'    : btn_width_hight,
+						'font-size' : btn_width_hight/70+'em'
 					};
 				}
 			}
-			return(css_dict);
+			return( css_dict );
 		}
 		
 		
 		//二層目
-		function make_sec_box(btn_top,btn_left,func)
+		function make_sec_box( btn_top, btn_left, func )
 		{
-			let box = $('<div class="abs pritest effect" id="sec_box" style="top:'+btn_top+'px;left:'+btn_left+'px;width:0px;height:0px;"></div>');			
+			let box = $('<div class="abs pritest effect" id="sec_box" style="top:'+ btn_top +'px;left:'+ btn_left +'px;width:0px;height:0px;"></div>');
+			
 			$('#main_box').append(box);
 			
-			
-			box.animate(sec_box_resize(),500,func);
+			box.animate( sec_box_resize(), 500, func );
 		}
 		
 		function sec_box_resize()
 		{
-			let mbox = $('#main_box');
-			let mbox_width = mbox.width();
+			let mbox        = $('#main_box');
+			let mbox_width  = mbox.width();
 			let mbox_height = mbox.height();
 			
-			let fir_btn_css = menu_unit_resize(0,4);
-			let btn_top = fir_btn_css.top;
-			let btn_hight = fir_btn_css.height;
-			let btn_left = fir_btn_css.left;
-			let btn_wight = fir_btn_css.width;
-			
+			let fir_btn_css = menu_unit_resize( 0, 4 );
+			let btn_top     = fir_btn_css.top;
+			let btn_hight   = fir_btn_css.height;
+			let btn_left    = fir_btn_css.left;
+			let btn_wight   = fir_btn_css.width;			
 			
 			let css_dict;
-			if(monitor_ver_check(mbox))
+			
+			if( monitor_ver_check(mbox) )
 			{
 				css_dict={
-					'left':mbox_width*0.02,
-					'top':mbox_height*0.02,
-					'width':mbox_width*0.96-btn_wight,
-					'height':mbox_height*0.96
+					'left'   :mbox_width*0.02,
+					'top'    :mbox_height*0.02,
+					'width'  :mbox_width*0.96-btn_wight,
+					'height' :mbox_height*0.96
 				}
 			}
 			else
 			{
 				css_dict={
-					'left':mbox_width*0.02,
-					'top':btn_top*2+btn_hight,
-					'width':mbox_width*0.96,
-					'height':mbox_height*0.98-(btn_top*2+btn_hight),
+					'left'   :mbox_width*0.02,
+					'top'    :btn_top*2+btn_hight,
+					'width'  :mbox_width*0.96,
+					'height' :mbox_height*0.98-( btn_top*2+btn_hight ),
 				}
 			}
 			return(css_dict);
@@ -408,36 +419,37 @@
 		function make_CatForm_menu()
 		{
 			do_resize();
-			let menu_list = ['画像アップ','毛色選択','TNR選択','GPSデータ確認'];
-			let ImgId_list = ['imgup','color','tnr','gps'];
-			let func_list = [imgup_func,color_func,tnr_func,gps_func];
-			let t = 500;
 			
-			let main_btn_css = menu_unit_resize(0,$('.menu_btn').length);
-			let sec_box_css = sec_box_resize();
-			let sec_btn_css = catform_btn_resize(0,menu_list.length)
+			let menu_list  = [ '画像アップ', '毛色選択', 'TNR選択', 'GPSデータ確認' ];
+			let ImgId_list = [ 'imgup', 'color', 'tnr', 'gps' ];
+			let func_list  = [ imgup_func, color_func, tnr_func, gps_func ];
+			let t          = 500;
 			
-			let top = main_btn_css.top+main_btn_css.height/2-sec_box_css.top;
-			let left = main_btn_css.left+main_btn_css.width/2-sec_box_css.left;
+			let main_btn_css = menu_unit_resize( 0, $('.menu_btn').length );
+			let sec_box_css  = sec_box_resize();
+			let sec_btn_css  = catform_btn_resize( 0, menu_list.length );
 			
-			for(let index=0;index<menu_list.length;index++)
+			let top  = main_btn_css.top+main_btn_css.height / 2-sec_box_css.top;
+			let left = main_btn_css.left+main_btn_css.width / 2-sec_box_css.left;
+			
+			for( let index=0 ; index < menu_list.length; index++ )
 			{
-				let box_css = sec_box_resize();
-				let css_dect = catform_btn_resize(index,menu_list.length);
-				//let top = (box_css.height-css_dect.height)/2;
-				//let left = (box_css.width-css_dect.width)/2;
-				let btn = $('<input type="button" id="'+ImgId_list[index]+'" class="catform_btn abs" style="width:0px;height:0px;top:'+top+'px;left:'+left+'px" value="'+menu_list[index]+'">');
+				let box_css  = sec_box_resize();
+				let css_dect = catform_btn_resize( index, menu_list.length );
+				let btn      = $('<input type="button" id="'+ ImgId_list[index] +'" class="catform_btn abs" style="width:0px;height:0px;top:'+ top +'px;left:'+ left +'px" value="'+ menu_list[index] +'">');
+				
 				$('#sec_box').append(btn);
-				if(index<menu_list.length-1)
+				
+				if( index < menu_list.length-1 )
 				{
-					btn.animate(css_dect,t,function(){
-						btn.click(func_list[index]);
+					btn.animate( css_dect, t, function(){
+						btn.click( func_list[index] );
 					});
 				}
 				else
 				{
-					btn.animate(css_dect,t,function(){
-						btn.click(func_list[index]);
+					btn.animate( css_dect, t, function(){
+						btn.click( func_list[index] );
 						$('#'+ImgId_list[0]).click();
 					});
 				}				
@@ -448,243 +460,251 @@
 		function imgup_func()
 		{
 			$('*').finish();
-			menu_z=3;
 			$('.catform_btn').removeClass('check');
 			$(this).addClass('check');
 			$('#thr_box').remove();
+			
+			menu_z = 3;
+			
 			let css_dict = sec_box_resize();
-			let btn_css = catform_btn_resize(0,$('.catform_btn').length);
-			//console.log(btn_css);
-			make_thr_box(btn_css.top+btn_css.height/2,btn_css.left+btn_css.width/2,make_img_box);
+			let btn_css  = catform_btn_resize( 0, $('.catform_btn').length );
 			
-			
-			//make_img_box();
+			make_thr_box( btn_css.top+btn_css.height/2, btn_css.left+btn_css.width/2, make_img_box );
 		}
 		
 		function color_func()
 		{
 			$('*').finish();
-			menu_z=3;
 			$('.catform_btn').removeClass('check');
 			$(this).addClass('check');
 			$('#thr_box').remove();
+			
+			menu_z = 3;
+			
 			let css_dict = sec_box_resize();
-			let btn_css = catform_btn_resize(1,$('.catform_btn').length);
-			//console.log(btn_css);
-			make_thr_box(btn_css.top+btn_css.height/2,btn_css.left+btn_css.width/2,make_catColor_box);
+			let btn_css  = catform_btn_resize( 1, $('.catform_btn').length );
+			
+			make_thr_box( btn_css.top+btn_css.height/2, btn_css.left+btn_css.width/2, make_catColor_box );
 		}
 		
 		function tnr_func()
 		{
 			$('*').finish();
-			menu_z=3;
 			$('.catform_btn').removeClass('check');
 			$(this).addClass('check');
 			$('#thr_box').remove();
+			
+			menu_z = 3;
+			
 			let css_dict = sec_box_resize();
-			let btn_css = catform_btn_resize(2,$('.catform_btn').length);
-			console.log(btn_css);
-			make_thr_box(btn_css.top+btn_css.height/2,btn_css.left+btn_css.width/2,function(){console.log('test')});
+			let btn_css  = catform_btn_resize(2,$('.catform_btn').length);
+
+			make_thr_box( btn_css.top+btn_css.height/2, btn_css.left+btn_css.width/2, function(){ console.log('test') } );
 		}
 		
 		//googleマップ
 		function gps_func()
 		{
 			$('*').finish();
-			menu_z=3;
 			$('.catform_btn').removeClass('check');
 			$(this).addClass('check');
 			$('#thr_box').remove();
+			
+			menu_z = 3;
+			
 			let css_dict = sec_box_resize();
-			let btn_css = catform_btn_resize(3,$('.catform_btn').length);
-			//console.log(btn_css);
-			make_thr_box(btn_css.top+btn_css.height/2,btn_css.left+btn_css.width/2,make_gps_box);
+			let btn_css  = catform_btn_resize( 3, $('.catform_btn').length );
+
+			make_thr_box( btn_css.top+btn_css.height/2, btn_css.left+btn_css.width/2, make_gps_box );
 		}
 		
 		function catform_btn_resize(index,len)
 		{
-			let mbox = $('#sec_box');
-			let secBoc_css = sec_box_resize();
+			let mbox        = $('#sec_box');
+			let secBoc_css  = sec_box_resize();
 			let mbox_width  = secBoc_css.width;
 			let mbox_height = secBoc_css.height;
 			let monitor_ver = monitor_ver_check(mbox);
 			
 			let css_dict;
-			if(monitor_ver)
+			
+			if( monitor_ver )
 			{
-				let btn_width_hight = (mbox_width*0.05);
+				let btn_width_hight = ( mbox_width*0.05 );
+				let btn_padding     = btn_width_hight/2;
 
-				let btn_padding = btn_width_hight/2;
-
-				if(((btn_width_hight*len)+(btn_padding*(len-1)))>mbox_height)
+				if((( btn_width_hight*len )+( btn_padding*( len-1) ) ) > mbox_height )
 				{
-					btn_width_hight = mbox_height*0.95/((3*len-1)/2);
-					btn_padding = btn_width_hight/2;
+					btn_width_hight = mbox_height*0.95/(( 3*len-1 )/2);
+					btn_padding     = btn_width_hight/2;
 				}
 
-				let start_top = (mbox_height*0.975-(btn_width_hight*len)-(btn_padding*(len-1)))/2;
+				let start_top = ( mbox_height*0.975-( btn_width_hight*len )-( btn_padding*( len-1 ) ))/2;
 
 				css_dict = {
-					'left':mbox_width*0.93,
-					'top':start_top+(btn_width_hight+btn_padding)*index,
-					'width':btn_width_hight,
-					'height':btn_width_hight,
-					'font-size':btn_width_hight/70+'em',
+					'left'      : mbox_width*0.93,
+					'top'       : start_top+( btn_width_hight+btn_padding )*index,
+					'width'     : btn_width_hight,
+					'height'    : btn_width_hight,
+					'font-size' : btn_width_hight/70+'em',
 				}
-				
 			}
 			else
-			{				
-				//console.log(len);
-
-				let btn_width_hight = (mbox_width*0.60)/(((3*len)-1)/2);
-
-				let btn_padding = btn_width_hight/2;
-
-				let start_left = (mbox_width-(btn_width_hight*len)-(btn_padding*(len-1)))/2
+			{
+				let btn_width_hight = ( mbox_width*0.60 )/( ( ( 3*len )-1 )/2 );
+				let btn_padding     = btn_width_hight/2;
+				let start_left      = ( mbox_width-( btn_width_hight*len )-( btn_padding*( len-1 ) ) )/2
 				//console.log(start_left+(btn_width_hight+btn_padding)*index);
 				
 				css_dict = {
-					'left':start_left+(btn_width_hight+btn_padding)*index,
-					'top':mbox_height*0.01,
-					'width':btn_width_hight,
-					'height':btn_width_hight,
-					'font-size':btn_width_hight/70+'em',
+					'left'      : start_left+( btn_width_hight+btn_padding )*index,
+					'top'       : mbox_height*0.01,
+					'width'     : btn_width_hight,
+					'height'    : btn_width_hight,
+					'font-size' : btn_width_hight/70+'em',
 				}			
 			}
-			return(css_dict);
+			return( css_dict );
 		}
 		
 		//三層目
-		function make_thr_box(top,left,func)
+		function make_thr_box( top, left, func)
 		{
-			//console.log(top,left);
 			do_resize();
-			let box = $('<div class="abs pritest effect" style="top:'+top+'px;left:'+left+'px;width:0px;height:0px;" id="thr_box"></div>');
+			
+			let box = $('<div class="abs pritest effect" style="top:'+ top +'px;left:'+ left +'px;width:0px;height:0px;" id="thr_box"></div>');
+			
 			$('#sec_box').append(box);
-			box.animate(thr_box_resize(),500,func);
+			
+			box.animate( thr_box_resize(), 500, func );
 		}
 		
 		function thr_box_resize()
 		{
-			let mbox = $('#sec_box');
-			let mbox_width = mbox.width();
+			let mbox        = $('#sec_box');
+			let mbox_width  = mbox.width();
 			let mbox_height = mbox.height();
 			
-			let btn_css = catform_btn_resize(0,4);
-			let btn_wight = btn_css.width;
-			let btn_top = btn_css.top;
-			let btn_height = btn_css.height;
-			
+			let btn_css    = catform_btn_resize( 0, 4 );
+			let btn_wight  = btn_css.width;
+			let btn_top    = btn_css.top;
+			let btn_height = btn_css.height;			
 			
 			let css_dict;
 			
-			if(monitor_ver_check(mbox))
+			if( monitor_ver_check(mbox) )
 			{
 				css_dict={
-					'left':mbox_width*0.02,
-					'top':mbox_height*0.02,
-					'width':mbox_width*0.96-btn_wight,
-					'height':mbox_height*0.96,
+					'left'   : mbox_width*0.02,
+					'top'    : mbox_height*0.02,
+					'width'  : mbox_width*0.96-btn_wight,
+					'height' : mbox_height*0.96,
 				}
 			}
 			else
 			{
 				css_dict={
-					'left':mbox_width*0.02,
-					'top':btn_top*2+btn_height,
-					'width':mbox_width*0.96,
-					'height':mbox_height*0.98-(btn_top*2+btn_height),
+					'left'   : mbox_width*0.02,
+					'top'    : btn_top*2+btn_height,
+					'width'  : mbox_width*0.96,
+					'height' : mbox_height*0.98-( btn_top*2+btn_height ),
 				}
 			}
-			return(css_dict);
+			return( css_dict );
 		}
 		
 		function make_img_box()
 		{
 			do_resize();
-			let btn_css = catform_btn_resize(0,$('.catform_btn').length);
-			let box_css = sec_box_resize();
 			
-			let top = (btn_css.top+btn_css.height/2)-box_css.top;
-			let left = (btn_css.left+btn_css.width/2)-box_css.left;
-			//console.log(top,left);
+			let btn_css = catform_btn_resize( 0, $('.catform_btn').length );
+			let box_css = sec_box_resize();			
+			let top     = ( btn_css.top+btn_css.height/2 )-box_css.top;
+			let left    = ( btn_css.left+btn_css.width/2 )-box_css.left;
+
 			$('#img_block').remove();
-			let img_box = $('<div style="top:'+top+'px;left:'+left+'px;height:0px;width:0px" id="img_block" class="pritest abs effect"></div>');
 			
-			$('#thr_box').append(img_box);
+			let img_box = $('<div style="top:'+ top +'px;left:'+ left +'px;height:0px;width:0px" id="img_block" class="pritest abs effect"></div>');
 			
+			$('#thr_box').append( img_box );
 			
+			img_box.click( upimg );
 			
-			img_box.click(upimg);			
-			img_box.animate(resize_img_box(),500,function(){
+			img_box.animate( resize_img_box(), 500, function(){
 				let show_img_box = $('<img id="show_img" src="img/IMG_1409.jpg" alt="写真をアップしてください" />');
-				img_box.append(show_img_box);
-				if(now_src!=0)
+				
+				img_box.append( show_img_box );
+				
+				if( now_src != 0 )
 				{
-					show_img_box.attr('src',now_src);
+					show_img_box.attr( 'src', now_src);
 				}
 			});
-			
 		}
 		
 		function resize_img_box()
 		{
-			let mbox = thr_box_resize();
-			let mbox_width = mbox.width;
+			let mbox        = thr_box_resize();
+			let mbox_width  = mbox.width;
 			let mbox_height = mbox.height;
-			let box_width = mbox_width*0.9;
+			let box_width   = mbox_width*0.9;
+			
 			let css_dick;
-			if(box_width/3*2>mbox_height*0.9)
+			
+			if( box_width/3*2 > mbox_height*0.9 )
 			{
-				box_width = (mbox_height*0.9)/2*3;
+				box_width = ( mbox_height*0.9 )/2*3;
 			}
 			
 			css_dick={
-				'width':box_width,
-				'height':box_width/3*2,
-				'top':(mbox_height-(box_width/3*2))/5,
-				'left':(mbox_width-box_width)/2,
+				'width'  : box_width,
+				'height' : box_width/3*2,
+				'top'    : ( mbox_height-( box_width/3*2 ) )/5,
+				'left'   : ( mbox_width-box_width )/2,
 			}
-			return(css_dick);
+			return( css_dick );
 		}
 		
 		
 		function upimg()
 		{
-			if($('#img_input').length)
+			if( $('#img_input').length )
 			{
-				$('#img_input').attr('src','');
+				$('#img_input').attr( 'src', '' );
 			}
 			else
 			{
 				var img_input = $('<input type="file" id="img_input" accept="image/png, image/jpeg" onchange="readURL(this)" hidden>');
-				$('#thr_box').append(img_input);
 				
+				$('#thr_box').append(img_input);				
 			}
-			//console.log(now_src);
 			
 			$('#img_input').click();
+			
 			MyLatLng=1;
 		}
 		
 		function readURL(input)
 		{
 			$('.catform_btn').removeClass('isok');
+			
 			cat_color='';
-			if(input.files && input.files[0])
+			
+			if( input.files && input.files[0] )
 			{
-				has_gps=0;
+				has_gps = 0;
+				
 				$('#check').remove();
+				
 				subminimg();
-				const reader = new FileReader();
+				
+				const reader  = new FileReader();
+				
 				reader.onload = function(e){					
-					pred_img(e);					
+					pred_img(e);
 					
-					//$('#upcheck').remove();
-					//console.log($('#data_base').attr('gps-data-check'));
-					//console.log(MyLatLng.lat());
 					$('#imgup').addClass('isok');
+					
 					if(has_gps)
 					{
 						$('#color').click();
@@ -693,28 +713,30 @@
 					{
 						$('#gps').click();
 					}
-					//make_check_btn();
 				}
-				reader.readAsDataURL(input.files[0]);
 				
-				const post_data = {action:"read_gps"};
+				reader.readAsDataURL( input.files[0] );
+				
+				const post_data = { action : "read_gps" };
 				const work_func = test2_func;
-				get_data(post_data,work_func);
+				
+				get_data( post_data, work_func);
 			}
 		}
 		
 		function make_check_btn(func)
 		{
 			let btn = $('<input id="check" class="abs" type="submit" value="確認">');
+			
 			$('#thr_box').append(btn);
-			btn.css(check_btn_resize());
+			
+			btn.css( check_btn_resize() );
 			btn.click(func);
 		}
 		
 		function map_check_btn_func()
 		{
-			//console.log(MyLatLng);
-			if(MyLatLng==1)
+			if( MyLatLng == 1 )
 			{
 				alert('map上で猫を目撃した場所でクリックしてください');
 			}
@@ -728,36 +750,32 @@
 		function check_btn_resize()
 		{
 			let box_css = thr_box_resize();
-			let right=box_css.width*0.02;
-			
-			
-			let bottom = box_css.height*0.02;
+			let right   = box_css.width*0.02;
+			let bottom  = box_css.height*0.02;
 			
 			let css_dict = {
-				'bottom':bottom,
-				'right':right,
-				'font-size':bottom/12+'em'
+				'bottom'   : bottom,
+				'right'    : right,
+				'font-size': bottom/12+'em'
 			}
-			return(css_dict);
+			
+			return( css_dict );
 		}
 		
 		function pred_img(e)
 		{
-			//console.log(e);
 			const img = document.querySelector("#show_img");
-			img.setAttribute("src", e.target.result);
+			
+			img.setAttribute( "src", e.target.result );
+			
 			now_src = e.target.result;
-			//console.log(now_src);
-			//console.log($('#data_base').attr('img-src-check'));
 		}
 		
 		function subminimg(){
-			var formData = new FormData($("#post_data")[0]);
-			//console.log($('#img_input')[0].files[0]);
+			var formData  = new FormData( $("#post_data")[0] );
 			var imageFile = $('#img_input')[0].files[0];
 			
-			getexif(imageFile);
-			//console.log(imageFile);
+			getexif( imageFile );
 		}
 		
 		function test2_func(input)
@@ -767,24 +785,24 @@
 		
 		function make_catColor_box()
 		{
-			let ver_count = 3;
-			let color_count=[7,6,6];
-			let css_dict = sec_box_resize();
-			let btn_css = catform_btn_resize(1,$('.catform_btn').length);
+			let ver_count   = 3;
+			let color_count = [ 7, 6, 6 ];
+			let css_dict    = sec_box_resize();
+			let btn_css     = catform_btn_resize( 1, $('.catform_btn').length );			
+			let top         = btn_css.top+btn_css.height/2;
+			let left        = btn_css.left+btn_css.width/2;
 			
-			let top = btn_css.top+btn_css.height/2;
-			let left = btn_css.left+btn_css.width/2;
-			
-			for(let ver=0;ver<ver_count;ver++)
+			for( let ver=0; ver < ver_count; ver++ )
 			{
-				for(let color=0;color<color_count[ver];color++)
+				for( let color=0; color<color_count[ver]; color++ )
 				{
-					let img_name = (ver+1)+"_"+(color+1);
-					let src = "img/color/"+img_name+".png";
-					let img_box = $('<div class="abs color_img" id="'+img_name+'" style="top:'+top+'px;left:'+left+'px;width:0px;height:0px;"><img src="'+src+'"></div>');
-					//let img_box = $('<img src="'+src+'" class="abs color_img" id="'+img_name+'" style="top:'+top+'px;left:'+left+'px;width:0px;height:0px;border:2px green">');
-					$('#thr_box').append(img_box);
-					switch(ver)
+					let img_name = ( ver+1 )+"_"+( color+1 );
+					let src      = "img/color/"+ img_name +".png";
+					let img_box  = $('<div class="abs color_img" id="'+ img_name +'" style="top:'+ top +'px;left:'+ left +'px;width:0px;height:0px;"><img src="'+ src +'"></div>');
+
+					$('#thr_box').append( img_box );
+					
+					switch( ver )
 					{
 						case 0:
 							img_box.addClass('ver_one');
@@ -799,20 +817,24 @@
 							break;
 					}
 					
-					if(ver<2 || color<5)
+					if( ver<2 || color<5 )
 					{
 						img_box.animate(catColor_box_resize(ver,color),500,function(e){
 							let elem = $(this);
+							
 							elem.click(check_catColor);
 						});
 					}
 					else
 					{
-						img_box.animate(catColor_box_resize(ver,color),500,function(){
+						img_box.animate( catColor_box_resize( ver, color ), 500, function(){
 							let elem = $(this);
+							
 							elem.click(check_catColor);
+							
 							do_resize();
-							if(cat_color!='')
+							
+							if( cat_color != '' )
 							{
 								$('#'+cat_color).addClass('color_check');
 								$('#color').addClass('isok');
@@ -826,29 +848,36 @@
 		function check_catColor()
 		{		
 			let elem = $(this);
+			
 			if(elem.hasClass('color_check'))
 			{
 				elem.removeClass('color_check');
+				
 				cat_color = '';
+				
 				$('#color').removeClass('isok');
 			}
 			else
 			{
 				$('.color_img').removeClass('color_check');
+				
 				elem.addClass('color_check');
+				
 				cat_color = elem.attr('id');
+				
 				$('#color').addClass('isok');
 			}			
 		}
 		
-		function catColor_box_resize(ver_index,color_index)
+		function catColor_box_resize( ver_index, color_index )
 		{
-			let mbox_css = thr_box_resize();
-			let mbox_width = mbox_css.width;
+			let mbox_css    = thr_box_resize();
+			let mbox_width  = mbox_css.width;
 			let mbox_height = mbox_css.height;
+			
 			let color_len;
 			
-			if(ver_index==0)
+			if( ver_index == 0 )
 			{
 				color_len = 7;
 			}
@@ -860,79 +889,80 @@
 			if(monitor_ver_check())
 			{
 				let box_size = mbox_width*0.95/10;
-				if(box_size*3>mbox_height*0.6)
+				if( box_size*3 > mbox_height*0.6 )
 				{
 					box_size = mbox_height*0.2;
 				}
-				let w_padding = box_size/2;
-				let w_start = (mbox_width-(box_size*color_len)-(w_padding*(color_len-1)))/2;
-				let h_padding = (mbox_height*0.7-(box_size*3))/2;
-				let h_start = (mbox_height-(box_size*3)-(h_padding*2))/2;
 				
-				let top = h_start+((box_size+h_padding)*ver_index);
-				let left = w_start+((box_size+w_padding)*color_index);
+				let w_padding = box_size/2;
+				let w_start   = ( mbox_width-( box_size*color_len )-( w_padding*( color_len-1 ) ) )/2;
+				let h_padding = ( mbox_height*0.7-( box_size*3 ) )/2;
+				let h_start   = ( mbox_height-( box_size*3 )-( h_padding*2 ) )/2;
+				
+				let top  = h_start+( ( box_size+h_padding )*ver_index );
+				let left = w_start+( ( box_size+w_padding )*color_index );
 				
 				let css_dict = {
-					'top':top,
-					'left':left,
-					'width':box_size,
-					'height':box_size					
-				}				
-				return(css_dict);
+					'top'    : top,
+					'left'   : left,
+					'width'  : box_size,
+					'height' : box_size					
+				}
+				
+				return( css_dict );
 			}
 			else
 			{
 				console.log('test');
 				let box_size = mbox_height*0.95/10;
-				if(box_size*3>mbox_width*0.6)
+				if( box_size*3 > mbox_width*0.6 )
 				{
 					console.log('test2');
 					box_size = mbox_width*0.2;
 				}
+				
 				let h_padding = box_size/2;
-				let h_start = (mbox_height-(box_size*color_len)-(h_padding*(color_len-1)))/2;
-				let w_padding = (mbox_width*0.7-(box_size*3))/2;
-				let w_start = (mbox_width-(box_size*3)-(w_padding*2))/2;
+				let h_start   = ( mbox_height-( box_size*color_len )-( h_padding*( color_len-1 ) ) )/2;
+				let w_padding = ( mbox_width*0.7-( box_size*3 ) )/2;
+				let w_start   = ( mbox_width-( box_size*3 )-( w_padding*2 ) )/2;
 				
 				
-				let top = h_start+((box_size+h_padding)*color_index);
-				let left = w_start+((box_size+w_padding)*ver_index);
+				let top  = h_start+( ( box_size+h_padding )*color_index );
+				let left = w_start+( ( box_size+w_padding )*ver_index );
 				
 				let css_dict = {
-					'top':top,
-					'left':left,
-					'width':box_size,
-					'height':box_size					
+					'top'    :top,
+					'left'   :left,
+					'width'  :box_size,
+					'height' :box_size					
 				}				
-				return(css_dict);
+				return( css_dict );
 			}			
-		}
-		
-		
+		}		
 		
 		//写真からGPSデータを取る
-		function getexif(imageFile)
+		function getexif( imageFile )
 		{
-			EXIF.getData(imageFile,function(){
+			EXIF.getData( imageFile, function(){
 				//時間
-				var DateTimeOriginal = EXIF.getTag(this,'DateTimeOriginal');
-				if(DateTimeOriginal != undefined){
+				var DateTimeOriginal = EXIF.getTag( this, 'DateTimeOriginal' );
+				
+				if( DateTimeOriginal != undefined ){
 					let date_txt = '';
-					for(let i=0 ; i<DateTimeOriginal.length;i++)
+					
+					for( let i=0 ; i<DateTimeOriginal.length; i++ )
 					{
 						let s_txt = DateTimeOriginal[i];
-						if(i<10 && s_txt==':')
+						
+						if( i<10 && s_txt == ':' )
 						{
-							s_txt = '/'
+							s_txt = '/';
 						}
+						
 						date_txt = date_txt + s_txt;
-						//console.log(i,s_txt);
 					}
 					
-					
-					const date = new Date(date_txt).valueOf();
-					//console.log('DateTimeOriginal',date_txt);
-					//console.log('date',date);
+					const date = new Date( date_txt ).valueOf();
 				}
 				else
 				{
@@ -940,21 +970,20 @@
 				}
 				
 				//緯度
-				const GPSLatitude = EXIF.getTag(this,'GPSLatitude');
-				const GPSLongitude = EXIF.getTag(this,'GPSLongitude');
+				const GPSLatitude  = EXIF.getTag( this, 'GPSLatitude'  );
+				const GPSLongitude = EXIF.getTag( this, 'GPSLongitude' );
+				
 				if((GPSLatitude != undefined) && (GPSLongitude != undefined)){
-					var GPSLatitude_t = GPSLatitude[0]['numerator'];
-					var GPSLatitude_m = GPSLatitude[1]['numerator']/GPSLatitude[1]['denominator'];
-					let GPSLatitude_only_t = GPSLatitude_t+GPSLatitude_m/60;
+					var GPSLatitude_t       = GPSLatitude[0]['numerator'];
+					var GPSLatitude_m       = GPSLatitude[1]['numerator']/GPSLatitude[1]['denominator'];
+					let GPSLatitude_only_t  = GPSLatitude_t+GPSLatitude_m/60;
 					
-					var GPSLongitude_t = GPSLongitude[0]['numerator'];
-					var GPSLongitude_m = GPSLongitude[1]['numerator']/GPSLatitude[1]['denominator'];
+					var GPSLongitude_t      = GPSLongitude[0]['numerator'];
+					var GPSLongitude_m      = GPSLongitude[1]['numerator']/GPSLatitude[1]['denominator'];
 					let GPSLongitude_only_t = GPSLongitude_t+GPSLongitude_m/60;
 					
-					$('#data_base').attr('gps-data-check',1);
-					MyLatLng = new google.maps.LatLng(GPSLatitude_only_t, GPSLongitude_only_t)
-					//map.panTo(new google.maps.LatLng(GPSLatitude_only_t,GPSLongitude_only_t));
-					//make_maker(GPSLatitude_only_t,GPSLongitude_only_t,'test2','test test 2 txt')
+					$('#data_base').attr( 'gps-data-check', 1 );
+					MyLatLng = new google.maps.LatLng( GPSLatitude_only_t, GPSLongitude_only_t );
 					has_gps = 1;
 				}
 				else
@@ -970,58 +999,52 @@
 		function make_gps_box()
 		{
 			do_resize();
-			let btn_css = catform_btn_resize(3,$('.catform_btn').length);
+			
+			let btn_css     = catform_btn_resize( 3, $('.catform_btn').length );
 			let thr_box_css = thr_box_resize();
-			let top = (btn_css.top+btn_css.height/2)-thr_box_css.top;
-			let left = (btn_css.left+btn_css.width/2)-thr_box_css.left;
-			//console.log('btn_css',btn_css);
-			//console.log('thr_box_css',thr_box_css);
-			//console.log(top,left);
-			let map_box = $('<div id="map" style="top:'+top+'px;left:'+left+'px;height:0px;wight:0px;" class="abs pritest"></div>');
+			let top         = ( btn_css.top+btn_css.height/2 )-thr_box_css.top;
+			let left        = ( btn_css.left+btn_css.width/2 )-thr_box_css.left;
+			
+			let map_box     = $('<div id="map" style="top:'+ top +'px;left:'+ left +'px;height:0px;wight:0px;" class="abs pritest"></div>');
+			
 			$('#thr_box').append(map_box);
-			//console.log(map_resize());
-			//map_box.css(map_resize());
-			//initMap();
-			//console.log('<div id="map" style="top:'+top+'px;left:'+left+'px;height:10px;wight:10px;" class="abs pritest"></div>');
-			map_box.animate(map_resize(),500,initMap);		
+			
+			map_box.animate( map_resize(), 500, initMap );		
 		}
 		
 		function initMap(){
-			var nowLatLng
-			var latlng = new google.maps.LatLng(34.7577336,134.966988);
-			if(MyLatLng==1)
+			var nowLatLng;
+			
+			var latlng = new google.maps.LatLng( 34.7577336, 134.966988 );
+			
+			if( MyLatLng == 1 )
 			{
 				var Options = {
-					zoom: 8,      //地図の縮尺値
-					center: latlng,  //地図の中心座標
-					mapTypeId: 'roadmap'   //地図の種類
+					zoom      : 8,      //地図の縮尺値
+					center    : latlng,  //地図の中心座標
+					mapTypeId : 'roadmap'   //地図の種類
 				};
 			}
 			else
 			{				
 				var Options = {
-					zoom: 8,      //地図の縮尺値
-					center: MyLatLng,  //地図の中心座標
-					mapTypeId: 'roadmap'   //地図の種類
+					zoom      : 8,      //地図の縮尺値
+					center    : MyLatLng,  //地図の中心座標
+					mapTypeId : 'roadmap'   //地図の種類
 				};
 			}
-
 			
-			//center: nowLatLng,
-			//console.log(MyLatLng);
-			//console.log(latlng);
-			//console.log(nowLatLng);
-			map = new google.maps.Map(document.getElementById('map'), Options);
+			map = new google.maps.Map( document.getElementById('map'), Options );
 			
-			//map.setCenter(nowLatLng);
-			map.addListener("click", clickAction);
+			map.addListener( "click", clickAction );
 			
-			if(MyLatLng!=1)
+			if( MyLatLng != 1 )
 			{
-				map.panTo(MyLatLng);
-				make_maker(MyLatLng.lat(),MyLatLng.lng(),'test2','test test 2 txt');
+				map.panTo ( MyLatLng );
+				make_maker( MyLatLng.lat(), MyLatLng.lng(), 'test2', 'test test 2 txt');
 			}
-			make_check_btn(map_check_btn_func);
+			
+			make_check_btn( map_check_btn_func );
 		}
 		
 		function clickAction(overlay)
@@ -1037,33 +1060,34 @@
 		function map_resize()
 		{
 			//console.log('test');
-			let box_size = thr_box_resize();
-			let mbox_width = box_size.width;
+			let box_size    = thr_box_resize();
+			let mbox_width  = box_size.width;
 			let mbox_height = box_size.height;
-			let box_width = mbox_width*0.9;
+			let box_width   = mbox_width*0.9;
+			
 			let css_dict;
-			//console.log(box_size);
 			
 			css_dict={
-				'width':box_width,
-				'height':mbox_height*0.9,
-				'top':mbox_height*0.05,
-				'left':mbox_width*0.05,
+				'width'  : box_width,
+				'height' : mbox_height*0.9,
+				'top'    : mbox_height*0.05,
+				'left'   : mbox_width*0.05,
 			}
-			return(css_dict);
+			
+			return( css_dict );
 		}
 		
 		function now_position()
 		{
 			const options = {
-				enableHighAccuracy: true,
-				timeout: 5000,
-				maximumAge: 0
+				enableHighAccuracy : true,
+				timeout            : 5000,
+				maximumAge         : 0
 			}
 			
 			navigator.geolocation.getCurrentPosition( 
-				function(position){ 
-					now_GPSLatitude = position['coords']['latitude'];
+				function( position ){ 
+					now_GPSLatitude  = position['coords']['latitude'];
 					now_GPSLongitude = position['coords']['longitude'];
 				},
 				get_position_error,
@@ -1076,61 +1100,64 @@
 			makers.forEach(function(maker){
 				maker.setMap(null);
 			});
-			makers=[];
+			makers = [];
 		}
 		
-		function make_maker(x,y,title,txt)
+		function make_maker( x, y, title, txt )
 		{
 			
-			const latlng = new google.maps.LatLng(x,y);
+			const latlng = new google.maps.LatLng( x, y );
+			
 			const marker = new google.maps.Marker({
-				position: latlng,
-				title: title,
-				mapTypeId: google.maps.MapTypeId.ROADMAP,
-				map: map,
-				draggable:true
+				position  : latlng,
+				title     : title,
+				mapTypeId : google.maps.MapTypeId.ROADMAP,
+				map       : map,
+				draggable : true
 			});
 
 			infowindow = new google.maps.InfoWindow({
-				content: do_div_txt(txt),
-				position: latlng
+				content  : do_div_txt( txt ),
+				position : latlng
 			});
-			marker.setMap(map);
-			google.maps.event.addListener(marker, 'click', function(event) {
-				infowindow.open(map, marker);
+			
+			marker.setMap( map );
+			google.maps.event.addListener( marker, 'click', function(event){
+				infowindow.open( map, marker);
 			});
-			if(map.getZoom()<10)
+			
+			if( map.getZoom() < 10 )
 			{
 				map.setZoom(15);
 			}
 			
 			infowindows.push(infowindow);
 			makers.push(marker);
-			gps_list.push([x,y,title,txt]);
+			gps_list.push( [ x, y, title, txt ] );
 		}
 		
 		function do_div_txt(txt)
 		{
-			var div_txt = '';
-			div_txt += 	'<div style="width:100px;height:50px;background:rgb(0,255,0)">';
-			div_txt += 		'<samp>'+txt+'</samp>';
-			div_txt += 	'</div>';
+			var div_txt  = '';
+			div_txt     += 	'<div style="width:100px;height:50px;background:rgb(0,255,0)">';
+			div_txt     += 		'<samp>'+txt+'</samp>';
+			div_txt     += 	'</div>';
 			
-			return(div_txt);
+			return( div_txt );
 		}
 		
 		//ajax
-		function get_data(post_data,work_func)
+		function get_data( post_data, work_func )
 		{
 			$.ajax({
-				url:php_path,
-				data:post_data,
-				type:'post',
-				success: function(output){
+				url     : php_path,
+				data    : post_data,
+				type    :'post',
+				success : function(output){
 					const mydata = to_dict(output);
 					work_func(mydata);
 				},
-				error: function(jqXHR){ alert(jqXHR); }
+				error   : function(jqXHR){ alert(jqXHR); }
 			});
 		}
 		
