@@ -90,11 +90,11 @@
 				$('#sec_box').css( sec_box_resize() );
 			}
 			
-			for( let index = 0; index < $('.catform_btn').length; index++ )
+			for( let index = 0; index < $('.sec_btn').length; index++ )
 			{
-				let elem = $($('.catform_btn')[index]);
+				let elem = $($('.sec_btn')[index]);
 				
-				elem.css( sec_btn_resize( index, $('.catform_btn').length ) );
+				elem.css( sec_btn_resize( index, $('.sec_btn').length ) );
 			}
 			
 			if( $('#thr_box').length )
@@ -126,6 +126,11 @@
 					let box_id = '#'+( ver_index+1 )+'_'+( color_index+1 );
 					$(box_id).css( catColor_box_resize( ver_index, color_index ) );
 				}
+			}
+			
+			if( $('#login').length )
+			{
+				$('#login').css( login_box_resize() );
 			}
 		}
 		
@@ -185,16 +190,13 @@
 		
 		function case_cat_form()
 		{
-			$('*').finish();
-			$('.menu_btn').removeClass('check');
-			$(this).addClass('check');
-			$('#sec_box').remove();
+			sec_box_reset(this);
 			
 			cat_color='';
 			
 			if($.cookie('user_id'))
 			{
-				console.log($.cookie('user_id'));
+				//console.log($.cookie('user_id'));
 			}
 			else
 			{
@@ -250,10 +252,7 @@
 		
 		function case_tnr_log()
 		{
-			$('*').finish();
-			$('.menu_btn').removeClass('check');
-			$(this).addClass('check');
-			$('#sec_box').remove();
+			sec_box_reset(this);
 			
 			if($.cookie('user_id'))
 			{
@@ -284,10 +283,7 @@
 		
 		function case_count_glf()
 		{
-			$('*').finish();
-			$('.menu_btn').removeClass('check');
-			$(this).addClass('check');
-			$('#sec_box').remove();
+			sec_box_reset(this);
 			
 			if($.cookie('user_id'))
 			{
@@ -319,10 +315,7 @@
 		
 		function case_my_acc()
 		{
-			$('.menu_btn').removeClass('check');
-			$(this).addClass('check');
-			$('#sec_box').remove();
-			$('*').finish();
+			sec_box_reset(this);
 			
 			if( menu_z < 2)
 			{
@@ -338,6 +331,14 @@
 				
 				make_sec_box( btn_top, btn_left, acct_btn );
 			}
+		}
+		
+		function sec_box_reset(elem)
+		{
+			$('.menu_btn').removeClass('check');
+			$(elem).addClass('check');
+			$('#sec_box').remove();
+			$('*').finish();
 		}
 		
 		function acct_btn()
@@ -359,7 +360,7 @@
 			{
 				let box_css  = sec_box_resize();
 				let css_dect = sec_btn_resize( index, menu_list.length );
-				let btn      = $('<input type="button" id="'+ ImgId_list[index] +'" class="catform_btn abs" style="width:0px;height:0px;top:'+ top +'px;left:'+ left +'px" value="'+ menu_list[index] +'">');
+				let btn      = $('<input type="button" id="'+ ImgId_list[index] +'" class="sec_btn abs" style="width:0px;height:0px;top:'+ top +'px;left:'+ left +'px" value="'+ menu_list[index] +'">');
 				
 				$('#sec_box').append(btn);
 				
@@ -379,16 +380,115 @@
 			}
 		}
 		
+		function thr_box_reset(elem)
+		{
+			$('*').finish();
+			$('.sec_btn').removeClass('check');
+			$(elem).addClass('check');
+			$('#thr_box').remove();
+		}
+		
 		//now
 		function acct_func()
 		{
+			thr_box_reset(this);
+			
+			let btn_css = sec_btn_resize( 0, 4 );
+			let top     = btn_css.top+btn_css.height/2;
+			let left    = btn_css.left+btn_css.width/2;
+			
 			if( $.cookie('user_id') )
 			{
-				console.log( $.cookie('user_id') );
+				//console.log( $.cookie('user_id') );
 			}
 			else
 			{
-				
+				make_thr_box( top, left, make_login_box );
+			}
+		}
+		
+		function make_login_box()
+		{
+			let btn_css = sec_btn_resize( 0, 4 );
+			let top     = btn_css.top;
+			let left    = btn_css.left;
+			
+			let box = $('<div class="login abs pritest" id="login" style="top:'+ top +'px;left:'+ left +'px;width:0px;height:0px;"><samp>email:&nbsp;&nbsp;&nbsp;<input type="email" id="email_input" placeholder="sample@gmail.com"></samp><samp>password:<input type="password" id="password_input"></samp><input id="login_btn" type="submit"></div>');
+			
+			$('#thr_box').append(box);
+			
+			box.animate(login_box_resize());
+			$('#login_btn').click(check_login);
+		}
+		
+		function check_login()
+		{
+			const input_mail  = $('#email_input').val();
+			const input_passw = $('#password_input').val();
+			
+			const post_data   = {
+				action      : 'check_login',
+				input_mail  : input_mail,
+				input_passw : input_passw};
+			
+			let output = get_data(post_data,check_login_func);
+			
+			//console.log("do login");
+		}
+		
+		function check_login_func(input)
+		{
+			const user_id = input['user_id'].$oid
+			
+			if(user_id>'0')
+			{
+				//console.log(user_id);
+				$.cookie('user_id',user_id);
+			}
+			else
+			{
+				console.log('unfind');
+			}
+			
+		}
+		
+		function login_box_resize()
+		{
+			let mbox_css    = thr_box_resize();
+			let mbox_wight  = mbox_css.width;
+			let mbox_height = mbox_css.height;
+			
+			if(monitor_ver_check())
+			{
+				let width  = mbox_wight*0.5;
+				let height = mbox_height*0.5;
+				let top    = (mbox_height-height)/2;
+				let left   = (mbox_wight-width)/2;
+
+				let css_dict = {
+					'top'       : top,
+					'height'    : height,
+					'left'      : left,
+					'width'     : width,
+					'font-size' : width/300+'em'
+				}
+				return( css_dict );
+			}
+			else
+			{
+				let width  = mbox_wight*0.9;
+				let height = width/3*2;
+				let top    = (mbox_height-height)/2;
+				let left   = (mbox_wight-width)/2;
+
+				let css_dict = {
+					'top'       : top,
+					'height'    : height,
+					'left'      : left,
+					'width'     : width,
+					'font-size' : width/300+'em'
+				}
+				return( css_dict );
 			}
 		}
 		
@@ -566,7 +666,7 @@
 			{
 				let box_css  = sec_box_resize();
 				let css_dect = sec_btn_resize( index, menu_list.length );
-				let btn      = $('<input type="button" id="'+ ImgId_list[index] +'" class="catform_btn abs" style="width:0px;height:0px;top:'+ top +'px;left:'+ left +'px" value="'+ menu_list[index] +'">');
+				let btn      = $('<input type="button" id="'+ ImgId_list[index] +'" class="sec_btn abs" style="width:0px;height:0px;top:'+ top +'px;left:'+ left +'px" value="'+ menu_list[index] +'">');
 				
 				$('#sec_box').append(btn);
 				
@@ -589,45 +689,36 @@
 		//写真登録
 		function imgup_func()
 		{
-			$('*').finish();
-			$('.catform_btn').removeClass('check');
-			$(this).addClass('check');
-			$('#thr_box').remove();
+			thr_box_reset(this);
 			
 			menu_z = 3;
 			
 			let css_dict = sec_box_resize();
-			let btn_css  = sec_btn_resize( 0, $('.catform_btn').length );
+			let btn_css  = sec_btn_resize( 0, $('.sec_btn').length );
 			
 			make_thr_box( btn_css.top+btn_css.height/2, btn_css.left+btn_css.width/2, make_img_box );
 		}
 		
 		function color_func()
 		{
-			$('*').finish();
-			$('.catform_btn').removeClass('check');
-			$(this).addClass('check');
-			$('#thr_box').remove();
+			thr_box_reset(this);
 			
 			menu_z = 3;
 			
 			let css_dict = sec_box_resize();
-			let btn_css  = sec_btn_resize( 1, $('.catform_btn').length );
+			let btn_css  = sec_btn_resize( 1, $('.sec_btn').length );
 			
 			make_thr_box( btn_css.top+btn_css.height/2, btn_css.left+btn_css.width/2, make_catColor_box );
 		}
 		
 		function tnr_func()
 		{
-			$('*').finish();
-			$('.catform_btn').removeClass('check');
-			$(this).addClass('check');
-			$('#thr_box').remove();
+			thr_box_reset(this);
 			
 			menu_z = 3;
 			
 			let css_dict = sec_box_resize();
-			let btn_css  = sec_btn_resize(2,$('.catform_btn').length);
+			let btn_css  = sec_btn_resize(2,$('.sec_btn').length);
 
 			make_thr_box( btn_css.top+btn_css.height/2, btn_css.left+btn_css.width/2, function(){ console.log('test') } );
 		}
@@ -635,15 +726,12 @@
 		//googleマップ
 		function gps_func()
 		{
-			$('*').finish();
-			$('.catform_btn').removeClass('check');
-			$(this).addClass('check');
-			$('#thr_box').remove();
+			thr_box_reset(this);
 			
 			menu_z = 3;
 			
 			let css_dict = sec_box_resize();
-			let btn_css  = sec_btn_resize( 3, $('.catform_btn').length );
+			let btn_css  = sec_btn_resize( 3, $('.sec_btn').length );
 
 			make_thr_box( btn_css.top+btn_css.height/2, btn_css.left+btn_css.width/2, make_gps_box );
 		}
@@ -749,7 +837,7 @@
 		{
 			do_resize();
 			
-			let btn_css = sec_btn_resize( 0, $('.catform_btn').length );
+			let btn_css = sec_btn_resize( 0, $('.sec_btn').length );
 			let box_css = sec_box_resize();			
 			let top     = ( btn_css.top+btn_css.height/2 )-box_css.top;
 			let left    = ( btn_css.left+btn_css.width/2 )-box_css.left;
@@ -818,7 +906,7 @@
 		
 		function readURL(input)
 		{
-			$('.catform_btn').removeClass('isok');
+			$('.sec_btn').removeClass('isok');
 			
 			cat_color='';
 			
@@ -920,7 +1008,7 @@
 			let ver_count   = 3;
 			let color_count = [ 7, 6, 6 ];
 			let css_dict    = sec_box_resize();
-			let btn_css     = sec_btn_resize( 1, $('.catform_btn').length );			
+			let btn_css     = sec_btn_resize( 1, $('.sec_btn').length );			
 			let top         = btn_css.top+btn_css.height/2;
 			let left        = btn_css.left+btn_css.width/2;
 			
@@ -1132,7 +1220,7 @@
 		{
 			do_resize();
 			
-			let btn_css     = sec_btn_resize( 3, $('.catform_btn').length );
+			let btn_css     = sec_btn_resize( 3, $('.sec_btn').length );
 			let thr_box_css = thr_box_resize();
 			let top         = ( btn_css.top+btn_css.height/2 )-thr_box_css.top;
 			let left        = ( btn_css.left+btn_css.width/2 )-thr_box_css.left;
