@@ -37,7 +37,7 @@
 		
 		var menu_z   =1;
 		var has_gps  =0;
-		var MyLatLng =1;
+		var MyLatLng =0;
 		
 		var now_GPSLatitude  = 34.7577336;
 		var now_GPSLongitude = 134.966988;		
@@ -48,7 +48,6 @@
 		
 		var session = window.sessionStorage;
 		
-		var cat_color;
 		var img_input;
 		var now_src;
 		var map;
@@ -192,7 +191,8 @@
 		{
 			sec_box_reset(this);
 			
-			cat_color='';
+			session.removeItem('cat_color');
+			now_src = 0;
 			
 			if($.cookie('user_id'))
 			{
@@ -399,7 +399,7 @@
 			
 			if( $.cookie('user_id') )
 			{
-				//console.log( $.cookie('user_id') );
+				make_thr_box( top, left, make_login_box );
 			}
 			else
 			{
@@ -417,8 +417,9 @@
 			
 			$('#thr_box').append(box);
 			
-			box.animate(login_box_resize());
-			$('#login_btn').click(check_login);
+			box.animate( login_box_resize(), 500, function(){ 
+				$('#login_btn').click(check_login); 
+			});
 		}
 		
 		function check_login()
@@ -444,6 +445,7 @@
 			{
 				//console.log(user_id);
 				$.cookie('user_id',user_id);
+				$('#acct').click();
 			}
 			else
 			{
@@ -494,17 +496,56 @@
 		
 		function more_func()
 		{
+			thr_box_reset(this);
 			
+			if( $.cookie('user_id') )
+			{
+				let btn_css = sec_btn_resize( 1, $('.sec_btn').length );
+				let top     = btn_css.top+btn_css.height/2;
+				let left    = btn_css.left+btn_css.width/2;
+				
+				make_thr_box( top, left, make_login_box );
+			}
+			else
+			{
+				$('#acct').click();
+			}
 		}
 		
 		function UpCatList_func()
 		{
+			thr_box_reset(this);
 			
+			if( $.cookie('user_id') )
+			{
+				let btn_css = sec_btn_resize( 2, $('.sec_btn').length );
+				let top     = btn_css.top+btn_css.height/2;
+				let left    = btn_css.left+btn_css.width/2;
+				
+				make_thr_box( top, left, make_login_box );
+			}
+			else
+			{
+				$('#acct').click();
+			}
 		}
 		
 		function UpLog_func()
 		{
+			thr_box_reset(this);
 			
+			if( $.cookie('user_id') )
+			{
+				let btn_css = sec_btn_resize( 3, $('.sec_btn').length );
+				let top     = btn_css.top+btn_css.height/2;
+				let left    = btn_css.left+btn_css.width/2;
+				
+				make_thr_box( top, left, make_login_box );
+			}
+			else
+			{
+				$('#acct').click();
+			}
 		}
 		
 		
@@ -720,7 +761,87 @@
 			let css_dict = sec_box_resize();
 			let btn_css  = sec_btn_resize(2,$('.sec_btn').length);
 
-			make_thr_box( btn_css.top+btn_css.height/2, btn_css.left+btn_css.width/2, function(){ console.log('test') } );
+			make_thr_box( btn_css.top+btn_css.height/2, btn_css.left+btn_css.width/2, make_tnr_chose_box );
+		}
+		
+		function make_tnr_chose_box()
+		{
+			let btn_css  = sec_btn_resize(2,$('.sec_btn').length);
+			let top      = btn_css.top+btn_css.height/2;
+			let left     = btn_css.left+btn_css.width/2;
+			
+			let tnr_box  = $('<div id="tnr_box" class="abs pritest tnr_chose" is_tnr="1" style="top:'+ top +'px;left:'+ left +'px;width:0px;height:0px">is tnr</div>');
+			let nol_box  = $('<div id="nol_box" class="abs pritest tnr_chose" is_tnr="0" style="top:'+ top +'px;left:'+ left +'px;width:0px;height:0px">no tnr</div>');
+			
+			$('#thr_box').append(tnr_box).append(nol_box);
+			
+			tnr_box.animate(chose_box_resize(0),500,function(){
+				tnr_box.click(chose_click);
+			});
+			nol_box.animate(chose_box_resize(1),500,function(){
+				nol_box.click(chose_click);
+			});
+		}
+		
+		function chose_box_resize(index)
+		{
+			let mbox_css    = thr_box_resize();
+			let mbox_wight  = mbox_css.width;
+			let mbox_height = mbox_css.height;
+			
+			let css_dict;
+			
+			if(monitor_ver_check())
+			{
+				let box_size = mbox_height*0.3;
+				let padding  = mbox_wight*0.6-box_size*2;
+				let top      = ( mbox_height-box_size )/2;
+				let left     = ( mbox_wight-( box_size*2+padding ) )/2;
+				
+				css_dict = {
+					'width'  :box_size,
+					'height' :box_size,
+					'top'    :top,
+					'left'   :left+( box_size+padding )*index
+				}
+				return( css_dict );
+			}
+			else
+			{
+				let box_size = mbox_wight*0.3;
+				let padding  = mbox_height*0.6-box_size*2;
+				let top      = ( mbox_height-( box_size*2+padding ) )/2;
+				let left     = ( mbox_wight-box_size )/2;
+				
+				css_dict = {
+					'width'  :box_size,
+					'height' :box_size,
+					'top'    :top+( box_size+padding )*index,
+					'left'   :left
+				}
+				return( css_dict );
+			}
+		}
+		
+		function chose_click()
+		{
+			let elem = $(this);
+			
+			session.removeItem('is_tnr');
+			console.log('before',session.getItem('is_tnr'));
+			if( elem.hasClass('tnr_check') )
+			{
+				$('.tnr_chose').removeClass('tnr_check');
+				
+			}
+			else
+			{
+				$('.tnr_chose').removeClass('tnr_check');
+				elem.addClass('tnr_check');
+				session.setItem( 'is_tnr', elem.attr('is_tnr') );
+				$('#tnr').addClass('isok');
+			}
+			console.log('after',session.getItem('is_tnr'));
 		}
 		
 		//googleマップ
@@ -855,9 +976,9 @@
 				
 				img_box.append( show_img_box );
 				
-				if( now_src != 0 )
+				if( now_src )
 				{
-					show_img_box.attr( 'src', now_src);
+					show_img_box.attr( 'src', now_src );
 				}
 			});
 		}
@@ -901,14 +1022,14 @@
 			
 			$('#img_input').click();
 			
-			MyLatLng=1;
+			MyLatLng=0;
 		}
 		
 		function readURL(input)
 		{
 			$('.sec_btn').removeClass('isok');
 			
-			cat_color='';
+			session.removeItem('cat_color');
 			
 			if( input.files && input.files[0] )
 			{
@@ -956,14 +1077,18 @@
 		
 		function map_check_btn_func()
 		{
-			if( MyLatLng == 1 )
-			{
-				alert('map上で猫を目撃した場所でクリックしてください');
-			}
-			else
+			session.removeItem('lat');
+			session.removeItem('lng');
+			if( MyLatLng )
 			{
 				$('.check:not(.menu_btn)').addClass('isok');
 				$('#color').click();
+				session.setItem('lat',MyLatLng.lat());
+				session.setItem('lng',MyLatLng.lat());
+			}
+			else
+			{				
+				alert('map上で猫を目撃した場所でクリックしてください');
 			}
 		}
 		
@@ -989,6 +1114,7 @@
 			img.setAttribute( "src", e.target.result );
 			
 			now_src = e.target.result;
+			console.log(now_src);
 		}
 		
 		function subminimg(){
@@ -1054,9 +1180,9 @@
 							
 							do_resize();
 							
-							if( cat_color != '' )
+							if( session.getItem('cat_color') )
 							{
-								$('#'+cat_color).addClass('color_check');
+								$('#'+session.getItem('cat_color')).addClass('color_check');
 								$('#color').addClass('isok');
 							}
 						});
@@ -1073,7 +1199,7 @@
 			{
 				elem.removeClass('color_check');
 				
-				cat_color = '';
+				session.removeItem('cat_color');
 				
 				$('#color').removeClass('isok');
 			}
@@ -1083,10 +1209,10 @@
 				
 				elem.addClass('color_check');
 				
-				cat_color = elem.attr('id');
+				session.setItem( 'cat_color', elem.attr('id') );
 				
 				$('#color').addClass('isok');
-			}			
+			}
 		}
 		
 		function catColor_box_resize( ver_index, color_index )
@@ -1133,7 +1259,7 @@
 			}
 			else
 			{
-				console.log('test');
+				//console.log('test');
 				let box_size = mbox_height*0.95/10;
 				if( box_size*3 > mbox_width*0.6 )
 				{
@@ -1237,11 +1363,11 @@
 			
 			var latlng = new google.maps.LatLng( 34.7577336, 134.966988 );
 			
-			if( MyLatLng == 1 )
+			if( MyLatLng )
 			{
 				var Options = {
 					zoom      : 8,      //地図の縮尺値
-					center    : latlng,  //地図の中心座標
+					center    : MyLatLng,  //地図の中心座標
 					mapTypeId : 'roadmap'   //地図の種類
 				};
 			}
@@ -1249,7 +1375,7 @@
 			{				
 				var Options = {
 					zoom      : 8,      //地図の縮尺値
-					center    : MyLatLng,  //地図の中心座標
+					center    : latlng,  //地図の中心座標
 					mapTypeId : 'roadmap'   //地図の種類
 				};
 			}
@@ -1258,7 +1384,7 @@
 			
 			map.addListener( "click", clickAction );
 			
-			if( MyLatLng != 1 )
+			if( MyLatLng )
 			{
 				map.panTo ( MyLatLng );
 				make_maker( MyLatLng.lat(), MyLatLng.lng(), 'test2', 'test test 2 txt');
@@ -1269,7 +1395,6 @@
 		
 		function clickAction(overlay)
 		{
-			console.log('overlay:',overlay.latLng.lat());
 			remove_maker();
 			let latlng = overlay.latLng;
 			make_maker(latlng.lat(),latlng.lng(),'test',null);
@@ -1397,18 +1522,19 @@
 		}
 		
 		$(function(){
-			
+			//$.removeCookie('user_id');
 			$('body').append('<div id="data_base"></div>');
 			$(window).resize(do_resize);
 			now_position();
-			
+			session.clear();
 			session.setItem( 'key', 'test' );
-			console.log( session.getItem('key') );
 			
 			start();
 			
-			
-			
 		});
+			
+
+
+
 	</script>
 </html>
