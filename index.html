@@ -561,9 +561,9 @@
 			{
 				if( menu_z < 2 )
 				{						
-					let btn_width_hight = ( mbox_width*0.95 )/len;
+					let btn_width_hight = ( mbox_width*0.80 )/len;
 					let btn_padding     = ( mbox_width*0.05 )/( len+1 );
-					let start_top       = 0;
+					let start_top       = ( mbox_width-btn_width_hight*len-btn_padding*( len-1 ) )/2;
 					if( btn_width_hight > mbox_height )
 					{
 						btn_width_hight = mbox_height*0.95;
