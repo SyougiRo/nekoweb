@@ -868,7 +868,6 @@
 			let color   = session.getItem('cat_color');
 			let tnr     = session.getItem('is_tnr');
 			let pgs     = [ session.getItem('lat'), session.getItem('lng') ];
-			let user_id = $.cookie('user_id');
 			
 			if(src && color && tnr && pgs[0])
 			{
@@ -890,17 +889,19 @@
 		
 		function submit_func()
 		{
-			let src   = now_src;
-			let color = session.getItem('cat_color');
-			let tnr   = session.getItem('is_tnr');
-			let pgs   = [ session.getItem('lat'), session.getItem('lng') ];
+			let src     = now_src;
+			let color   = session.getItem('cat_color');
+			let tnr     = session.getItem('is_tnr');
+			let pgs     = [ session.getItem('lat'), session.getItem('lng') ];
+			let user_id = $.cookie('user_id');
 			
 			const post_data = { 
-				action : "save_data",
-				src    : src,
-				color  : color,
-				tnr    : tnr,
-				pgs    : pgs
+				action  : "save_data",
+				src     : src,
+				color   : color,
+				tnr     : tnr,
+				pgs     : pgs,
+				user_id : user_id
 			};
 			
 			const work_func = submit_check;

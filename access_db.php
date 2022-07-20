@@ -99,6 +99,56 @@
         return(1);
     }
 
+    function add_cat_data($user_id,$src,$color,$tnr,$gps)
+    {
+        $table_name = 'test.cat';
+
+        $work = 'insert';
+
+        $user_data = [
+            'user_id' => $user_id,
+            'src'     => $src,
+            'color'   => $color,
+            'tnr'     => $tnr,
+            'gps'     => $gps
+        ];
+
+        do_data($table_name,$work,$user_data);
+        $cat_id = get_cat_id($user_id,$src,$color,$tnr,$gps);
+        
+        return($cat_id);
+    }
+
+    function get_cat_id($user_id,$src,$color,$tnr,$gps)
+    {
+        $table_name = 'test.cat';
+
+        $work = 'search';
+
+        $user_data = [
+            'user_id' => $user_id,
+            'src'     => $src,
+            'color'   => $color,
+            'tnr'     => $tnr,
+            'gps'     => $gps
+        ];
+
+        $output = do_data($table_name,$work,$user_data)->toArray();
+
+        $res = current($output);
+        
+        if(empty($res))
+        {
+            return(0);
+        }
+        elseif(count($output)>1)
+        {
+            return(-1);
+        }
+
+        return($res->_id);
+    }
+
     function Email_and_Pwd_get_user_id($Email,$pwd)
     {
         $table_name = 'test.user';
@@ -124,36 +174,7 @@
 
         return($res->_id);
     }
-
-    function add_cat_data($color_list,$tnr=false)
-    {
-        $table_name = 'test.cat';
-
-        $work = 'insert';
-
-        $cat_data = [
-            'color'=>['red'=>0,'white'=>0,'black'=>0],
-            'tnr'=>0
-        ];
-
-        foreach(array_keys($cat_data['color']) as $color)
-        {
-            if(in_array($color,$color_list))
-            {
-                $cat_data['color'][$color] = 1;
-            }
-        }
-
-        if($tnr)
-        {
-            $cat_data['tnr'] = 1;
-        }
-
-        do_data($table_name,$work,$cat_data);
-
-        return(1);
-    }
-
+    
     function add_tag_log($user_id,$gps,$time,$img_src,$address)
     {
 

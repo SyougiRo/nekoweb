@@ -1287,6 +1287,16 @@
 				'user_id' => $user_id
 				)
 		);
+
+		$cat_id = add_cat_data( $src, $color, $tnr, $pgs, $user_id );
+
+		$return_txt = json_encode(
+			array(
+				'cat_id' => $cat_id,
+				'user_id' => $user_id
+				)
+		);
+
 		echo $return_txt;
 	}
 
