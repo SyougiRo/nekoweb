@@ -1275,7 +1275,7 @@
 		$src     = $_POST['src'];
 		$color   = $_POST['color'];
 		$tnr     = $_POST['tnr'];
-		$pgs     = $_POST['pgs'];
+		$gps     = $_POST['pgs'];
 		$user_id = $_POST['user_id'];
 
 		$return_txt = json_encode(
@@ -1283,18 +1283,15 @@
 				'src'     => $src,
 				'color'   => $color,
 				'tnr'     => $tnr,
-				'pgs'     => $pgs,
+				'pgs'     => $gps,
 				'user_id' => $user_id
 				)
 		);
 
-		$cat_id = add_cat_data( $src, $color, $tnr, $pgs, $user_id );
+		$cat_id = add_cat_data( $src, $color, $tnr, $gps, $user_id );
 
 		$return_txt = json_encode(
-			array(
-				'cat_id' => $cat_id,
-				'user_id' => $user_id
-				)
+			$cat_id
 		);
 
 		echo $return_txt;

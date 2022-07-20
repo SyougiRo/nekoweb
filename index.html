@@ -881,9 +881,10 @@
 		}
 		
 		function make_submin_btn()
-		{
-			let btn = $('<input type="button" id="form_btn">');
-			$('#sec_box').append(btn);
+		{			
+			$('#form_btn').remove();
+			let btn = $('<input type="button" id="form_btn" value="submin" class="abs" style="top:50%;right:10px">');
+			$('#thr_box').append(btn);
 			btn.click(submit_func);
 		}
 		

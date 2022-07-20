@@ -99,41 +99,65 @@
         return(1);
     }
 
-    function add_cat_data($user_id,$src,$color,$tnr,$gps)
+    function add_cat_data($src, $color, $tnr, $gps, $user_id)
     {
         $table_name = 'test.cat';
 
         $work = 'insert';
 
-        $user_data = [
-            'user_id' => $user_id,
-            'src'     => $src,
-            'color'   => $color,
-            'tnr'     => $tnr,
-            'gps'     => $gps
-        ];
+        $data = check_img_only($src);
+        if($data)
+        {
+            return(['erro'=>'has1']);
+        }
+        else
+        {
+            $cat_data = [
+                'user_id' => $user_id,
+                'src'     => $src,
+                'color'   => $color,
+                'tnr'     => $tnr,
+                'gps'     => $gps
+            ];
 
-        do_data($table_name,$work,$user_data);
-        $cat_id = get_cat_id($user_id,$src,$color,$tnr,$gps);
-        
-        return($cat_id);
+            do_data($table_name,$work,$cat_data);
+
+            $return_data = get_cat_data($cat_data);
+
+            return($return_data);
+        }
     }
 
-    function get_cat_id($user_id,$src,$color,$tnr,$gps)
+    function check_img_only($src)
     {
         $table_name = 'test.cat';
 
         $work = 'search';
 
-        $user_data = [
-            'user_id' => $user_id,
-            'src'     => $src,
-            'color'   => $color,
-            'tnr'     => $tnr,
-            'gps'     => $gps
+        $data = [
+            'src' => $src
         ];
 
-        $output = do_data($table_name,$work,$user_data)->toArray();
+        $output = do_data($table_name,$work,$data)->toArray();
+        $res = current($output);
+
+        if(empty($res))
+        {
+            return(0);
+        }
+        else
+        {
+            return(1);
+        }
+    }
+
+    function get_cat_data($cat_data)
+    {
+        $table_name = 'test.cat';
+
+        $work = 'search';
+
+        $output = do_data($table_name,$work,$cat_data)->toArray();
 
         $res = current($output);
         
@@ -146,7 +170,7 @@
             return(-1);
         }
 
-        return($res->_id);
+        return($res);
     }
 
     function Email_and_Pwd_get_user_id($Email,$pwd)
