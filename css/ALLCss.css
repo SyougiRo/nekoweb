@@ -151,3 +151,10 @@
 	margin-left : 79%;
     margin-top  : 15%;
 }
+
+#login{
+    -webkit-box-shadow: inset 10px 10px 0 5px rgba(0,0,0,0.50);
+    box-shadow: inset 10px 10px 0 5px rgba(0,0,0,0.50);
+    border-radius: 10px;
+    background-color: rgba(255,255,255,1.00);
+}

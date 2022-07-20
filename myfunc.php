@@ -1270,6 +1270,26 @@
 		echo $return_txt;
 	}
 
+	function save_data()
+	{
+		$src     = $_POST['src'];
+		$color   = $_POST['color'];
+		$tnr     = $_POST['tnr'];
+		$pgs     = $_POST['pgs'];
+		$user_id = $_POST['user_id'];
+
+		$return_txt = json_encode(
+			array(
+				'src'     => $src,
+				'color'   => $color,
+				'tnr'     => $tnr,
+				'pgs'     => $pgs,
+				'user_id' => $user_id
+				)
+		);
+		echo $return_txt;
+	}
+
     if(isset($_POST['action']))
     {
         $action = $_POST['action'];
@@ -1281,6 +1301,7 @@
 			case 'get_nekodata':return(get_nekodata());
 			case 'get_src':return(get_src());
 			case 'get_address_list':return(get_address_list());
+			case 'save_data':return(save_data());
         }
     }
 ?>

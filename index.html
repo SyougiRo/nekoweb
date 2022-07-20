@@ -440,7 +440,7 @@
 		function check_login_func(input)
 		{
 			const user_id = input['user_id'].$oid
-			
+			//console.log(user_id);
 			if(user_id>'0')
 			{
 				//console.log(user_id);
@@ -738,6 +738,7 @@
 			let btn_css  = sec_btn_resize( 0, $('.sec_btn').length );
 			
 			make_thr_box( btn_css.top+btn_css.height/2, btn_css.left+btn_css.width/2, make_img_box );
+			submin_btn();
 		}
 		
 		function color_func()
@@ -750,6 +751,7 @@
 			let btn_css  = sec_btn_resize( 1, $('.sec_btn').length );
 			
 			make_thr_box( btn_css.top+btn_css.height/2, btn_css.left+btn_css.width/2, make_catColor_box );
+			submin_btn();
 		}
 		
 		function tnr_func()
@@ -762,6 +764,7 @@
 			let btn_css  = sec_btn_resize(2,$('.sec_btn').length);
 
 			make_thr_box( btn_css.top+btn_css.height/2, btn_css.left+btn_css.width/2, make_tnr_chose_box );
+			submin_btn();
 		}
 		
 		function make_tnr_chose_box()
@@ -855,6 +858,59 @@
 			let btn_css  = sec_btn_resize( 3, $('.sec_btn').length );
 
 			make_thr_box( btn_css.top+btn_css.height/2, btn_css.left+btn_css.width/2, make_gps_box );
+			submin_btn();
+		}
+		
+		//now
+		function submin_btn()
+		{
+			let src     = now_src;
+			let color   = session.getItem('cat_color');
+			let tnr     = session.getItem('is_tnr');
+			let pgs     = [ session.getItem('lat'), session.getItem('lng') ];
+			let user_id = $.cookie('user_id');
+			
+			if(src && color && tnr && pgs[0])
+			{
+				make_submin_btn();
+				console.log('all ok',src,color,tnr,pgs);
+			}
+			else
+			{
+				console.log('not ok');
+			}
+		}
+		
+		function make_submin_btn()
+		{
+			let btn = $('<input type="button" id="form_btn">');
+			$('#sec_box').append(btn);
+			btn.click(submit_func);
+		}
+		
+		function submit_func()
+		{
+			let src   = now_src;
+			let color = session.getItem('cat_color');
+			let tnr   = session.getItem('is_tnr');
+			let pgs   = [ session.getItem('lat'), session.getItem('lng') ];
+			
+			const post_data = { 
+				action : "save_data",
+				src    : src,
+				color  : color,
+				tnr    : tnr,
+				pgs    : pgs
+			};
+			
+			const work_func = submit_check;
+				
+			get_data( post_data, work_func);			
+		}
+		
+		function submit_check(input)
+		{
+			console.log(input);
 		}
 		
 		function sec_btn_resize(index,len)
@@ -1085,6 +1141,7 @@
 				$('#color').click();
 				session.setItem('lat',MyLatLng.lat());
 				session.setItem('lng',MyLatLng.lat());
+				submin_btn();
 			}
 			else
 			{				
@@ -1114,7 +1171,7 @@
 			img.setAttribute( "src", e.target.result );
 			
 			now_src = e.target.result;
-			console.log(now_src);
+			//console.log(now_src);
 		}
 		
 		function subminimg(){
