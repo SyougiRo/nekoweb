@@ -131,6 +131,11 @@
 			{
 				$('#login').css( login_box_resize() );
 			}
+			
+			$.each($('.img_list_box'),function(key,value){
+				let len = $('.img_list_box').length;
+				$(value).css( CatImg_list_resize( key, len ) );
+			})
 		}
 		
 		//一層目
@@ -388,7 +393,6 @@
 			$('#thr_box').remove();
 		}
 		
-		//now
 		function acct_func()
 		{
 			thr_box_reset(this);
@@ -515,18 +519,102 @@
 		function UpCatList_func()
 		{
 			thr_box_reset(this);
-			
+
 			if( $.cookie('user_id') )
 			{
 				let btn_css = sec_btn_resize( 2, $('.sec_btn').length );
 				let top     = btn_css.top+btn_css.height/2;
 				let left    = btn_css.left+btn_css.width/2;
-				
-				make_thr_box( top, left, make_login_box );
+
+				make_thr_box( top, left, get_CatImg_list );
 			}
 			else
 			{
 				$('#acct').click();
+			}
+		}
+		//now
+		function get_CatImg_list()
+		{
+			let mbox    = $('#thr_box');
+			let user_id = $.cookie('user_id');
+			
+			const post_data = { 
+				action  : "gat_img_array",
+				user_id : user_id
+			};
+			
+			const work_func = make_CatImg_list;
+				
+			get_data( post_data, work_func, false);
+		}
+		
+		function make_CatImg_list(input)
+		{
+			let mbox    = $('#thr_box');
+			let len = input.length;
+			$.each(input,function( key, value ){
+				console.log(key,value['color']);
+				let src = value['src'];				
+				let box = $('<div style="height:20%;width:20%" class="img_list_box pritest abs"></div>');
+				let img = $('<img class="img_list" src="'+ src +'" />');
+				mbox.append(box.append(img));
+				box.animate(CatImg_list_resize(key,len));
+			});
+		}
+		
+		function CatImg_list_resize(index,len)
+		{
+			let mbox        = $('#thr_box');
+			let mbox_css    = thr_box_resize();
+			let mbox_width  = mbox_css.width;
+			let mbox_height = mbox_css.height;
+			let x_count     = 5;
+			
+			while (true)
+			{
+				if(len<x_count*( x_count-1 ))
+				{
+					break;
+				}
+				x_count++;
+			}
+			
+			if(monitor_ver_check())
+			{
+				let box_size     = mbox_width/( x_count+( ( x_count+1 )/2 ) );
+				let left_padding = box_size/2;
+				let left_start   = left_padding;
+				let top_padding  = (mbox_height-( box_size*4 ))/x_count;
+				let top_start    = top_padding;
+				let x_index      = index % x_count;
+				let y_index      = ( index-x_index )/x_count;
+				
+				let css_dict = {
+					'width'  : box_size,
+					'height' : box_size,
+					'top'    : top_start+y_index*( top_padding+box_size ),
+					'left'   : left_start+x_index*( box_size+left_padding )
+				}
+				return( css_dict );
+			}
+			else
+			{
+				let box_size     = mbox_height/( x_count+( ( x_count+1 )/2 ) );
+				let left_padding = (mbox_width-( box_size*4 ))/x_count;
+				let left_start   = left_padding;
+				let top_padding  = box_size/2;
+				let top_start    = top_padding;
+				let y_index      = index % x_count;
+				let x_index      = ( index-y_index )/x_count;
+				
+				let css_dict = {
+					'width'  : box_size,
+					'height' : box_size,
+					'top'    : top_start+y_index*( top_padding+box_size ),
+					'left'   : left_start+x_index*( box_size+left_padding )
+				}
+				return( css_dict );
 			}
 		}
 		
@@ -861,7 +949,7 @@
 			submin_btn();
 		}
 		
-		//now
+		
 		function submin_btn()
 		{
 			let src     = now_src;
@@ -1555,12 +1643,13 @@
 		}
 		
 		//ajax
-		function get_data( post_data, work_func )
+		function get_data( post_data, work_func, async=true )
 		{
 			$.ajax({
 				url     : php_path,
 				data    : post_data,
-				type    :'post',
+				type    : 'post',
+				async   : async,
 				success : function(output){
 					const mydata = to_dict(output);
 					work_func(mydata);

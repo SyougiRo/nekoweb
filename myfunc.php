@@ -1297,6 +1297,26 @@
 		echo $return_txt;
 	}
 
+	function gat_img_array()
+	{
+		$user_id = $_POST['user_id'];
+
+		$return_txt = json_encode(
+			array(
+				'user_id' => $user_id
+				)
+		);
+
+		$cat_id = get_CatArray_form_UserId($user_id);
+
+		$return_txt = json_encode(
+			$cat_id
+		);
+
+		echo $return_txt;
+
+	}
+
     if(isset($_POST['action']))
     {
         $action = $_POST['action'];
@@ -1309,6 +1329,7 @@
 			case 'get_src':return(get_src());
 			case 'get_address_list':return(get_address_list());
 			case 'save_data':return(save_data());
+			case 'gat_img_array':return(gat_img_array());
         }
     }
 ?>

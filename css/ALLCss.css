@@ -64,6 +64,25 @@
     height: auto;
 }
 
+.img_list_box{
+	margin: 0px;
+	padding: 0px;
+	text-align : center;
+	background: #726F6F;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.img_list{
+	margin: 0px;
+	padding: 0px;
+	max-height: 100%;  
+    max-width: 100%;
+	width: auto;
+    height: auto;
+}
+
 #testshow_img{
 	margin: 0px;
 	padding: 0px;

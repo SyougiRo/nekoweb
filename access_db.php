@@ -286,6 +286,21 @@
         return($res);
     }
 
+    function get_CatArray_form_UserId($user_id)
+    {
+        $table_name = 'test.cat';
+
+        $work='search';
+
+        $data=[
+            'user_id' => $user_id,
+        ];
+
+        $output = do_data( $table_name,$work,$data)->toArray();
+
+        return($output);
+    }
+
     function do_formet($txt)
     {
         $len = mb_strlen($txt);
@@ -299,4 +314,6 @@
         
         return($output_txt);
     }
+
+    
 ?>
