@@ -582,10 +582,20 @@
 			
 			if(monitor_ver_check())
 			{
-				let box_size     = mbox_width/( x_count+( ( x_count+1 )/2 ) );
-				let left_padding = box_size/2;
+				let box_size;
+				let box_size_w    = mbox_width/( x_count+( ( x_count+1 )/2 ) );
+				let box_size_h    = mbox_height/( (x_count-1)+( ( x_count-1 )/2 ) );
+				if(box_size_w>box_size_h)
+				{
+					box_size = box_size_h;
+				}
+				else
+				{
+					box_size = box_size_w;
+				}
+				let left_padding = ( mbox_width-( box_size*x_count ) )/( x_count+1 );
 				let left_start   = left_padding;
-				let top_padding  = (mbox_height-( box_size*4 ))/x_count;
+				let top_padding  = ( mbox_height-( box_size*( x_count-1 ) ) )/x_count;
 				let top_start    = top_padding;
 				let x_index      = index % x_count;
 				let y_index      = ( index-x_index )/x_count;
@@ -600,10 +610,20 @@
 			}
 			else
 			{
-				let box_size     = mbox_height/( x_count+( ( x_count+1 )/2 ) );
-				let left_padding = (mbox_width-( box_size*4 ))/x_count;
+				let box_size;
+				let box_size_w    = mbox_width/( (x_count-1)+( ( x_count-1 )/2 ) );
+				let box_size_h    = mbox_height/( x_count+( ( x_count+1 )/2 ) );
+				if(box_size_w>box_size_h)
+				{
+					box_size = box_size_h;
+				}
+				else
+				{
+					box_size = box_size_w;
+				}
+				let left_padding = ( mbox_width-( box_size*( x_count-1 ) ) )/x_count;
 				let left_start   = left_padding;
-				let top_padding  = box_size/2;
+				let top_padding  = ( mbox_height-( box_size*x_count ) )/( x_count+1 );
 				let top_start    = top_padding;
 				let y_index      = index % x_count;
 				let x_index      = ( index-y_index )/x_count;
