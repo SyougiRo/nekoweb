@@ -111,10 +111,10 @@
 				$('#check').css( check_btn_resize() );
 			}
 			
-			if( $('#map').length )
+			if( $('.gps_box').length )
 			{
 				//console.log(map_resize());
-				$('#map').css( map_resize() );
+				$('.gps_box').css( map_resize() );
 			}
 			
 			for( let ver_index  =0; ver_index < 3; ver_index++ )
@@ -533,7 +533,7 @@
 				$('#acct').click();
 			}
 		}
-		//now
+
 		function get_CatImg_list()
 		{
 			let mbox    = $('#thr_box');
@@ -552,14 +552,24 @@
 		function make_CatImg_list(input)
 		{
 			let mbox    = $('#thr_box');
+			let btn_css = sec_btn_resize(2,4);
+			
 			let len = input.length;
 			$.each(input,function( key, value ){
-				console.log(key,value['color']);
-				let src = value['src'];				
-				let box = $('<div style="height:20%;width:20%" class="img_list_box pritest abs"></div>');
-				let img = $('<img class="img_list" src="'+ src +'" />');
+				//console.log(key,value['color']);
+				let src   = value['src'];
+				let color = value['color'];
+				let tnr   = value['tnr'];
+				let lat   = value['gps'][0];
+				let lng   = value['gps'][1];
+				let box   = $('<div style="top:'+btn_css.top+'px;left:'+btn_css.left+'px;height:0px;width:0px" class="img_list_box pritest abs"></div>');
+				let img   = $('<img class="img_list" src="'+ src +'" />');
 				mbox.append(box.append(img));
-				box.animate(CatImg_list_resize(key,len));
+				box.animate(CatImg_list_resize(key,len),500,function(){
+					box.click(function(){
+						make_submin_btn( src, color, tnr, lat, lng ,UpCatList_func);
+					});
+				});
 			});
 		}
 		
@@ -846,7 +856,6 @@
 			let btn_css  = sec_btn_resize( 0, $('.sec_btn').length );
 			
 			make_thr_box( btn_css.top+btn_css.height/2, btn_css.left+btn_css.width/2, make_img_box );
-			submin_btn();
 		}
 		
 		function color_func()
@@ -859,7 +868,6 @@
 			let btn_css  = sec_btn_resize( 1, $('.sec_btn').length );
 			
 			make_thr_box( btn_css.top+btn_css.height/2, btn_css.left+btn_css.width/2, make_catColor_box );
-			submin_btn();
 		}
 		
 		function tnr_func()
@@ -872,7 +880,6 @@
 			let btn_css  = sec_btn_resize(2,$('.sec_btn').length);
 
 			make_thr_box( btn_css.top+btn_css.height/2, btn_css.left+btn_css.width/2, make_tnr_chose_box );
-			submin_btn();
 		}
 		
 		function make_tnr_chose_box()
@@ -943,7 +950,7 @@
 			if( elem.hasClass('tnr_check') )
 			{
 				$('.tnr_chose').removeClass('tnr_check');
-				
+				$('#tnr').removeClass('isok');
 			}
 			else
 			{
@@ -951,6 +958,7 @@
 				elem.addClass('tnr_check');
 				session.setItem( 'is_tnr', elem.attr('is_tnr') );
 				$('#tnr').addClass('isok');
+				submin_btn();
 			}
 			console.log('after',session.getItem('is_tnr'));
 		}
@@ -966,7 +974,6 @@
 			let btn_css  = sec_btn_resize( 3, $('.sec_btn').length );
 
 			make_thr_box( btn_css.top+btn_css.height/2, btn_css.left+btn_css.width/2, make_gps_box );
-			submin_btn();
 		}
 		
 		
@@ -975,25 +982,54 @@
 			let src     = now_src;
 			let color   = session.getItem('cat_color');
 			let tnr     = session.getItem('is_tnr');
-			let pgs     = [ session.getItem('lat'), session.getItem('lng') ];
+			let gps     = [ session.getItem('lat'), session.getItem('lng') ];
 			
-			if(src && color && tnr && pgs[0])
+			if(src && color && tnr && gps[0])
 			{
-				make_submin_btn();
-				console.log('all ok',src,color,tnr,pgs);
+				make_submin_btn(src,color,tnr,session.getItem('lat'),session.getItem('lng'),submit_func);
+				console.log('all ok',src,color,tnr,gps);
 			}
 			else
 			{
 				console.log('not ok');
 			}
 		}
+		//now  
+		function make_submin_btn( src, color, tnr, lat, lng, func )
+		{
+			console.log(src, color, tnr, lat, lng);
+			$('#thr_box *').remove();
+			$('*').finish();
+			$('.sec_btn').removeClass('check');
+			$('#map').remove();
+			let mbox       = $('#thr_box');
+			let img_box    = $('<div class="abs" id="check_img"><img src="'+src+'"></div>');
+			let color_box  = $('<div class="abs" id="check_color"><img src="img/color/'+color+'.png"></div>');
+			let tnr_check  = $('<div class="abs" id="check_tnr">'+tnr+'</div>');
+			let map_check  = $('<div id="map" class="gps_check" class="abs pritest"></div>');
+			let submit_btn = $('<input id="check_btn" type="button" value="btn">');
+			
+			mbox.append(map_check).append(color_box).append(tnr_check).append(img_box).append(submit_btn);
+			submit_btn.click(func);
+			map_reset( lat, lng );
+		}
 		
-		function make_submin_btn()
-		{			
-			$('#form_btn').remove();
-			let btn = $('<input type="button" id="form_btn" value="submin" class="abs" style="top:50%;right:10px">');
-			$('#thr_box').append(btn);
-			btn.click(submit_func);
+		function map_reset( lat, lng )
+		{
+			map = null;
+			var latlng = new google.maps.LatLng( lat, lng );
+			
+					
+			var Options = {
+				zoom      : 13,      //地図の縮尺値
+				center    : latlng,  //地図の中心座標
+				mapTypeId : 'roadmap'   //地図の種類
+			};
+			
+			
+			map = new google.maps.Map( document.getElementById('map'), Options );
+			make_maker( lat, lng );
+			
 		}
 		
 		function submit_func()
@@ -1196,6 +1232,10 @@
 			$('.sec_btn').removeClass('isok');
 			
 			session.removeItem('cat_color');
+			session.removeItem('is_tnr');
+			session.removeItem('lat');
+			session.removeItem('lng');
+			now_src = null;
 			
 			if( input.files && input.files[0] )
 			{
@@ -1248,9 +1288,8 @@
 			if( MyLatLng )
 			{
 				$('.check:not(.menu_btn)').addClass('isok');
-				$('#color').click();
 				session.setItem('lat',MyLatLng.lat());
-				session.setItem('lng',MyLatLng.lat());
+				session.setItem('lng',MyLatLng.lng());
 				submin_btn();
 			}
 			else
@@ -1297,7 +1336,7 @@
 		}
 		
 		function make_catColor_box()
-		{
+		{console.log('do color');
 			let ver_count   = 3;
 			let color_count = [ 7, 6, 6 ];
 			let css_dict    = sec_box_resize();
@@ -1379,6 +1418,8 @@
 				session.setItem( 'cat_color', elem.attr('id') );
 				
 				$('#color').addClass('isok');
+				
+				submin_btn();
 			}
 		}
 		
@@ -1489,11 +1530,13 @@
 				if((GPSLatitude != undefined) && (GPSLongitude != undefined)){
 					var GPSLatitude_t       = GPSLatitude[0]['numerator'];
 					var GPSLatitude_m       = GPSLatitude[1]['numerator']/GPSLatitude[1]['denominator'];
-					let GPSLatitude_only_t  = GPSLatitude_t+GPSLatitude_m/60;
+					var GPSLatitude_s       = GPSLatitude[2]['numerator']/GPSLatitude[2]['denominator'];
+					let GPSLatitude_only_t  = GPSLatitude_t+GPSLatitude_m/60+GPSLatitude_s/3600;
 					
 					var GPSLongitude_t      = GPSLongitude[0]['numerator'];
 					var GPSLongitude_m      = GPSLongitude[1]['numerator']/GPSLatitude[1]['denominator'];
-					let GPSLongitude_only_t = GPSLongitude_t+GPSLongitude_m/60;
+					var GPSLongitude_s      = GPSLongitude[2]['numerator']/GPSLatitude[2]['denominator'];
+					let GPSLongitude_only_t = GPSLongitude_t+GPSLongitude_m/60+GPSLongitude_s/3600;
 					
 					$('#data_base').attr( 'gps-data-check', 1 );
 					MyLatLng = new google.maps.LatLng( GPSLatitude_only_t, GPSLongitude_only_t );
@@ -1518,7 +1561,7 @@
 			let top         = ( btn_css.top+btn_css.height/2 )-thr_box_css.top;
 			let left        = ( btn_css.left+btn_css.width/2 )-thr_box_css.left;
 			
-			let map_box     = $('<div id="map" style="top:'+ top +'px;left:'+ left +'px;height:0px;wight:0px;" class="abs pritest"></div>');
+			let map_box     = $('<div id="map" class="gps_box" style="top:'+ top +'px;left:'+ left +'px;height:0px;wight:0px;" class="abs pritest"></div>');
 			
 			$('#thr_box').append(map_box);
 			
@@ -1528,12 +1571,12 @@
 		function initMap(){
 			var nowLatLng;
 			
-			var latlng = new google.maps.LatLng( 34.7577336, 134.966988 );
+			var latlng = new google.maps.LatLng( now_GPSLatitude, now_GPSLongitude );
 			
 			if( MyLatLng )
 			{
 				var Options = {
-					zoom      : 8,      //地図の縮尺値
+					zoom      : 15,      //地図の縮尺値
 					center    : MyLatLng,  //地図の中心座標
 					mapTypeId : 'roadmap'   //地図の種類
 				};
@@ -1541,7 +1584,7 @@
 			else
 			{				
 				var Options = {
-					zoom      : 8,      //地図の縮尺値
+					zoom      : 10,      //地図の縮尺値
 					center    : latlng,  //地図の中心座標
 					mapTypeId : 'roadmap'   //地図の種類
 				};
@@ -1608,7 +1651,7 @@
 		}
 		
 		function get_position_error(err) {
-			console.warn(`ERROR(${err.code}): ${err.message}`);
+			//console.log('ERROR('+err.code+'): '+err.message);
 		}
 		
 		function remove_maker()

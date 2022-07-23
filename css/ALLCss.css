@@ -64,6 +64,18 @@
     height: auto;
 }
 
+#check_btn{
+    width: 10%;
+    height: 10%;
+    top: 45%;
+    left: 85%;
+    border-radius: 50%;
+    font-size: large;
+    -webkit-box-shadow: 2% 2% 1% 2% rgba(0,0,0,1.00);
+    box-shadow: 2% 2% 1% 2% rgba(0,0,0,1.00);
+    position: absolute;
+}
+
 .img_list_box{
 	margin: 0px;
 	padding: 0px;
@@ -83,6 +95,56 @@
     height: auto;
 }
 
+#check_img{
+	margin: 0px;
+	top:5%;
+	left:5%;
+	padding: 0px;
+	width: 40%;
+	height: 40%;
+	text-align : center;
+	background: #726F6F;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#check_img img{
+	margin: 0px;
+	padding: 0px;
+	max-height: 100%;  
+    max-width: 100%;
+	width: auto;
+    height: auto;
+}
+
+#check_tnr{
+	top:5%;
+	left:50%;
+	width: 20%;
+	height: 20%;
+}
+
+#check_color{
+	top:5%;
+	left:75%;
+	width: 20%;
+	height: 20%;
+	text-align : center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#check_color img{
+	margin: 0px;
+	padding: 0px;
+	max-height: 100%;  
+    max-width: 100%;
+	width: auto;
+    height: auto;
+}
+
 #testshow_img{
 	margin: 0px;
 	padding: 0px;
@@ -90,6 +152,13 @@
     max-width: 100%;
 	width: auto;
     height: auto;
+}
+
+.gps_check{
+	top:55%;
+	left:5%;
+	width: 40%;
+	height: 40%;
 }
 
 .check{
