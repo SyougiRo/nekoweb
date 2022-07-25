@@ -261,7 +261,7 @@
 			
 			if($.cookie('user_id'))
 			{
-				console.log($.cookie('user_id'));
+				//console.log($.cookie('user_id'));
 			}
 			else
 			{
@@ -292,7 +292,7 @@
 			
 			if($.cookie('user_id'))
 			{
-				console.log($.cookie('user_id'));
+				//console.log($.cookie('user_id'));
 			}
 			else
 			{
@@ -997,7 +997,7 @@
 		//now  
 		function make_submin_btn( src, color, tnr, lat, lng, func )
 		{
-			console.log(src, color, tnr, lat, lng);
+			//console.log(src, color, tnr, lat, lng);
 			$('#thr_box *').remove();
 			$('*').finish();
 			$('.sec_btn').removeClass('check');
@@ -1336,7 +1336,7 @@
 		}
 		
 		function make_catColor_box()
-		{console.log('do color');
+		{
 			let ver_count   = 3;
 			let color_count = [ 7, 6, 6 ];
 			let css_dict    = sec_box_resize();
@@ -1739,13 +1739,7 @@
 			now_position();
 			session.clear();
 			session.setItem( 'key', 'test' );
-			
 			start();
-			
 		});
-			
-
-
-
 	</script>
 </html>
