@@ -3,6 +3,7 @@
     $bulk = null;
     $writeConcern = null;
     $access_is_ok = false;
+    $database = 'test'
 
     function access_db()
     {
@@ -83,7 +84,8 @@
 
     function add_user($Email,$pwd,$is_root,$user_name)
     {
-        $table_name = 'test.user';
+        global $database;
+        $table_name = $database.'.user';
 
         $work = 'insert';
 
@@ -101,7 +103,8 @@
 
     function add_cat_data($src, $color, $tnr, $gps, $user_id)
     {
-        $table_name = 'test.cat';
+        global $database;
+        $table_name = $database.'.cat';
 
         $work = 'insert';
 
@@ -130,7 +133,8 @@
 
     function check_img_only($src)
     {
-        $table_name = 'test.cat';
+        global $database;
+        $table_name = $database.'.cat';
 
         $work = 'search';
 
@@ -153,7 +157,8 @@
 
     function get_cat_data($cat_data)
     {
-        $table_name = 'test.cat';
+        global $database;
+        $table_name = $database.'.cat';
 
         $work = 'search';
 
@@ -175,7 +180,8 @@
 
     function Email_and_Pwd_get_user_id($Email,$pwd)
     {
-        $table_name = 'test.user';
+        global $database;
+        $table_name = $database.'.user';
 
         $work='search';
         
@@ -201,8 +207,9 @@
     
     function add_tag_log($user_id,$gps,$time,$img_src,$address)
     {
+        global $database;
+        $table_name = $database.'.taglog';
 
-        $table_name = 'test.taglog';
         $work = 'insert';
 
         $taglog = [
@@ -222,7 +229,8 @@
 
     function UserId_get_ImgSrc($user_id)
     {
-        $table_name = 'test.taglog';
+        global $database;
+        $table_name = $database.'.taglog';
 
         $work='search';
 
@@ -244,7 +252,8 @@
 
     function get_NoDealLog()
     {
-        $table_name = 'test.taglog';
+        global $database;
+        $table_name = $database.'.taglog';
 
         $work='search';
 
@@ -271,7 +280,8 @@
 
     function ImgId_get_ImgSrc($img_id)
     {
-        $table_name = 'test.taglog';
+        global $database;
+        $table_name = $database.'.taglog';
 
         $work='search';
 
@@ -288,7 +298,8 @@
 
     function get_CatArray_form_UserId($user_id)
     {
-        $table_name = 'test.cat';
+        global $database;
+        $table_name = $database.'.cat';
 
         $work='search';
 
