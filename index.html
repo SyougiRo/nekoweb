@@ -417,12 +417,13 @@
 			let top     = btn_css.top;
 			let left    = btn_css.left;
 			
-			let box = $('<div class="login abs pritest" id="login" style="top:'+ top +'px;left:'+ left +'px;width:0px;height:0px;"><samp>email:&nbsp;&nbsp;&nbsp;<input type="email" id="email_input" placeholder="sample@gmail.com"></samp><samp>password:<input type="password" id="password_input"></samp><input id="login_btn" type="submit"></div>');
+			let box = $('<div class="login abs pritest" id="login" style="top:'+ top +'px;left:'+ left +'px;width:0px;height:0px;"><samp>email:&nbsp;&nbsp;&nbsp;<input type="email" id="email_input" placeholder="sample@gmail.com"></samp><samp>password:<input type="password" id="password_input"></samp><input id="new_user_btn" type="submit" value="新しい使用者"><input id="login_btn" type="submit"　value="登録"></div>');
 			
 			$('#thr_box').append(box);
 			
 			box.animate( login_box_resize(), 500, function(){ 
-				$('#login_btn').click(check_login); 
+				$('#login_btn').click(check_login);
+				$('#new_user_btn').click(add_new_user); 
 			});
 		}
 		
@@ -440,8 +441,19 @@
 			
 			//console.log("do login");
 		}
+		//now
+		function add_new_user()
+		{
+			$('#thr_box *').remove();
+			const user_name_box  = $('<div id="userName_input"><samp>名称</samp><input type="txt"></div>');
+			const user_email_box = $('<div id="userEmail_input"><samp>E-mail</samp><input type="txt" placeholder="sample@gmail.com"></div>');
+			const user_pwd_box   = $('<div id="userPwd_input"><samp>パスワード</samp><input type="txt"></div>');
+			const submit_btn     = $('<input type="submit" id="submit_user_info" value="登録">');
+			$('#thr_box').append(user_name_box).append(user_email_box).append(user_pwd_box).append(submit_btn);
+			
+		}
 		
-		function check_login_func(input)
+		function check_login_func(input)    
 		{
 			const user_id = input['user_id'].$oid
 			//console.log(user_id);
@@ -994,7 +1006,7 @@
 				console.log('not ok');
 			}
 		}
-		//now  
+		
 		function make_submin_btn( src, color, tnr, lat, lng, func )
 		{
 			//console.log(src, color, tnr, lat, lng);
@@ -1057,6 +1069,7 @@
 		function submit_check(input)
 		{
 			console.log(input);
+			alert('転送しました。');
 		}
 		
 		function sec_btn_resize(index,len)

@@ -208,6 +208,13 @@
 }
 
 #login_btn{
-	margin-left : 79%;
-    margin-top  : 15%;
+	position : absolute;
+	right    : 10px;
+    bottom   : 10px;
+}
+
+#new_user_btn{
+	position : absolute;
+	left     : 10px;
+    bottom   : 10px;
 }
