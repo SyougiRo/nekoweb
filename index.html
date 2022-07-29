@@ -591,73 +591,31 @@
 			let mbox_css    = thr_box_resize();
 			let mbox_width  = mbox_css.width;
 			let mbox_height = mbox_css.height;
-			let x_count     = 5;
-			
-			while (true)
-			{
-				if(len<x_count*( x_count-1 ))
-				{
-					break;
-				}
-				x_count++;
-			}
 			
 			if(monitor_ver_check())
 			{
-				let box_size;
-				let box_size_w    = mbox_width/( x_count+( ( x_count+1 )/2 ) );
-				let box_size_h    = mbox_height/( (x_count-1)+( ( x_count-1 )/2 ) );
-				if(box_size_w>box_size_h)
-				{
-					box_size = box_size_h;
-				}
-				else
-				{
-					box_size = box_size_w;
-				}
-				let left_padding = ( mbox_width-( box_size*x_count ) )/( x_count+1 );
-				let left_start   = left_padding;
-				let top_padding  = ( mbox_height-( box_size*( x_count-1 ) ) )/x_count;
-				let top_start    = top_padding;
-				let x_index      = index % x_count;
-				let y_index      = ( index-x_index )/x_count;
-				
-				let css_dict = {
-					'width'  : box_size,
-					'height' : box_size,
-					'top'    : top_start+y_index*( top_padding+box_size ),
-					'left'   : left_start+x_index*( box_size+left_padding )
-				}
-				return( css_dict );
+				var cont     = 5;				
 			}
 			else
 			{
-				let box_size;
-				let box_size_w    = mbox_width/( (x_count-1)+( ( x_count-1 )/2 ) );
-				let box_size_h    = mbox_height/( x_count+( ( x_count+1 )/2 ) );
-				if(box_size_w>box_size_h)
-				{
-					box_size = box_size_h;
-				}
-				else
-				{
-					box_size = box_size_w;
-				}
-				let left_padding = ( mbox_width-( box_size*( x_count-1 ) ) )/x_count;
-				let left_start   = left_padding;
-				let top_padding  = ( mbox_height-( box_size*x_count ) )/( x_count+1 );
-				let top_start    = top_padding;
-				let y_index      = index % x_count;
-				let x_index      = ( index-y_index )/x_count;
-				
-				let css_dict = {
-					'width'  : box_size,
-					'height' : box_size,
-					'top'    : top_start+y_index*( top_padding+box_size ),
-					'left'   : left_start+x_index*( box_size+left_padding )
-				}
-				return( css_dict );
+				var cont     = 3;
 			}
+			
+			let box_size     = mbox_width/( cont+( (cont-1)/2 )+2 );
+			let left_padding = box_size/2;
+			let left_start   = (mbox_width-box_size*(cont+( (cont-1)/2 )))/2;
+			let top_padding  = left_start;
+			let top_start    = top_padding;
+			let x_index      = index % cont;
+			let y_index      = ( index-x_index )/cont;
+
+			let css_dict     = {
+				'width'  : box_size,
+				'height' : box_size,
+				'top'    : top_start+y_index*( top_padding+box_size ),
+				'left'   : left_start+x_index*( box_size+left_padding )
+			}
+			return( css_dict );
 		}
 		
 		function UpLog_func()
