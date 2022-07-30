@@ -218,3 +218,32 @@
 	left     : 10px;
     bottom   : 10px;
 }
+
+#addUser{
+	display: flex;
+	align-items     : center                ;
+	flex-wrap       : wrap                  ;
+	align-content   : center                ;
+	justify-content : center                ;
+	border-style    : groove                ;
+	border-width    : 5px                   ;
+	border-color    : #939699               ;
+	background-color: rgba(240,240,240,1.00);
+}
+
+.addUser_div{
+	margin-top: 10px;
+	top      : auto;
+	clear    : left;
+	width    : 95%;
+}
+
+#submit_user_info{
+	right: 3%;
+	bottom: 3%;
+}
+
+.addUser_div input{
+	width: 60%;
+    right: 1%;	
+}

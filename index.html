@@ -132,6 +132,11 @@
 				$('#login').css( login_box_resize() );
 			}
 			
+			if( $('#addUser').length )
+			{
+				$('#addUser').css( login_box_resize() );
+			}
+			
 			$.each($('.img_list_box'),function(key,value){
 				let len = $('.img_list_box').length;
 				$(value).css( CatImg_list_resize( key, len ) );
@@ -445,11 +450,15 @@
 		function add_new_user()
 		{
 			$('#thr_box *').remove();
-			const user_name_box  = $('<div id="userName_input"><samp>名称</samp><input type="txt"></div>');
-			const user_email_box = $('<div id="userEmail_input"><samp>E-mail</samp><input type="txt" placeholder="sample@gmail.com"></div>');
-			const user_pwd_box   = $('<div id="userPwd_input"><samp>パスワード</samp><input type="txt"></div>');
-			const submit_btn     = $('<input type="submit" id="submit_user_info" value="登録">');
-			$('#thr_box').append(user_name_box).append(user_email_box).append(user_pwd_box).append(submit_btn);
+			const box = $('<div id="addUser" class="abs box"></div>');
+			const user_name_box  = $('<div class="addUser_div" id="userName_input"><samp>名前&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</samp><input class="abs" type="txt"></div>');
+			const user_email_box = $('<div class="addUser_div" id="userEmail_input"><samp>E-mail&nbsp;&nbsp;&nbsp;</samp><input class="abs" type="txt" placeholder="sample@gmail.com"></div>');
+			const user_pwd_box   = $('<div class="addUser_div" id="userPwd_input"><samp>パスワード</samp><input class="abs" type="txt"></div>');
+			const submit_btn     = $('<input class="addUser_btn abs" type="submit" id="submit_user_info" value="登録">');
+			
+			box.append(user_name_box).append(user_email_box).append(user_pwd_box).append(submit_btn);
+			$('#thr_box').append(box);
+			box.animate(login_box_resize());
 			
 		}
 		
