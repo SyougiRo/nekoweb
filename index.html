@@ -450,7 +450,10 @@
 		function add_new_user()
 		{
 			$('#thr_box *').remove();
-			const box = $('<div id="addUser" class="abs box"></div>');
+			const btn_css = sec_btn_resize( 0, 4 );
+			const top     = btn_css.top;
+			const left    = btn_css.left;
+			const box = $('<div id="addUser" class="abs box" style="top:'+top+'px;left:'+left+'px;width:0px;height:0px"></div>');
 			const user_name_box  = $('<div class="addUser_div" id="userName_input"><samp>名前&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</samp><input class="abs" type="txt"></div>');
 			const user_email_box = $('<div class="addUser_div" id="userEmail_input"><samp>E-mail&nbsp;&nbsp;&nbsp;</samp><input class="abs" type="txt" placeholder="sample@gmail.com"></div>');
 			const user_pwd_box   = $('<div class="addUser_div" id="userPwd_input"><samp>パスワード</samp><input class="abs" type="txt"></div>');
