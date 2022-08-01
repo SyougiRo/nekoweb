@@ -5,7 +5,6 @@ import json
 def func():
     output = {}
     input_json = sys.argv[1]
-    print(input_json)
     input_dict = json.loads(input_json)
     geolocator = Nominatim(user_agent="geoapiExercises")
     location = geolocator.reverse(str(input_dict['lat'])+","+str(input_dict['lng']))

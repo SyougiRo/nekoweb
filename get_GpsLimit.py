@@ -55,7 +55,10 @@ def get_rimit_DD(DD):  #取得300公尺時的經緯度極限值
     return Latitude_DD_rimit,Longitude_DD_rimit #回傳經緯度各自的距離差及兩端的經緯度
 
 def do_print():
-    DD = (float(sys.argv[1]),float(sys.argv[2]))
+    output = {}
+    input_json = sys.argv[1]
+    input_dict = json.loads(input_json)
+    DD = (float(input_dict['lat']),float(input_dict['lng']))
     limit = get_rimit_DD(DD)
     gps_dict = {
         'lat_km'  : limit[0][0],

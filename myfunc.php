@@ -1,5 +1,22 @@
 <?php
 	include('access_db.php');
+
+	function dogeopy()
+	{
+		$gps = $_POST['gps'];
+		$str_command = 'python3 dogeopy.py {\"lat\":'+$gps[0]+',\"lng\":'+$gps[1]+'}';
+		exec($str_command,$output_json);
+		$data = json_decode($output_json[0]);
+	}
+
+	function getGpsLimit()
+	{
+		$gps = $_POST['gps'];
+		$str_command = 'python3 get_GpsLimit.py {\"lat\":'+$gps[0]+',\"lng\":'+$gps[1]+'}';
+		exec($str_command,$output_json);
+		$data = json_decode($output_json[0]);
+	}
+
     function test_func()
     {
         $val_a = $_POST['val_a'];
@@ -1275,7 +1292,7 @@
 		$src     = $_POST['src'];
 		$color   = $_POST['color'];
 		$tnr     = $_POST['tnr'];
-		$gps     = $_POST['pgs'];
+		$gps     = $_POST['gps'];
 		$user_id = $_POST['user_id'];
 
 		$return_txt = json_encode(
@@ -1283,7 +1300,7 @@
 				'src'     => $src,
 				'color'   => $color,
 				'tnr'     => $tnr,
-				'pgs'     => $gps,
+				'gps'     => $gps,
 				'user_id' => $user_id
 				)
 		);

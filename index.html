@@ -1019,7 +1019,7 @@
 			let src     = now_src;
 			let color   = session.getItem('cat_color');
 			let tnr     = session.getItem('is_tnr');
-			let pgs     = [ session.getItem('lat'), session.getItem('lng') ];
+			let gps     = [ session.getItem('lat'), session.getItem('lng') ];
 			let user_id = $.cookie('user_id');
 			
 			const post_data = { 
@@ -1027,7 +1027,7 @@
 				src     : src,
 				color   : color,
 				tnr     : tnr,
-				pgs     : pgs,
+				gps     : gps,
 				user_id : user_id
 			};
 			
