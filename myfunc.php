@@ -1295,23 +1295,35 @@
 		$gps     = $_POST['gps'];
 		$user_id = $_POST['user_id'];
 
+		exec('python dogeopy.py {\"lat\":'.$gps['0'].',\"lng\":'.$gps['1'].'}',$testoutput);
+
+		$fu  = json_decode($testoutput[0])->{'fu'};
+		$fu  = base64_decode(str_replace(["b'","'"],"",$fu));
+		$shi = json_decode($testoutput[0])->{'shi'};
+		$shi = base64_decode(str_replace(["b'","'"],"",$shi));
+		$ku  = json_decode($testoutput[0])->{'ku'};
+		$ku  = base64_decode(str_replace(["b'","'"],"",$ku));
+
 		$return_txt = json_encode(
 			array(
 				'src'     => $src,
 				'color'   => $color,
 				'tnr'     => $tnr,
-				'gps'     => $gps,
-				'user_id' => $user_id
+				'lat'     => $gps['0'],
+				'lng'     => $gps['1'],
+				'user_id' => $user_id,
+				'fu'      => $fu,
+				'shi'     => $shi,
+				'ku'      => $ku
 				)
 		);
 
 		$cat_id = add_cat_data( $src, $color, $tnr, $gps, $user_id );
-
+		
 		$return_txt = json_encode(
 			$cat_id
 		);
-
-		echo $return_txt;
+		echo  $return_txt;
 	}
 
 	function gat_img_array()

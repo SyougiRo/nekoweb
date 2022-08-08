@@ -3,7 +3,7 @@
     $bulk = null;
     $writeConcern = null;
     $access_is_ok = false;
-    $database = 'test'
+    $database = 'test';
 
     function access_db()
     {

@@ -473,7 +473,7 @@
 			{
 				//console.log(user_id);
 				$.cookie('user_id',user_id);
-				$('#acct').click();
+				$('#cat_form').click();
 			}
 			else
 			{
@@ -1691,6 +1691,7 @@
 		//ajax
 		function get_data( post_data, work_func, async=true )
 		{
+			console.log(post_data);
 			$.ajax({
 				url     : php_path,
 				data    : post_data,
@@ -1700,13 +1701,14 @@
 					const mydata = to_dict(output);
 					work_func(mydata);
 				},
-				error   : function(jqXHR){ alert(jqXHR); }
+				error   : function(jqXHR){ console.log(jqXHR); }
 			});
 		}
 		
 		function to_dict(input)
 		{
 			const jsondata = JSON.parse(input);
+			console.log(jsondata);
 			return(jsondata);
 		}
 		
