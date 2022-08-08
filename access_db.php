@@ -101,7 +101,7 @@
         return(1);
     }
 
-    function add_cat_data($src, $color, $tnr, $gps, $user_id)
+    function add_cat_data($src, $color, $tnr, $lat, $lng, $fu, $shi, $ku, $user_id)
     {
         global $database;
         $table_name = $database.'.cat';
@@ -116,11 +116,15 @@
         else
         {
             $cat_data = [
-                'user_id' => $user_id,
                 'src'     => $src,
                 'color'   => $color,
                 'tnr'     => $tnr,
-                'gps'     => $gps
+                'lat'     => $lat,
+                'lng'     => $lng,
+                'user_id' => $user_id,
+                'fu'      => $fu,
+                'shi'     => $shi,
+                'ku'      => $ku
             ];
 
             do_data($table_name,$work,$cat_data);

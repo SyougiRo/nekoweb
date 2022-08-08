@@ -1287,6 +1287,25 @@
 		echo $return_txt;
 	}
 
+	function buffer_file($txt)
+	{
+		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$charactersLength = strlen($characters);
+		$randomString = '';
+		$length = 10;
+		for ($i = 0; $i < $length; $i++) {
+			$randomString .= $characters[rand(0, $charactersLength - 1)];
+		}
+
+        $file_name = $randomString;
+
+		$myfile = fopen($file_name, "w") or die("Unable to open file!");
+		fwrite($myfile, $txt);
+		fclose($myfile);
+
+		return $file_name;
+	}
+
 	function save_data()
 	{
 		$src     = $_POST['src'];
@@ -1296,6 +1315,8 @@
 		$user_id = $_POST['user_id'];
 
 		exec('python dogeopy.py {\"lat\":'.$gps['0'].',\"lng\":'.$gps['1'].'}',$testoutput);
+		$file_name = buffer_file($src);
+		exec('python resizebase.py '.$file_name ,$resizebase);
 
 		$fu  = json_decode($testoutput[0])->{'fu'};
 		$fu  = base64_decode(str_replace(["b'","'"],"",$fu));
@@ -1303,22 +1324,24 @@
 		$shi = base64_decode(str_replace(["b'","'"],"",$shi));
 		$ku  = json_decode($testoutput[0])->{'ku'};
 		$ku  = base64_decode(str_replace(["b'","'"],"",$ku));
+		$lat = $gps['0'];
+		$lng = $gps['1'];
 
-		$return_txt = json_encode(
-			array(
-				'src'     => $src,
-				'color'   => $color,
-				'tnr'     => $tnr,
-				'lat'     => $gps['0'],
-				'lng'     => $gps['1'],
-				'user_id' => $user_id,
-				'fu'      => $fu,
-				'shi'     => $shi,
-				'ku'      => $ku
-				)
-		);
+		//$return_txt = json_encode(
+		//	array(
+		//		'src'     => $resizebase,
+		//		'color'   => $color,
+		//		'tnr'     => $tnr,
+		//		'lat'     => $gps['0'],
+		//		'lng'     => $gps['1'],
+		//		'user_id' => $user_id,
+		//		'fu'      => $fu,
+		//		'shi'     => $shi,
+		//		'ku'      => $ku
+		//		)
+		//);
 
-		$cat_id = add_cat_data( $src, $color, $tnr, $gps, $user_id );
+		$cat_id = add_cat_data( $resizebase, $color, $tnr, $lat, $lng, $fu, $shi, $ku, $user_id );
 		
 		$return_txt = json_encode(
 			$cat_id
