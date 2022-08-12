@@ -1313,6 +1313,12 @@
 		$tnr     = $_POST['tnr'];
 		$gps     = $_POST['gps'];
 		$user_id = $_POST['user_id'];
+		$is_first= $_POST['is_first'];
+		$cat_id = null;
+		if(isset($_POST['is_first']))
+		{
+			$cat_id = $_POST['cat_id'];
+		}
 
 		exec('python dogeopy.py {\"lat\":'.$gps['0'].',\"lng\":'.$gps['1'].'}',$testoutput);
 		$file_name = buffer_file($src);
@@ -1341,11 +1347,11 @@
 		//		)
 		//);
 
-		$cat_id = add_cat_data( $resizebase, $color, $tnr, $lat, $lng, $fu, $shi, $ku, $user_id );
-		
+		$cat_oid = add_cat_data( $resizebase[0], $color, $tnr, $lat, $lng, $fu, $shi, $ku, $user_id, $is_first,$cat_id);
 		$return_txt = json_encode(
-			$cat_id
+			$cat_oid
 		);
+		$return_txt = substr($return_txt,0,-1).',"func":"save"}';
 		echo  $return_txt;
 	}
 
@@ -1369,6 +1375,63 @@
 
 	}
 
+	function get_some_cat_array()
+	{
+		$color   = $_POST['color'];
+		$gps     = $_POST['gps'];
+
+		exec('python get_GpsLimit.py {\"lat\":'.$gps['0'].',\"lng\":'.$gps['1'].'}',$limitoutput);
+
+		$data = json_decode($limitoutput[0]);
+		$lat_min = $data -> {'lat_min'};
+		$lat_max = $data -> {'lat_max'};
+		$lng_min = $data -> {'lng_min'};
+		$lng_max = $data -> {'lng_max'};
+
+		$return_data = search_some_cat($color,$lat_min,$lat_max, $lng_min, $lng_max);
+
+		if(empty($return_data))
+		{
+			save_data();
+			return(1);
+		}
+		//echo json_encode(['test'=>'isok']);
+		//exit();
+		$return_txt = json_encode(
+			$return_data
+		);
+
+		echo $return_txt;
+	}
+
+	function CatId_get_cat_array()
+	{
+		$cat_id = $_POST['cat_id'];
+
+		$return_data = CatId_get_array($cat_id);
+
+		$return_txt = json_encode(
+			$return_data
+		);
+
+		echo $return_txt;
+	}
+
+	function add_new_user()
+	{
+		$user_name = $_POST['name'];
+		$user_email = $_POST['email'];
+		$user_pwd = $_POST['pwd'];
+
+		$user_id = add_user($user_name,$user_email,$user_pwd);
+
+		$return_txt = json_encode(
+			$user_id
+		);
+
+		echo $return_txt;
+	}
+
     if(isset($_POST['action']))
     {
         $action = $_POST['action'];
@@ -1382,6 +1445,9 @@
 			case 'get_address_list':return(get_address_list());
 			case 'save_data':return(save_data());
 			case 'gat_img_array':return(gat_img_array());
+			case 'get_some_cat_array':return(get_some_cat_array());
+			case 'CatId_get_cat_array':return(CatId_get_cat_array());
+			case 'add_new_user':return(add_new_user());
         }
     }
 ?>

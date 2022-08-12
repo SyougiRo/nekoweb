@@ -432,7 +432,7 @@
 			let top     = btn_css.top;
 			let left    = btn_css.left;
 			
-			let box = $('<div class="login abs pritest" id="login" style="top:'+ top +'px;left:'+ left +'px;width:0px;height:0px;"><samp>email:&nbsp;&nbsp;&nbsp;<input type="email" id="email_input" placeholder="sample@gmail.com"></samp><samp>password:<input type="password" id="password_input"></samp><input id="new_user_btn" type="submit" value="新しい使用者"><input id="login_btn" type="submit"　value="登録"></div>');
+			let box = $('<div class="login abs pritest" id="login" style="top:'+ top +'px;left:'+ left +'px;width:0px;height:0px;"><samp>E-mail:&nbsp;&nbsp;&nbsp;<input type="email" id="email_input" placeholder="sample@gmail.com"></samp><samp>パスワード:<input type="password" id="password_input"></samp><input id="new_user_btn" type="submit" value="新規登録"><input id="login_btn" type="submit"　value="登録"></div>');
 			
 			$('#thr_box').append(box);
 			
@@ -464,15 +464,37 @@
 			const top     = btn_css.top;
 			const left    = btn_css.left;
 			const box = $('<div id="addUser" class="abs box" style="top:'+top+'px;left:'+left+'px;width:0px;height:0px"></div>');
-			const user_name_box  = $('<div class="addUser_div" id="userName_input"><samp>名前&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</samp><input class="abs" type="txt"></div>');
-			const user_email_box = $('<div class="addUser_div" id="userEmail_input"><samp>E-mail&nbsp;&nbsp;&nbsp;</samp><input class="abs" type="txt" placeholder="sample@gmail.com"></div>');
-			const user_pwd_box   = $('<div class="addUser_div" id="userPwd_input"><samp>パスワード</samp><input class="abs" type="txt"></div>');
+			const user_name_box  = $('<div class="addUser_div" id="userName_input"><samp>名前:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</samp><input id="input_name" class="abs" type="txt"></div>');
+			const user_email_box = $('<div class="addUser_div" id="userEmail_input"><samp>E-mail:&nbsp;&nbsp;&nbsp;</samp><input id="input_email" class="abs" type="txt" placeholder="sample@gmail.com"></div>');
+			const user_pwd_box   = $('<div class="addUser_div" id="userPwd_input"><samp>パスワード:</samp><input id="input_password" class="abs" type="txt"></div>');
 			const submit_btn     = $('<input class="addUser_btn abs" type="submit" id="submit_user_info" value="登録">');
 			
 			box.append(user_name_box).append(user_email_box).append(user_pwd_box).append(submit_btn);
 			$('#thr_box').append(box);
 			box.animate(login_box_resize());
+			submit_btn.click(new_user);
 			
+		}
+		
+		function new_user()
+		{
+			const name = $('#input_name').val();
+			const email = $('#input_email').val();
+			const pwd = $('#input_password').val();
+			
+			const post_data   = {
+				action      : 'add_new_user',
+				name  : name,
+				email : email,
+				pwd:pwd
+			};
+			
+			let output = get_data(post_data,check_user);
+		}
+		
+		function check_user(input)
+		{
+			console.log(input);
 		}
 		
 		function check_login_func(input)    
@@ -978,7 +1000,7 @@
 			
 			if(src && color && tnr && gps[0])
 			{
-				make_submin_btn(src,color,tnr,session.getItem('lat'),session.getItem('lng'),submit_func);
+				make_submin_btn(src,color,tnr,session.getItem('lat'),session.getItem('lng'),get_some_cat_list);
 				console.log('all ok',src,color,tnr,gps);
 			}
 			else
@@ -1024,7 +1046,7 @@
 			
 		}
 		
-		function submit_func()
+		function get_some_cat_list()
 		{
 			let src     = now_src;
 			let color   = session.getItem('cat_color');
@@ -1033,12 +1055,155 @@
 			let user_id = $.cookie('user_id');
 			
 			const post_data = { 
+				action  : "get_some_cat_array",
+				src     : src,
+				color   : color,
+				tnr     : tnr,
+				gps     : gps,
+				user_id : user_id,
+				is_first: 'true'
+			};
+			
+			const work_func = show_some_cat_list;
+				
+			get_data( post_data, work_func);
+		}
+		
+		function show_some_cat_list(input)
+		{
+			if(input['func'] == 'save')
+			{
+				console.log('save');
+				alert('完了しました');
+				$('#cat_form').click();
+			}
+			else
+			{
+				console.log(input);
+				$('#thr_box *').remove();
+				let mbox    = $('#thr_box');
+				let btn_css = sec_btn_resize(2,4);
+
+				let len = input.length;
+				$.each(input,function( key, value ){
+					console.log(key,value['color']);
+					let src   = value['src'];
+					let color = value['color'];
+					let tnr   = value['tnr'];
+					let lat   = value['lat'];
+					let lng   = value['lng'];
+					let cat_id= value['_id'].$oid;
+					let box   = $('<div style="top:'+btn_css.top+'px;left:'+btn_css.left+'px;height:0px;width:0px" class="img_list_box pritest abs"></div>');
+					let img   = $('<img class="img_list" src="'+ src +'" />');
+					mbox.append(box.append(img));
+					box.css(CatImg_list_resize(key,len));
+					session.removeItem('cat_id');
+					box.click(function(){
+						get_same_cat(cat_id);
+						session.setItem( 'cat_id', cat_id );
+					});
+				});
+			}
+		}
+		
+		function get_same_cat(cat_id)
+		{
+			const post_data = { 
+				action : "CatId_get_cat_array",
+				cat_id : cat_id
+			};
+			
+			const work_func = show_cat_array;
+				
+			get_data( post_data, work_func);
+		}
+		
+		function show_cat_array(input)
+		{
+			console.log(input);
+			let under_box = $('<div id="show_some_cat" class="abs"></div>');
+			let show_box = $('<div id="show_some_cat_box" class="abs"></div>');
+			let scroll_box = $('<div id="scroll_box" class="abs"></div>');
+			let btn = $('<input id="show_some_cat_btn" class="abs" type="submit" val="転送"/>');
+			
+			show_box.append(scroll_box).append(btn);
+			under_box.append(show_box);
+			$('body').append(under_box);
+			let len = input.length;
+			$.each(input,function( key, value ){
+				let src   = value['src'];
+				let box   = $('<div style="top:0px;left:0px;height:0px;width:0px" class="img_list_box pritest abs"></div>');
+				let img   = $('<img class="img_list" src="'+ src +'" />');
+				scroll_box.append(box.append(img));
+				box.css(show_cat_box_css(key,len));
+			});
+			btn.click(submit_func);
+			under_box.click(function(e){
+				console.log($(e['target']).attr('id'));
+				if($(e['target']).attr('id')=='show_some_cat')
+				{
+					under_box.remove();
+				}
+			});
+		}
+		
+		function show_cat_box_css(index,len)
+		{
+			let cont = 1;
+			if(monitor_ver_check())
+			{
+				cont = 3;
+			}
+			
+			let height = parseFloat($('#scroll_box').css('height'));
+			let wight = parseFloat($('#scroll_box').css('width'));
+			console.log((cont-1)/2);
+			console.log((cont+((cont-1)/2)+1));
+			console.log($.type(wight));
+			console.log(wight/(cont+((cont-1)/2)+1));
+			const box_size = wight/(cont+((cont-1)/2)+1);
+			
+			if(box_size>wight*0.8)
+			{
+				box_size = wight*0.8;
+			}
+			
+			const left_padding = box_size/2;
+			const left_start = box_size/2;
+			const top_start = wight*0.1;
+			const top_padding = wight*0.1;
+			
+			const x_index = index % cont;
+			const y_index = (index-x_index)/cont;
+			
+			let css_dict     = {
+				'width'  : box_size,
+				'height' : box_size,
+				'top'    : top_start+y_index*( top_padding+box_size ),
+				'left'   : left_start+x_index*( box_size+left_padding )
+			}
+			
+			return( css_dict );
+		}
+		
+		function submit_func()
+		{
+			let src     = now_src;
+			let color   = session.getItem('cat_color');
+			let tnr     = session.getItem('is_tnr');
+			let gps     = [ session.getItem('lat'), session.getItem('lng') ];
+			let user_id = $.cookie('user_id');
+			let cat_id  = session.getItem('cat_id');
+			console.log(cat_id);
+			const post_data = { 
 				action  : "save_data",
 				src     : src,
 				color   : color,
 				tnr     : tnr,
 				gps     : gps,
-				user_id : user_id
+				user_id : user_id,
+				is_first: 'false',
+				cat_id  : cat_id
 			};
 			
 			const work_func = submit_check;
@@ -1049,7 +1214,9 @@
 		function submit_check(input)
 		{
 			console.log(input);
-			alert('転送しました。');
+			alert('完了しました');
+			$('#cat_form').click();
+			$('#show_some_cat').remove();
 		}
 		
 		function sec_btn_resize(index,len)
@@ -1708,8 +1875,8 @@
 		
 		function to_dict(input)
 		{
+			console.log(input);
 			const jsondata = JSON.parse(input);
-			console.log(jsondata);
 			return(jsondata);
 		}
 		

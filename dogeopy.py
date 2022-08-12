@@ -13,7 +13,7 @@ def func():
     for val in val_list:
         if(val[-1]=='区'):
             output['ku']=str(base64.b64encode(val.encode()))
-        elif(val[-1]=='市'):
+        elif(val[-1]=='市' or val[-1]=='郡'):
             output['shi']=str(base64.b64encode(val.encode()))
         elif(val[-1]=='府' or val[-1]=='県' or val=='北海道'):
             output['fu']=str(base64.b64encode(val.encode()))

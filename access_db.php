@@ -82,7 +82,12 @@
         $result = $manager->executeBulkWrite($table_name, $bulk, $writeConcern);
     }
 
-    function add_user($Email,$pwd,$is_root,$user_name)
+    function do_id($_id=null)
+    {
+        return new MongoDB\BSON\ObjectID($_id);
+    }
+
+    function add_user($Email,$pwd,$user_name)
     {
         global $database;
         $table_name = $database.'.user';
@@ -90,23 +95,62 @@
         $work = 'insert';
 
         $user_data = [
+            '_id' =>do_id(),
             'user_Email'=>$Email,
             'pwd'=>$pwd,
-            'is_root'=>$is_root,
+            'checker'=>null,
             'user_name'=>$user_name
         ];
 
-        do_data($table_name,$work,$user_data);
+        if(Email_and_Pwd_get_user_id($Email,$pwd)==0)
+        {
+            do_data($table_name,$work,$user_data);
 
-        return(1);
+            $output = Email_and_Pwd_get_user_id($Email,$pwd);
+
+            return($output);
+        }
+        else
+        {
+            return(0);
+        }        
     }
 
-    function add_cat_data($src, $color, $tnr, $lat, $lng, $fu, $shi, $ku, $user_id)
+    function search_some_cat($color,$lat_min,$lat_max, $lng_min, $lng_max)
+    {
+        global $database;
+        $table_name = $database.'.cat';
+
+        $work = 'search';
+        $data = [
+            'color'   => $color,
+            'lat'     => ['$gte'=>(string)$lat_min,'$lte'=>(string)$lat_max],
+            'lng'     => ['$gte'=>(string)$lng_min,'$lte'=>(string)$lng_max],
+            'isfirst' => 'true'
+        ];
+
+        $output = do_data($table_name,$work,$data)->toArray();
+
+        return($output);
+    }
+
+    function add_cat_data($src, $color, $tnr, $lat, $lng, $fu, $shi, $ku, $user_id,$is_first,$cat_id=null)
     {
         global $database;
         $table_name = $database.'.cat';
 
         $work = 'insert';
+
+        if($is_first=='true')
+        {
+            $cat_id=do_id();
+            $oid = $cat_id;
+        }
+        else
+        {
+            $oid = do_id();
+            $cat_id=do_id($cat_id);
+        }
 
         $data = check_img_only($src);
         if($data)
@@ -116,15 +160,18 @@
         else
         {
             $cat_data = [
+                '_id'     => $oid,
                 'src'     => $src,
                 'color'   => $color,
                 'tnr'     => $tnr,
                 'lat'     => $lat,
                 'lng'     => $lng,
+                'cat_id'  => $cat_id,
                 'user_id' => $user_id,
                 'fu'      => $fu,
                 'shi'     => $shi,
-                'ku'      => $ku
+                'ku'      => $ku,
+                'isfirst' => $is_first
             ];
 
             do_data($table_name,$work,$cat_data);
@@ -330,5 +377,22 @@
         return($output_txt);
     }
 
-    
+    function CatId_get_array($cat_id)
+    {
+        global $database;
+        $table_name = $database.'.cat';
+
+        $work='search';
+
+        $data=[
+            'cat_id' => do_id($cat_id),
+        ];
+        $opt=[
+            'projection' => ['src'=>1]
+        ];
+
+        $output = do_data( $table_name,$work,$data,$opt)->toArray();
+
+        return($output);
+    }
 ?>
