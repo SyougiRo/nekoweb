@@ -57,7 +57,10 @@
 		}
 		$user_id = Email_and_Pwd_get_user_id($email,$pwd);
 		
-		$return_txt = json_encode(array('user_id'=> $user_id ));
+		$return_txt = json_encode(
+			$user_id
+		);
+
 		echo $return_txt;
 	}
 
@@ -1315,10 +1318,21 @@
 		$user_id = $_POST['user_id'];
 		$is_first= $_POST['is_first'];
 		$cat_id = null;
-		if(isset($_POST['is_first']))
+		$ispass = 'true';
+		if($_POST['is_first']=='false')
 		{
 			$cat_id = $_POST['cat_id'];
 		}
+
+		if(isset($_POST['is_pass']))
+		{
+			$ispass = $_POST['is_pass'];
+		}
+
+		if($_POST['checker']=='null')
+        {
+            $ispass='false';
+        }
 
 		exec('python dogeopy.py {\"lat\":'.$gps['0'].',\"lng\":'.$gps['1'].'}',$testoutput);
 		$file_name = buffer_file($src);
@@ -1347,7 +1361,7 @@
 		//		)
 		//);
 
-		$cat_oid = add_cat_data( $resizebase[0], $color, $tnr, $lat, $lng, $fu, $shi, $ku, $user_id, $is_first,$cat_id);
+		$cat_oid = add_cat_data( $resizebase[0], $color, $tnr, $lat, $lng, $fu, $shi, $ku, $user_id, $is_first,$cat_id,$ispass);
 		$return_txt = json_encode(
 			$cat_oid
 		);
@@ -1423,13 +1437,47 @@
 		$user_email = $_POST['email'];
 		$user_pwd = $_POST['pwd'];
 
-		$user_id = add_user($user_name,$user_email,$user_pwd);
+		$user_id = add_user($user_email,$user_pwd,$user_name);
 
 		$return_txt = json_encode(
 			$user_id
 		);
 
 		echo $return_txt;
+	}
+
+	function search_user()
+	{
+		$key = $_POST['key'];
+		$_id = $_POST['user_id'];
+		$output_id_and_name = search_userName($key);
+		$output_rootLevel = Id_get_rootLevel($_id);
+		
+		$return_txt1 = json_encode(
+			$output_id_and_name
+		);	
+
+		$return_txt2 = json_encode(
+			$output_rootLevel
+		);
+
+		$return_txt = substr($return_txt1,0,-2).','.substr($return_txt2,2);
+
+		echo $return_txt;
+	}
+
+	function id_gat_img()
+	{
+		$cat_id = $_POST['cat_id'];
+
+		$user_id = IdGatImg($cat_id);
+
+		$return_txt = json_encode(
+			$user_id
+		);
+
+		echo $return_txt;
+
 	}
 
     if(isset($_POST['action']))
@@ -1448,6 +1496,8 @@
 			case 'get_some_cat_array':return(get_some_cat_array());
 			case 'CatId_get_cat_array':return(CatId_get_cat_array());
 			case 'add_new_user':return(add_new_user());
+			case 'search_user':return(search_user());
+			case 'id_gat_img':return(id_gat_img());
         }
     }
 ?>

@@ -279,7 +279,36 @@ html,body {
 
 #show_some_cat_btn{
     width: 10vw;
+    border-radius: 100%;
     height: 10vw;
 	top: calc(50% + -5vw);
 	left: calc(92.5% + -5vw);
+}
+
+#key_input{
+    width: 90%;
+    height: 5%;
+    left: 5%;
+    top: 5%;
+	background-color: white;
+}
+
+#output_nameList{
+	width: 90%;
+	height: 83%;
+	top:12%;
+	left:5%;
+	overflow-y: scroll;
+}
+
+.show_user_underline{
+	height: 10px;
+	margin: 0px;
+	border: 0;
+    border-bottom: 1px solid rgba(0,0,0,1);
+	margin-bottom: 10px;
+}
+
+.upLevel_btn{
+    float: right;	
 }

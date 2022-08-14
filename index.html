@@ -365,9 +365,9 @@
 		{
 			do_resize();
 			
-			let menu_list  = [ '基本情報', '詳細', '登録済み', '登録きろ' ];
-			let ImgId_list = [ 'acct', 'more', 'up_cat_list', 'up_log' ];
-			let func_list  = [ acct_func, more_func, UpCatList_func, UpLog_func ];
+			let menu_list  = [ '基本情報', '探す', '登録済み', '登録きろ' ];
+			let ImgId_list = [ 'acct', 'search', 'up_cat_list', 'up_log' ];
+			let func_list  = [ acct_func, search_func, UpCatList_func, UpLog_func ];
 			let t          = 500;
 			
 			let main_btn_css = menu_unit_resize( 3, $('.menu_btn').length );
@@ -450,7 +450,8 @@
 			const post_data   = {
 				action      : 'check_login',
 				input_mail  : input_mail,
-				input_passw : input_passw};
+				input_passw : input_passw
+			};
 			
 			let output = get_data(post_data,check_login_func);
 			
@@ -482,6 +483,28 @@
 			const email = $('#input_email').val();
 			const pwd = $('#input_password').val();
 			
+			let re_email=/^([0-9]|[a-z])+@([0-9]|[a-z])+(.([0-9]|[a-z])+)+$/g;
+			if(email.match(re_email)==null)
+			{
+				alert('E-mailの入力に問題があります');
+				return;
+			}
+			
+			let re_pwd=/^[0-9a-zA-Z]{8,}$/g;
+			if(pwd.match(re_pwd)==null)
+			{
+				alert('パスワードの入力に問題があります');
+				return;
+			}
+			
+			let re_name=/^[^\!\@\#\$\%\^\&\*\(\)\_\+\-\=\[\]\{\}\\\|\:\;\'\"\<\>\?\,\.]+$/g;
+			if(name.match(re_name)==null)
+			{
+				alert('名前の入力に問題があります');
+				return;
+			}
+			
+			
 			const post_data   = {
 				action      : 'add_new_user',
 				name  : name,
@@ -494,17 +517,26 @@
 		
 		function check_user(input)
 		{
-			console.log(input);
+			alert('成功しました。')
+			$('#cat_form').click();
 		}
 		
 		function check_login_func(input)    
 		{
-			const user_id = input['user_id'].$oid
+			console.log(input['_id']);
+			const user_id = input['_id']['$oid'];
+			const checker = input['checker'];
+			if(input['checker']==null)
+			{
+				$.cookie('checker','null');
+			}
+			
 			//console.log(user_id);
 			if(user_id>'0')
 			{
 				//console.log(user_id);
 				$.cookie('user_id',user_id);
+				$.cookie('checker',checker);
 				$('#cat_form').click();
 			}
 			else
@@ -554,7 +586,7 @@
 			}
 		}
 		
-		function more_func()
+		function search_func()
 		{
 			thr_box_reset(this);
 			
@@ -564,12 +596,66 @@
 				let top     = btn_css.top+btn_css.height/2;
 				let left    = btn_css.left+btn_css.width/2;
 				
-				make_thr_box( top, left, make_login_box );
+				make_thr_box( top, left, search_box );
 			}
 			else
 			{
 				$('#acct').click();
 			}
+		}
+		
+		function search_box()
+		{
+			let mbox = $('#thr_box');
+			let input_box = $('<input type="text" id="key_input" class="abs">');
+			let output_box = $('<div class="abs" id="output_nameList"></div>');
+			mbox.append(input_box).append(output_box);
+			input_box.keyup(search_name);
+		}
+		
+		function search_name()
+		{
+			let key = $('#key_input').val();
+			
+			const post_data   = {
+				action : 'search_user',
+				key    : key,
+				user_id:$.cookie('user_id')
+			};
+			
+			let output = get_data(post_data,show_userName);
+		}
+		
+		function show_userName(input)
+		{
+			
+			$('#output_nameList *').remove();
+			let box = $('#output_nameList');
+			let len = input.length;
+			let root_level = input[len-1]['root_level'];
+			console.log(root_level);
+			$.each(input,function( key, value ){
+				let user_box = $('<div class="user_box"><samp>'+value['user_name']+'</samp></div>');
+				if(root_level<2)
+				{
+					let btn = $('<input class="upLevel_btn" type="submit" value="up level">');
+					btn.click(function(){
+						up_level(value['_id']['$oid']);
+					})
+					user_box.append(btn);
+				}
+				
+				box.append(user_box);
+				if(key<(len-1))
+				{
+					box.append($('<hr class="show_user_underline">'));
+				}
+			});
+		}
+		
+		function up_level(id)
+		{
+			console.log(id);
 		}
 		
 		function UpCatList_func()
@@ -609,22 +695,36 @@
 		{
 			let mbox    = $('#thr_box');
 			let btn_css = sec_btn_resize(2,4);
-			
 			let len = input.length;
 			$.each(input,function( key, value ){
-				//console.log(key,value['color']);
-				let src   = value['src'];
-				let color = value['color'];
-				let tnr   = value['tnr'];
-				let lat   = value['lat'];
-				let lng   = value['lng'];
-				let box   = $('<div style="top:'+btn_css.top+'px;left:'+btn_css.left+'px;height:0px;width:0px" class="img_list_box pritest abs"></div>');
-				let img   = $('<img class="img_list" src="'+ src +'" />');
-				mbox.append(box.append(img));
-				box.animate(CatImg_list_resize(key,len),500,function(){
-					box.click(function(){
-						make_submin_btn( src, color, tnr, lat, lng ,UpCatList_func);
-					});
+				let cat_id   = value['_id']['$oid'];
+				let box   = $('<div id="'+cat_id+'" style="top:'+btn_css.top+'px;left:'+btn_css.left+'px;height:0px;width:0px" class="img_list_box pritest abs"></div>');
+				mbox.append(box);
+				//let img   = $('<img class="img_list" src="'+ src +'" />');
+				const post_data = { 
+					action  : "id_gat_img",
+					cat_id : cat_id
+				};
+			
+				const work_func = show_cat_img;
+
+				get_data( post_data, work_func, false);
+				
+				box.animate(CatImg_list_resize(key,len),500);
+			});
+		}
+		
+		function show_cat_img(input)
+		{
+			console.log(input);
+			$.each(input,function( key, value ){
+				let cat_id = value['_id']['$oid'];
+				let box = $('#'+cat_id);
+				let img_box = $('<img class="img_list" src="'+ value['src'] +'" />');
+				box.append(img_box);
+
+				box.click(function(){
+					make_submin_btn( cat_id );
 				});
 			});
 		}
@@ -1000,7 +1100,7 @@
 			
 			if(src && color && tnr && gps[0])
 			{
-				make_submin_btn(src,color,tnr,session.getItem('lat'),session.getItem('lng'),get_some_cat_list);
+				do_submit(src,color,tnr,session.getItem('lat'),session.getItem('lng'),get_some_cat_list);
 				console.log('all ok',src,color,tnr,gps);
 			}
 			else
@@ -1009,9 +1109,22 @@
 			}
 		}
 		
-		function make_submin_btn( src, color, tnr, lat, lng, func )
+		function make_submin_btn( cat_id )
 		{
+			const post_data = { 
+				action  : "catId_gat_All",
+				cat_id : cat_id
+			};
+
+			const work_func = show_cat_info;
+
+			get_data( post_data, work_func, false);
 			//console.log(src, color, tnr, lat, lng);
+			
+		}
+		
+		function do_submit(src,color,tnr,lat,lng,func)
+		{
 			$('#thr_box *').remove();
 			$('*').finish();
 			$('.sec_btn').removeClass('check');
@@ -1025,6 +1138,30 @@
 			
 			mbox.append(map_check).append(color_box).append(tnr_check).append(img_box).append(submit_btn);
 			submit_btn.click(func);
+			map_reset( lat, lng );
+		}
+		
+		function show_cat_info(input)
+		{
+			let src = input['src'];
+			let color = input['color'];
+			let tnr = input['tnr'];
+			let lat = input['lat'];
+			let lng = input['lng'];
+			
+			$('#thr_box *').remove();
+			$('*').finish();
+			$('.sec_btn').removeClass('check');
+			$('#map').remove();
+			let mbox       = $('#thr_box');
+			let img_box    = $('<div class="abs" id="check_img"><img src="'+src+'"></div>');
+			let color_box  = $('<div class="abs" id="check_color"><img src="img/color/'+color+'.png"></div>');
+			let tnr_check  = $('<div class="abs" id="check_tnr">'+tnr+'</div>');
+			let map_check  = $('<div id="map" class="gps_check" class="abs pritest"></div>');
+			let submit_btn = $('<input id="check_btn" type="button" value="btn">');
+			
+			mbox.append(map_check).append(color_box).append(tnr_check).append(img_box).append(submit_btn);
+			//submit_btn.click(func);
 			map_reset( lat, lng );
 		}
 		
@@ -1053,7 +1190,8 @@
 			let tnr     = session.getItem('is_tnr');
 			let gps     = [ session.getItem('lat'), session.getItem('lng') ];
 			let user_id = $.cookie('user_id');
-			
+			let checker = $.cookie('checker');
+			console.log(checker);
 			const post_data = { 
 				action  : "get_some_cat_array",
 				src     : src,
@@ -1061,7 +1199,8 @@
 				tnr     : tnr,
 				gps     : gps,
 				user_id : user_id,
-				is_first: 'true'
+				is_first: 'true',
+				checker : checker
 			};
 			
 			const work_func = show_some_cat_list;
@@ -1092,10 +1231,20 @@
 					let tnr   = value['tnr'];
 					let lat   = value['lat'];
 					let lng   = value['lng'];
-					let cat_id= value['_id'].$oid;
-					let box   = $('<div style="top:'+btn_css.top+'px;left:'+btn_css.left+'px;height:0px;width:0px" class="img_list_box pritest abs"></div>');
-					let img   = $('<img class="img_list" src="'+ src +'" />');
-					mbox.append(box.append(img));
+					
+					let cat_id= value['_id']['$oid'];
+					let box   = $('<div id="'+cat_id+'" style="top:'+btn_css.top+'px;left:'+btn_css.left+'px;height:0px;width:0px" class="img_list_box pritest abs"></div>');
+					mbox.append(box);
+					//let img   = $('<img class="img_list" src="'+ src +'" />');
+					const post_data = { 
+						action  : "id_gat_img",
+						cat_id : cat_id
+					};
+
+					const work_func = show_cat_img;
+
+					get_data( post_data, work_func, false);
+					
 					box.css(CatImg_list_resize(key,len));
 					session.removeItem('cat_id');
 					box.click(function(){
@@ -1193,8 +1342,10 @@
 			let tnr     = session.getItem('is_tnr');
 			let gps     = [ session.getItem('lat'), session.getItem('lng') ];
 			let user_id = $.cookie('user_id');
+			let checker = $.cookie('checker');
 			let cat_id  = session.getItem('cat_id');
-			console.log(cat_id);
+			
+			console.log(checker);
 			const post_data = { 
 				action  : "save_data",
 				src     : src,
@@ -1203,7 +1354,8 @@
 				gps     : gps,
 				user_id : user_id,
 				is_first: 'false',
-				cat_id  : cat_id
+				cat_id  : cat_id,
+				checker : checker
 			};
 			
 			const work_func = submit_check;

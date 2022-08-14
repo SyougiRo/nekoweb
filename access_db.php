@@ -87,6 +87,11 @@
         return new MongoDB\BSON\ObjectID($_id);
     }
 
+    function re($key,$opt='i')
+    {
+        return new MongoDB\BSON\Regex($key,$opt);
+    }
+
     function add_user($Email,$pwd,$user_name)
     {
         global $database;
@@ -98,8 +103,9 @@
             '_id' =>do_id(),
             'user_Email'=>$Email,
             'pwd'=>$pwd,
-            'checker'=>null,
-            'user_name'=>$user_name
+            'checker'=>'null',
+            'user_name'=>$user_name,
+            'root_level' => '10'
         ];
 
         if(Email_and_Pwd_get_user_id($Email,$pwd)==0)
@@ -126,7 +132,8 @@
             'color'   => $color,
             'lat'     => ['$gte'=>(string)$lat_min,'$lte'=>(string)$lat_max],
             'lng'     => ['$gte'=>(string)$lng_min,'$lte'=>(string)$lng_max],
-            'isfirst' => 'true'
+            'isfirst' => 'true',
+            'ispass' => 'true',
         ];
 
         $output = do_data($table_name,$work,$data)->toArray();
@@ -134,11 +141,53 @@
         return($output);
     }
 
-    function add_cat_data($src, $color, $tnr, $lat, $lng, $fu, $shi, $ku, $user_id,$is_first,$cat_id=null)
+    function search_userName($key)
+    {
+        global $database;
+        $table_name = $database.'.user';
+
+        $work = 'search';
+
+        $re = re($key);
+
+        $data = [
+            'user_name' => $re
+        ];
+
+        $opt=[
+            'projection' => ['user_name'=>1,'_id'=>1]
+        ];
+
+        $output = do_data($table_name,$work,$data,$opt)->toArray();
+
+        return($output);
+    }
+
+    function Id_get_rootLevel($id)
+    {
+        global $database;
+        $table_name = $database.'.user';
+        $work = 'search';
+
+        $id = do_id($id);
+
+        $data = [
+            '_id' => $id
+        ];
+
+        $opt=[
+            'projection' => ['root_level'=>1]
+        ];
+
+        $output = do_data($table_name,$work,$data,$opt)->toArray();
+
+        return($output);
+    }
+
+    function add_cat_data($src, $color, $tnr, $lat, $lng, $fu, $shi, $ku, $user_id,$is_first,$cat_id=null,$ispass='true')
     {
         global $database;
         $table_name = $database.'.cat';
-
         $work = 'insert';
 
         if($is_first=='true')
@@ -171,7 +220,8 @@
                 'fu'      => $fu,
                 'shi'     => $shi,
                 'ku'      => $ku,
-                'isfirst' => $is_first
+                'isfirst' => $is_first,
+                'ispass'  => $ispass
             ];
 
             do_data($table_name,$work,$cat_data);
@@ -253,7 +303,7 @@
             return(-1);
         }
 
-        return($res->_id);
+        return($res);
     }
     
     function add_tag_log($user_id,$gps,$time,$img_src,$address)
@@ -358,7 +408,11 @@
             'user_id' => $user_id,
         ];
 
-        $output = do_data( $table_name,$work,$data)->toArray();
+        $opt=[
+            'projection' => ['_id'=>1]
+        ];
+
+        $output = do_data( $table_name,$work,$data,$opt)->toArray();
 
         return($output);
     }
@@ -389,6 +443,25 @@
         ];
         $opt=[
             'projection' => ['src'=>1]
+        ];
+
+        $output = do_data( $table_name,$work,$data,$opt)->toArray();
+
+        return($output);
+    }
+
+    function IdGatImg($cat_id)
+    {
+        global $database;
+        $table_name = $database.'.cat';
+
+        $work='search';
+
+        $data=[
+            '_id' => do_id($cat_id),
+        ];
+        $opt=[
+            'projection' => ['_id'=>1,'src'=>1]
         ];
 
         $output = do_data( $table_name,$work,$data,$opt)->toArray();
