@@ -155,7 +155,7 @@
         ];
 
         $opt=[
-            'projection' => ['user_name'=>1,'_id'=>1]
+            'projection' => ['user_name'=>1,'_id'=>1,'root_level'=>1]
         ];
 
         $output = do_data($table_name,$work,$data,$opt)->toArray();
@@ -465,6 +465,22 @@
         ];
 
         $output = do_data( $table_name,$work,$data,$opt)->toArray();
+
+        return($output);
+    }
+
+    function catIdGatAll($cat_id)
+    {
+        global $database;
+        $table_name = $database.'.cat';
+
+        $work='search';
+
+        $data=[
+            '_id' => do_id($cat_id),
+        ];
+
+        $output = do_data( $table_name,$work,$data)->toArray();
 
         return($output);
     }

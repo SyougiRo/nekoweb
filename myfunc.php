@@ -1339,11 +1339,8 @@
 		exec('python resizebase.py '.$file_name ,$resizebase);
 
 		$fu  = json_decode($testoutput[0])->{'fu'};
-		$fu  = base64_decode(str_replace(["b'","'"],"",$fu));
 		$shi = json_decode($testoutput[0])->{'shi'};
-		$shi = base64_decode(str_replace(["b'","'"],"",$shi));
 		$ku  = json_decode($testoutput[0])->{'ku'};
-		$ku  = base64_decode(str_replace(["b'","'"],"",$ku));
 		$lat = $gps['0'];
 		$lng = $gps['1'];
 
@@ -1451,19 +1448,19 @@
 		$key = $_POST['key'];
 		$_id = $_POST['user_id'];
 		$output_id_and_name = search_userName($key);
-		$output_rootLevel = Id_get_rootLevel($_id);
+		//$output_rootLevel = Id_get_rootLevel($_id);
 		
 		$return_txt1 = json_encode(
 			$output_id_and_name
 		);	
 
-		$return_txt2 = json_encode(
-			$output_rootLevel
-		);
+		//$return_txt2 = json_encode(
+		//	$output_rootLevel
+		//);
 
-		$return_txt = substr($return_txt1,0,-2).','.substr($return_txt2,2);
+		//$return_txt = substr($return_txt1,0,-2).','.substr($return_txt2,2);
 
-		echo $return_txt;
+		echo $return_txt1;
 	}
 
 	function id_gat_img()
@@ -1478,6 +1475,19 @@
 
 		echo $return_txt;
 
+	}
+
+	function catId_gat_All()
+	{
+		$cat_id = $_POST['cat_id'];
+
+		$all = catIdGatAll($cat_id);
+
+		$return_txt = json_encode(
+			$all
+		);
+
+		echo $return_txt;
 	}
 
     if(isset($_POST['action']))
@@ -1498,6 +1508,7 @@
 			case 'add_new_user':return(add_new_user());
 			case 'search_user':return(search_user());
 			case 'id_gat_img':return(id_gat_img());
+			case 'catId_gat_All':return(catId_gat_All());
         }
     }
 ?>

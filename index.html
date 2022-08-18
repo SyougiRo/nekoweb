@@ -526,6 +526,7 @@
 			console.log(input['_id']);
 			const user_id = input['_id']['$oid'];
 			const checker = input['checker'];
+			const root_level = input['root_level'];
 			if(input['checker']==null)
 			{
 				$.cookie('checker','null');
@@ -537,6 +538,7 @@
 				//console.log(user_id);
 				$.cookie('user_id',user_id);
 				$.cookie('checker',checker);
+				$.cookie('root_level',root_level);
 				$('#cat_form').click();
 			}
 			else
@@ -632,11 +634,15 @@
 			$('#output_nameList *').remove();
 			let box = $('#output_nameList');
 			let len = input.length;
-			let root_level = input[len-1]['root_level'];
-			console.log(root_level);
+			if(len<1)
+			{
+				return;
+			}
+			let root_level = $.cookie('root_level');
+			
 			$.each(input,function( key, value ){
 				let user_box = $('<div class="user_box"><samp>'+value['user_name']+'</samp></div>');
-				if(root_level<2)
+				if(root_level<parseInt(value['root_level']))
 				{
 					let btn = $('<input class="upLevel_btn" type="submit" value="up level">');
 					btn.click(function(){
@@ -935,6 +941,8 @@
 			let top  = main_btn_css.top+main_btn_css.height / 2-sec_box_css.top;
 			let left = main_btn_css.left+main_btn_css.width / 2-sec_box_css.left;
 			
+			MyLatLng=0;
+			
 			for( let index=0 ; index < menu_list.length; index++ )
 			{
 				let box_css  = sec_box_resize();
@@ -1143,6 +1151,8 @@
 		
 		function show_cat_info(input)
 		{
+			console.log('test',input)
+			input = input['0'];
 			let src = input['src'];
 			let color = input['color'];
 			let tnr = input['tnr'];
