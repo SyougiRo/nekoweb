@@ -3,6 +3,7 @@
     $bulk = null;
     $writeConcern = null;
     $access_is_ok = false;
+    $database = 'test';
 
     function access_db()
     {
@@ -81,27 +82,207 @@
         $result = $manager->executeBulkWrite($table_name, $bulk, $writeConcern);
     }
 
-    function add_user($Email,$pwd,$is_root,$user_name)
+    function do_id($_id=null)
     {
-        $table_name = 'test.user';
+        return new MongoDB\BSON\ObjectID($_id);
+    }
+
+    function re($key,$opt='i')
+    {
+        return new MongoDB\BSON\Regex($key,$opt);
+    }
+
+    function add_user($Email,$pwd,$user_name)
+    {
+        global $database;
+        $table_name = $database.'.user';
 
         $work = 'insert';
 
         $user_data = [
+            '_id' =>do_id(),
             'user_Email'=>$Email,
             'pwd'=>$pwd,
-            'is_root'=>$is_root,
-            'user_name'=>$user_name
+            'checker'=>'null',
+            'user_name'=>$user_name,
+            'root_level' => '10'
         ];
 
-        do_data($table_name,$work,$user_data);
+        if(Email_and_Pwd_get_user_id($Email,$pwd)==0)
+        {
+            do_data($table_name,$work,$user_data);
 
-        return(1);
+            $output = Email_and_Pwd_get_user_id($Email,$pwd);
+
+            return($output);
+        }
+        else
+        {
+            return(0);
+        }        
+    }
+
+    function search_some_cat($color,$lat_min,$lat_max, $lng_min, $lng_max)
+    {
+        global $database;
+        $table_name = $database.'.cat';
+
+        $work = 'search';
+        $data = [
+            'color'   => $color,
+            'lat'     => ['$gte'=>(string)$lat_min,'$lte'=>(string)$lat_max],
+            'lng'     => ['$gte'=>(string)$lng_min,'$lte'=>(string)$lng_max],
+            'isfirst' => 'true',
+            'ispass' => 'true',
+        ];
+
+        $output = do_data($table_name,$work,$data)->toArray();
+
+        return($output);
+    }
+
+    function search_userName($key)
+    {
+        global $database;
+        $table_name = $database.'.user';
+
+        $work = 'search';
+
+        $re = re($key);
+
+        $data = [
+            'user_name' => $re
+        ];
+
+        $opt=[
+            'projection' => ['user_name'=>1,'_id'=>1,'root_level'=>1]
+        ];
+
+        $output = do_data($table_name,$work,$data,$opt)->toArray();
+
+        return($output);
+    }
+
+    function Id_get_rootLevel($id)
+    {
+        global $database;
+        $table_name = $database.'.user';
+        $work = 'search';
+
+        $id = do_id($id);
+
+        $data = [
+            '_id' => $id
+        ];
+
+        $opt=[
+            'projection' => ['root_level'=>1]
+        ];
+
+        $output = do_data($table_name,$work,$data,$opt)->toArray();
+
+        return($output);
+    }
+
+    function add_cat_data($src, $color, $tnr, $lat, $lng, $fu, $shi, $ku, $user_id,$is_first,$cat_id=null,$ispass='true')
+    {
+        global $database;
+        $table_name = $database.'.cat';
+        $work = 'insert';
+
+        if($is_first=='true')
+        {
+            $cat_id=do_id();
+            $oid = $cat_id;
+        }
+        else
+        {
+            $oid = do_id();
+            $cat_id=do_id($cat_id);
+        }
+
+        $data = check_img_only($src);
+        if($data)
+        {
+            return(['erro'=>'has1']);
+        }
+        else
+        {
+            $cat_data = [
+                '_id'     => $oid,
+                'src'     => $src,
+                'color'   => $color,
+                'tnr'     => $tnr,
+                'lat'     => $lat,
+                'lng'     => $lng,
+                'cat_id'  => $cat_id,
+                'user_id' => $user_id,
+                'fu'      => $fu,
+                'shi'     => $shi,
+                'ku'      => $ku,
+                'isfirst' => $is_first,
+                'ispass'  => $ispass
+            ];
+
+            do_data($table_name,$work,$cat_data);
+
+            $return_data = get_cat_data($cat_data);
+
+            return($return_data);
+        }
+    }
+
+    function check_img_only($src)
+    {
+        global $database;
+        $table_name = $database.'.cat';
+
+        $work = 'search';
+
+        $data = [
+            'src' => $src
+        ];
+
+        $output = do_data($table_name,$work,$data)->toArray();
+        $res = current($output);
+
+        if(empty($res))
+        {
+            return(0);
+        }
+        else
+        {
+            return(1);
+        }
+    }
+
+    function get_cat_data($cat_data)
+    {
+        global $database;
+        $table_name = $database.'.cat';
+
+        $work = 'search';
+
+        $output = do_data($table_name,$work,$cat_data)->toArray();
+
+        $res = current($output);
+        
+        if(empty($res))
+        {
+            return(0);
+        }
+        elseif(count($output)>1)
+        {
+            return(-1);
+        }
+
+        return($res);
     }
 
     function Email_and_Pwd_get_user_id($Email,$pwd)
     {
-        $table_name = 'test.user';
+        global $database;
+        $table_name = $database.'.user';
 
         $work='search';
         
@@ -122,42 +303,14 @@
             return(-1);
         }
 
-        return($res->_id);
+        return($res);
     }
-
-    function add_cat_data($color_list,$tnr=false)
-    {
-        $table_name = 'test.cat';
-
-        $work = 'insert';
-
-        $cat_data = [
-            'color'=>['red'=>0,'white'=>0,'black'=>0],
-            'tnr'=>0
-        ];
-
-        foreach(array_keys($cat_data['color']) as $color)
-        {
-            if(in_array($color,$color_list))
-            {
-                $cat_data['color'][$color] = 1;
-            }
-        }
-
-        if($tnr)
-        {
-            $cat_data['tnr'] = 1;
-        }
-
-        do_data($table_name,$work,$cat_data);
-
-        return(1);
-    }
-
+    
     function add_tag_log($user_id,$gps,$time,$img_src,$address)
     {
+        global $database;
+        $table_name = $database.'.taglog';
 
-        $table_name = 'test.taglog';
         $work = 'insert';
 
         $taglog = [
@@ -177,7 +330,8 @@
 
     function UserId_get_ImgSrc($user_id)
     {
-        $table_name = 'test.taglog';
+        global $database;
+        $table_name = $database.'.taglog';
 
         $work='search';
 
@@ -199,7 +353,8 @@
 
     function get_NoDealLog()
     {
-        $table_name = 'test.taglog';
+        global $database;
+        $table_name = $database.'.taglog';
 
         $work='search';
 
@@ -226,7 +381,8 @@
 
     function ImgId_get_ImgSrc($img_id)
     {
-        $table_name = 'test.taglog';
+        global $database;
+        $table_name = $database.'.taglog';
 
         $work='search';
 
@@ -241,6 +397,26 @@
         return($res);
     }
 
+    function get_CatArray_form_UserId($user_id)
+    {
+        global $database;
+        $table_name = $database.'.cat';
+
+        $work='search';
+
+        $data=[
+            'user_id' => $user_id,
+        ];
+
+        $opt=[
+            'projection' => ['_id'=>1]
+        ];
+
+        $output = do_data( $table_name,$work,$data,$opt)->toArray();
+
+        return($output);
+    }
+
     function do_formet($txt)
     {
         $len = mb_strlen($txt);
@@ -253,5 +429,59 @@
         $output_txt = $output_txt.$txt;
         
         return($output_txt);
+    }
+
+    function CatId_get_array($cat_id)
+    {
+        global $database;
+        $table_name = $database.'.cat';
+
+        $work='search';
+
+        $data=[
+            'cat_id' => do_id($cat_id),
+        ];
+        $opt=[
+            'projection' => ['src'=>1]
+        ];
+
+        $output = do_data( $table_name,$work,$data,$opt)->toArray();
+
+        return($output);
+    }
+
+    function IdGatImg($cat_id)
+    {
+        global $database;
+        $table_name = $database.'.cat';
+
+        $work='search';
+
+        $data=[
+            '_id' => do_id($cat_id),
+        ];
+        $opt=[
+            'projection' => ['_id'=>1,'src'=>1]
+        ];
+
+        $output = do_data( $table_name,$work,$data,$opt)->toArray();
+
+        return($output);
+    }
+
+    function catIdGatAll($cat_id)
+    {
+        global $database;
+        $table_name = $database.'.cat';
+
+        $work='search';
+
+        $data=[
+            '_id' => do_id($cat_id),
+        ];
+
+        $output = do_data( $table_name,$work,$data)->toArray();
+
+        return($output);
     }
 ?>

@@ -1,5 +1,22 @@
 <?php
 	include('access_db.php');
+
+	function dogeopy()
+	{
+		$gps = $_POST['gps'];
+		$str_command = 'python3 dogeopy.py {\"lat\":'+$gps[0]+',\"lng\":'+$gps[1]+'}';
+		exec($str_command,$output_json);
+		$data = json_decode($output_json[0]);
+	}
+
+	function getGpsLimit()
+	{
+		$gps = $_POST['gps'];
+		$str_command = 'python3 get_GpsLimit.py {\"lat\":'+$gps[0]+',\"lng\":'+$gps[1]+'}';
+		exec($str_command,$output_json);
+		$data = json_decode($output_json[0]);
+	}
+
     function test_func()
     {
         $val_a = $_POST['val_a'];
@@ -40,7 +57,10 @@
 		}
 		$user_id = Email_and_Pwd_get_user_id($email,$pwd);
 		
-		$return_txt = json_encode(array('user_id'=> $user_id ));
+		$return_txt = json_encode(
+			$user_id
+		);
+
 		echo $return_txt;
 	}
 
@@ -1270,6 +1290,206 @@
 		echo $return_txt;
 	}
 
+	function buffer_file($txt)
+	{
+		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$charactersLength = strlen($characters);
+		$randomString = '';
+		$length = 10;
+		for ($i = 0; $i < $length; $i++) {
+			$randomString .= $characters[rand(0, $charactersLength - 1)];
+		}
+
+        $file_name = $randomString;
+
+		$myfile = fopen($file_name, "w") or die("Unable to open file!");
+		fwrite($myfile, $txt);
+		fclose($myfile);
+
+		return $file_name;
+	}
+
+	function save_data()
+	{
+		$src     = $_POST['src'];
+		$color   = $_POST['color'];
+		$tnr     = $_POST['tnr'];
+		$gps     = $_POST['gps'];
+		$user_id = $_POST['user_id'];
+		$is_first= $_POST['is_first'];
+		$cat_id = null;
+		$ispass = 'true';
+		if($_POST['is_first']=='false')
+		{
+			$cat_id = $_POST['cat_id'];
+		}
+
+		if(isset($_POST['is_pass']))
+		{
+			$ispass = $_POST['is_pass'];
+		}
+
+		if($_POST['checker']=='null')
+        {
+            $ispass='false';
+        }
+
+		exec('python dogeopy.py {\"lat\":'.$gps['0'].',\"lng\":'.$gps['1'].'}',$testoutput);
+		$file_name = buffer_file($src);
+		exec('python resizebase.py '.$file_name ,$resizebase);
+
+		$fu  = json_decode($testoutput[0])->{'fu'};
+		$shi = json_decode($testoutput[0])->{'shi'};
+		$ku  = json_decode($testoutput[0])->{'ku'};
+		$lat = $gps['0'];
+		$lng = $gps['1'];
+
+		//$return_txt = json_encode(
+		//	array(
+		//		'src'     => $resizebase,
+		//		'color'   => $color,
+		//		'tnr'     => $tnr,
+		//		'lat'     => $gps['0'],
+		//		'lng'     => $gps['1'],
+		//		'user_id' => $user_id,
+		//		'fu'      => $fu,
+		//		'shi'     => $shi,
+		//		'ku'      => $ku
+		//		)
+		//);
+
+		$cat_oid = add_cat_data( $resizebase[0], $color, $tnr, $lat, $lng, $fu, $shi, $ku, $user_id, $is_first,$cat_id,$ispass);
+		$return_txt = json_encode(
+			$cat_oid
+		);
+		$return_txt = substr($return_txt,0,-1).',"func":"save"}';
+		echo  $return_txt;
+	}
+
+	function gat_img_array()
+	{
+		$user_id = $_POST['user_id'];
+
+		$return_txt = json_encode(
+			array(
+				'user_id' => $user_id
+				)
+		);
+
+		$cat_id = get_CatArray_form_UserId($user_id);
+
+		$return_txt = json_encode(
+			$cat_id
+		);
+
+		echo $return_txt;
+
+	}
+
+	function get_some_cat_array()
+	{
+		$color   = $_POST['color'];
+		$gps     = $_POST['gps'];
+
+		exec('python get_GpsLimit.py {\"lat\":'.$gps['0'].',\"lng\":'.$gps['1'].'}',$limitoutput);
+
+		$data = json_decode($limitoutput[0]);
+		$lat_min = $data -> {'lat_min'};
+		$lat_max = $data -> {'lat_max'};
+		$lng_min = $data -> {'lng_min'};
+		$lng_max = $data -> {'lng_max'};
+
+		$return_data = search_some_cat($color,$lat_min,$lat_max, $lng_min, $lng_max);
+
+		if(empty($return_data))
+		{
+			save_data();
+			return(1);
+		}
+		//echo json_encode(['test'=>'isok']);
+		//exit();
+		$return_txt = json_encode(
+			$return_data
+		);
+
+		echo $return_txt;
+	}
+
+	function CatId_get_cat_array()
+	{
+		$cat_id = $_POST['cat_id'];
+
+		$return_data = CatId_get_array($cat_id);
+
+		$return_txt = json_encode(
+			$return_data
+		);
+
+		echo $return_txt;
+	}
+
+	function add_new_user()
+	{
+		$user_name = $_POST['name'];
+		$user_email = $_POST['email'];
+		$user_pwd = $_POST['pwd'];
+
+		$user_id = add_user($user_email,$user_pwd,$user_name);
+
+		$return_txt = json_encode(
+			$user_id
+		);
+
+		echo $return_txt;
+	}
+
+	function search_user()
+	{
+		$key = $_POST['key'];
+		$_id = $_POST['user_id'];
+		$output_id_and_name = search_userName($key);
+		//$output_rootLevel = Id_get_rootLevel($_id);
+		
+		$return_txt1 = json_encode(
+			$output_id_and_name
+		);	
+
+		//$return_txt2 = json_encode(
+		//	$output_rootLevel
+		//);
+
+		//$return_txt = substr($return_txt1,0,-2).','.substr($return_txt2,2);
+
+		echo $return_txt1;
+	}
+
+	function id_gat_img()
+	{
+		$cat_id = $_POST['cat_id'];
+
+		$user_id = IdGatImg($cat_id);
+
+		$return_txt = json_encode(
+			$user_id
+		);
+
+		echo $return_txt;
+
+	}
+
+	function catId_gat_All()
+	{
+		$cat_id = $_POST['cat_id'];
+
+		$all = catIdGatAll($cat_id);
+
+		$return_txt = json_encode(
+			$all
+		);
+
+		echo $return_txt;
+	}
+
     if(isset($_POST['action']))
     {
         $action = $_POST['action'];
@@ -1281,6 +1501,14 @@
 			case 'get_nekodata':return(get_nekodata());
 			case 'get_src':return(get_src());
 			case 'get_address_list':return(get_address_list());
+			case 'save_data':return(save_data());
+			case 'gat_img_array':return(gat_img_array());
+			case 'get_some_cat_array':return(get_some_cat_array());
+			case 'CatId_get_cat_array':return(CatId_get_cat_array());
+			case 'add_new_user':return(add_new_user());
+			case 'search_user':return(search_user());
+			case 'id_gat_img':return(id_gat_img());
+			case 'catId_gat_All':return(catId_gat_All());
         }
     }
 ?>

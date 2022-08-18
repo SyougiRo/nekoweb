@@ -12,10 +12,10 @@
 	<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 	<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
 
-	<!-- Bootstrap -->
+	<!-- Bootstrap 
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>		
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>	-->	
 
 	<!-- google map API -->
 	<script src="https://maps.google.com/maps/api/js?key=AIzaSyB-9a0T7sfcoJUoCR2Avg6dv7j_5qJCgXg&language=ja"></script>
@@ -25,38 +25,46 @@
 
 	<!--exif-->
 	<script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
+	
+	<!--cookie-->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 </head>
 
 <body>
 </body>
 	<script>
-		var menu_z=1;
-		var img_input;
-		var now_GPSLatitude = 34.7577336;
-		var now_GPSLongitude = 134.966988;
 		const php_path = 'myfunc.php';
-		var MyLatLng=1;
-		var map;
+		
+		var menu_z   =1;
+		var has_gps  =0;
+		var MyLatLng =0;
+		
+		var now_GPSLatitude  = 34.7577336;
+		var now_GPSLongitude = 134.966988;		
+		
 		var infowindows=[];
-		var gps_list=[];
-		var makers=[];
+		var gps_list   =[];
+		var makers     =[];
+		
+		var session = window.sessionStorage;
+		
+		var img_input;
 		var now_src;
-		var has_gps=0;
-		var cat_color;
+		var map;
 		
 		function monitor_ver_check(melem)
 		{
 			let monitor_ver;
-			let mbox_width = $(window).width();
+			let mbox_width  = $(window).width();
 			let mbox_height = $(window).height();
 			
-			if(mbox_width>mbox_height)
+			if(mbox_width > mbox_height)
 			{
-				monitor_ver=1;
+				monitor_ver = 1;
 			}
 			else
 			{
-				monitor_ver=0;
+				monitor_ver = 0;
 			}
 			
 			return(monitor_ver);
@@ -64,59 +72,75 @@
 		
 		function do_resize()
 		{
-			//console.log('do resize');
-			if($('#main_box').length)
+			if( $('#main_box').length )
 			{
-				$('#main_box').css(main_box_resize());
+				$('#main_box').css( main_box_resize() );
 			}
 			
-			for(let index=0;index<$('.menu_btn').length;index++)
+			for( let index = 0; index<$('.menu_btn').length; index++ )
 			{
 				let elem = $($('.menu_btn')[index]);
-				elem.css(menu_unit_resize(index,$('.menu_btn').length));
+				
+				elem.css( menu_unit_resize( index, $('.menu_btn').length ) );
 			}
 			
-			if($('#sec_box').length)
+			if( $('#sec_box').length )
 			{
-				$('#sec_box').css(sec_box_resize());
+				$('#sec_box').css( sec_box_resize() );
 			}
 			
-			for(let index=0;index<$('.catform_btn').length;index++)
+			for( let index = 0; index < $('.sec_btn').length; index++ )
 			{
-				let elem = $($('.catform_btn')[index]);
-				elem.css(catform_btn_resize(index,$('.catform_btn').length));
+				let elem = $($('.sec_btn')[index]);
+				
+				elem.css( sec_btn_resize( index, $('.sec_btn').length ) );
 			}
 			
-			if($('#thr_box').length)
+			if( $('#thr_box').length )
 			{
-				$('#thr_box').css(thr_box_resize());
+				$('#thr_box').css( thr_box_resize() );
 			}
 			
-			if($('#img_block').length)
+			if( $('#img_block').length )
 			{
-			   $('#img_block').css(resize_img_box());
+			   	$('#img_block').css( resize_img_box() );
 			}
 			
-			if($('#check').length)
+			if( $('#check').length )
 			{
-				$('#check').css(check_btn_resize());
+				$('#check').css( check_btn_resize() );
 			}
 			
-			if($('#map').length)
+			if( $('.gps_box').length )
 			{
 				//console.log(map_resize());
-				$('#map').css(map_resize());
+				$('.gps_box').css( map_resize() );
 			}
 			
-			for(let ver_index=0;ver_index<3;ver_index++)
+			for( let ver_index  =0; ver_index < 3; ver_index++ )
 			{
-				let ver_list=[7,6,6];
-				for(let color_index=0;color_index<ver_list[ver_index];color_index++)
+				let ver_list = [ 7, 6, 6 ];
+				for( let color_index = 0; color_index < ver_list[ver_index]; color_index++ )
 				{
-					let box_id = '#'+(ver_index+1)+'_'+(color_index+1);
-					$(box_id).css(catColor_box_resize(ver_index,color_index));
+					let box_id = '#'+( ver_index+1 )+'_'+( color_index+1 );
+					$(box_id).css( catColor_box_resize( ver_index, color_index ) );
 				}
 			}
+			
+			if( $('#login').length )
+			{
+				$('#login').css( login_box_resize() );
+			}
+			
+			if( $('#addUser').length )
+			{
+				$('#addUser').css( login_box_resize() );
+			}
+			
+			$.each($('.img_list_box'),function(key,value){
+				let len = $('.img_list_box').length;
+				$(value).css( CatImg_list_resize( key, len ) );
+			})
 		}
 		
 		//一層目
@@ -124,93 +148,122 @@
 		{			
 			let box = $('<div class="abs pritest effect" id="main_box"></div>');
 			$('body').append(box);
-			box.animate(main_box_resize(),1000,make_unit);
+			box.animate( main_box_resize(), 1000, make_unit);
 			//console.log('test1');
 		}
 		
 		function main_box_resize()
 		{
-			let window_width = $(window).width();
+			let window_width  = $(window).width();
 			let window_height = $(window).height();
 			
 			let css_dict = {
-				'width' : window_width*0.98,
-				'height' : window_height*0.98,
-				'top' : window_height*0.01,
-				'left':window_width*0.01,
+				'width'  : window_width  *0.98,
+				'height' : window_height *0.98,
+				'top'    : window_height *0.01,
+				'left'   : window_width  *0.01,
 			};
-			return(css_dict);
+			return( css_dict );
 		}
 		
 		function make_unit()
 		{
 			$('#main *').remove();
 			do_resize();
-			const t=500;
-			const nuit_list = ['猫を登録','TNRの記録','猫数の変化','私のアカウント'];
-			const id_list = ['cat_form','TNR_log','count_glf','my_acc'];
-			const func_list = [case_cat_form,case_tnr_log,case_count_glf,case_my_acc];
-			for(let index=0;index<nuit_list.length;index++)
+			
+			const t         = 500;
+			const nuit_list = [ '猫を登録', 'TNRの記録', '猫数の変化', '私のアカウント' ];
+			const id_list   = [ 'cat_form', 'TNR_log', 'count_glf', 'my_acc' ];
+			const func_list = [ case_cat_form, case_tnr_log, case_count_glf, case_my_acc];
+			
+			for( let index = 0; index < nuit_list.length; index++ )
 			{
-				let btn = $('<input type="button" style="height:1px;width:1px" the_count="'+index+'" id="'+id_list[index]+'" class="menu_btn abs" value="'+nuit_list[index]+'">');
-				$('#main_box').append(btn);
-				btn.animate(menu_unit_resize(index,nuit_list.length),function(){
-					btn.click(func_list[index]);
-				});
+				if( index < nuit_list.length-1 )
+				{
+					let btn = $('<input type="button" style="height:1px;width:1px" the_count="'+ index +'" id="'+ id_list[index] +'" class="menu_btn abs" value="'+ nuit_list[index] +'">');
+					$('#main_box').append(btn);
+					btn.animate( menu_unit_resize( index,nuit_list.length ), function(){
+						btn.click( func_list[index] );
+					});
+				}
+				else
+				{
+					let btn = $('<input type="button" style="height:1px;width:1px" the_count="'+ index +'" id="'+ id_list[index] +'" class="menu_btn abs" value="'+ nuit_list[index] +'">');
+					$('#main_box').append(btn);
+					btn.animate( menu_unit_resize( index,nuit_list.length ), function(){
+						btn.click( func_list[index] );
+						if($.cookie('user_id'))
+						{
+							//console.log($.cookie('user_id'));
+						}
+						else
+						{
+							$('#my_acc').click();
+							//alert('loginしてください');
+							return;
+						}
+					});
+				}				
 			}
 		}
 		
 		function case_cat_form()
 		{
-			$('*').finish();
-			cat_color='';
-			//console.log($('.menu_btn')[0].zIndex);
-			$('.menu_btn').removeClass('check');
-			$(this).addClass('check');
-			$('#sec_box').remove();
-			if(menu_z<2)
+			sec_box_reset(this);
+			
+			session.removeItem('cat_color');
+			now_src = 0;
+			
+			if($.cookie('user_id'))
 			{
-				menu_z=2;
-				fir_box_animet(make_CatForm_menu);	
+				//console.log($.cookie('user_id'));
 			}
 			else
 			{
-				let len = $('.menu_btn').length;
-				const t=500;
-
-
-				let css_dect = menu_unit_resize(0,len);
-				let btn_top = css_dect.height/2+css_dect.top;
+				$('#my_acc').click();
+				//alert('loginしてください');
+				return;
+			}
+			
+			if( menu_z < 2)
+			{
+				menu_z = 2;
+				fri_box_animet( 0, make_CatForm_menu );	
+			}
+			else
+			{
+				let len      = $('.menu_btn').length;
+				let css_dect = menu_unit_resize( 0, len);
+				let btn_top  = css_dect.height/2+css_dect.top;
 				let btn_left = css_dect.width/2+css_dect.left;
-				make_sec_box(btn_top,btn_left,make_CatForm_menu);
+				
+				make_sec_box( btn_top, btn_left, make_CatForm_menu );
 			}			
 		}
 		
-		function fir_box_animet(func)
+		function fri_box_animet(btn_index,func)
 		{
-			let len = $('.menu_btn').length;
-			const t=500;
+			const t      = 500;
 			
-
-			let css_dect = menu_unit_resize(0,len);
-			let btn_top = css_dect.height/2+css_dect.top;
+			let len      = $('.menu_btn').length;
+			let css_dect = menu_unit_resize( btn_index, len );
+			let btn_top  = css_dect.height/2+css_dect.top;
 			let btn_left = css_dect.width/2+css_dect.left;
 
-			for(let index=0;index<len;index++)
+			for( let index = 0; index < len; index++ )
 			{
-				let elem = $($('.menu_btn')[index]);
-				css_dect = menu_unit_resize(index,len);
-				if(index<len-1)
+				css_dect = menu_unit_resize( index, len );
+				
+				let elem = $( $('.menu_btn')[index] );
+				
+				if( index < len-1 )
 				{
-
-					elem.animate(css_dect,t);
-					console.log('test1');
+					elem.animate( css_dect, t );
 				}
 				else
 				{
-					console.log('test2');
-					elem.animate(css_dect,t,function(){
-						make_sec_box(btn_top,btn_left,func);
+					elem.animate( css_dect, t, function(){
+						make_sec_box( btn_top, btn_left, func );
 						do_resize();
 					});
 				}				
@@ -219,187 +272,654 @@
 		
 		function case_tnr_log()
 		{
-			$('*').finish();
-			menu_z=2;
-			let len = $('.menu_btn').length
-			let css_dect = menu_unit_resize(1,len)
-			let btn_top = css_dect.height/2+css_dect.top;
-			let btn_left = css_dect.width/2+css_dect.left;
-			$('.menu_btn').removeClass('check');
-			$(this).addClass('check');
-			$('#sec_box').remove();
-			make_sec_box(btn_top,btn_left);
-			//console.log('test');
+			sec_box_reset(this);
+			
+			if($.cookie('user_id'))
+			{
+				//console.log($.cookie('user_id'));
+			}
+			else
+			{
+				$('#my_acc').click();
+				//alert('loginしてください');
+				return;
+			}
+			
+			if( menu_z < 2)
+			{
+				menu_z = 2;
+				fri_box_animet( 1, function(){console.log('test');} );	
+			}
+			else
+			{
+				let len      = $('.menu_btn').length;
+				let css_dect = menu_unit_resize( 1, len);
+				let btn_top  = css_dect.height/2+css_dect.top;
+				let btn_left = css_dect.width/2+css_dect.left;
+				
+				make_sec_box( btn_top, btn_left, function(){console.log('test');} );
+			}
 		}
 		
 		function case_count_glf()
 		{
-			$('*').finish();
-			menu_z=2;
-			let len = $('.menu_btn').length
-			let css_dect = menu_unit_resize(2,len)
-			let btn_top = css_dect.height/2+css_dect.top;
-			let btn_left = css_dect.width/2+css_dect.left;
-			$('.menu_btn').removeClass('check');
-			$(this).addClass('check');
-			$('#sec_box').remove();
-			make_sec_box(btn_top,btn_left);
+			sec_box_reset(this);
+			
+			if($.cookie('user_id'))
+			{
+				//console.log($.cookie('user_id'));
+			}
+			else
+			{
+				$('#my_acc').click();
+				//alert('loginしてください');
+				return;
+			}
+			
+			if( menu_z < 2)
+			{
+				menu_z = 2;
+				fri_box_animet( 2, function(){console.log('test');} );	
+			}
+			else
+			{
+				let len      = $('.menu_btn').length;
+				let css_dect = menu_unit_resize( 2, len);
+				let btn_top  = css_dect.height/2+css_dect.top;
+				let btn_left = css_dect.width/2+css_dect.left;
+				
+				make_sec_box( btn_top, btn_left, function(){console.log('test');} );
+			}
 			//console.log('test');
 		}
 		
 		function case_my_acc()
 		{
-			$('*').finish();
-			menu_z=2;
-			let len = $('.menu_btn').length
-			let css_dect = menu_unit_resize(3,len)
-			let btn_top = css_dect.height/2+css_dect.top;
-			let btn_left = css_dect.width/2+css_dect.left;
-			$('.menu_btn').removeClass('check');
-			$(this).addClass('check');
-			$('#sec_box').remove();
-			make_sec_box(btn_top,btn_left);
-			//console.log('test');
+			sec_box_reset(this);
+			
+			if( menu_z < 2)
+			{
+				menu_z = 2;
+				fri_box_animet( 3, acct_btn );
+			}
+			else
+			{
+				let len      = $('.menu_btn').length;
+				let css_dect = menu_unit_resize( 3, len);
+				let btn_top  = css_dect.height/2+css_dect.top;
+				let btn_left = css_dect.width/2+css_dect.left;
+				
+				make_sec_box( btn_top, btn_left, acct_btn );
+			}
 		}
+		
+		function sec_box_reset(elem)
+		{
+			$('.menu_btn').removeClass('check');
+			$(elem).addClass('check');
+			$('#sec_box').remove();
+			$('*').finish();
+		}
+		
+		function acct_btn()
+		{
+			do_resize();
+			
+			let menu_list  = [ '基本情報', '探す', '登録済み', '登録きろ' ];
+			let ImgId_list = [ 'acct', 'search', 'up_cat_list', 'up_log' ];
+			let func_list  = [ acct_func, search_func, UpCatList_func, UpLog_func ];
+			let t          = 500;
+			
+			let main_btn_css = menu_unit_resize( 3, $('.menu_btn').length );
+			let sec_box_css  = sec_box_resize();
+			
+			let top  = main_btn_css.top+main_btn_css.height / 2-sec_box_css.top;
+			let left = main_btn_css.left+main_btn_css.width / 2-sec_box_css.left;
+			
+			for( let index=0 ; index < menu_list.length; index++ )
+			{
+				let box_css  = sec_box_resize();
+				let css_dect = sec_btn_resize( index, menu_list.length );
+				let btn      = $('<input type="button" id="'+ ImgId_list[index] +'" class="sec_btn abs" style="width:0px;height:0px;top:'+ top +'px;left:'+ left +'px" value="'+ menu_list[index] +'">');
+				
+				$('#sec_box').append(btn);
+				
+				if( index < menu_list.length-1 )
+				{
+					btn.animate( css_dect, t, function(){
+						btn.click( func_list[index] );
+					});
+				}
+				else
+				{
+					btn.animate( css_dect, t, function(){
+						btn.click( func_list[index] );
+						$('#'+ImgId_list[0]).click();
+					});
+				}				
+			}
+		}
+		
+		function thr_box_reset(elem)
+		{
+			$('*').finish();
+			$('.sec_btn').removeClass('check');
+			$(elem).addClass('check');
+			$('#thr_box').remove();
+		}
+		
+		function acct_func()
+		{
+			thr_box_reset(this);
+			
+			let btn_css = sec_btn_resize( 0, 4 );
+			let top     = btn_css.top+btn_css.height/2;
+			let left    = btn_css.left+btn_css.width/2;
+			
+			if( $.cookie('user_id') )
+			{
+				make_thr_box( top, left, make_login_box );
+			}
+			else
+			{
+				make_thr_box( top, left, make_login_box );
+			}
+		}
+		
+		function make_login_box()
+		{
+			let btn_css = sec_btn_resize( 0, 4 );
+			let top     = btn_css.top;
+			let left    = btn_css.left;
+			
+			let box = $('<div class="login abs pritest" id="login" style="top:'+ top +'px;left:'+ left +'px;width:0px;height:0px;"><samp>E-mail:&nbsp;&nbsp;&nbsp;<input type="email" id="email_input" placeholder="sample@gmail.com"></samp><samp>パスワード:<input type="password" id="password_input"></samp><input id="new_user_btn" type="submit" value="新規登録"><input id="login_btn" type="submit"　value="登録"></div>');
+			
+			$('#thr_box').append(box);
+			
+			box.animate( login_box_resize(), 500, function(){ 
+				$('#login_btn').click(check_login);
+				$('#new_user_btn').click(add_new_user); 
+			});
+		}
+		
+		function check_login()
+		{
+			const input_mail  = $('#email_input').val();
+			const input_passw = $('#password_input').val();
+			
+			const post_data   = {
+				action      : 'check_login',
+				input_mail  : input_mail,
+				input_passw : input_passw
+			};
+			
+			let output = get_data(post_data,check_login_func);
+			
+			//console.log("do login");
+		}
+		//now
+		function add_new_user()
+		{
+			$('#thr_box *').remove();
+			const btn_css = sec_btn_resize( 0, 4 );
+			const top     = btn_css.top;
+			const left    = btn_css.left;
+			const box = $('<div id="addUser" class="abs box" style="top:'+top+'px;left:'+left+'px;width:0px;height:0px"></div>');
+			const user_name_box  = $('<div class="addUser_div" id="userName_input"><samp>名前:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</samp><input id="input_name" class="abs" type="txt"></div>');
+			const user_email_box = $('<div class="addUser_div" id="userEmail_input"><samp>E-mail:&nbsp;&nbsp;&nbsp;</samp><input id="input_email" class="abs" type="txt" placeholder="sample@gmail.com"></div>');
+			const user_pwd_box   = $('<div class="addUser_div" id="userPwd_input"><samp>パスワード:</samp><input id="input_password" class="abs" type="txt"></div>');
+			const submit_btn     = $('<input class="addUser_btn abs" type="submit" id="submit_user_info" value="登録">');
+			
+			box.append(user_name_box).append(user_email_box).append(user_pwd_box).append(submit_btn);
+			$('#thr_box').append(box);
+			box.animate(login_box_resize());
+			submit_btn.click(new_user);
+			
+		}
+		
+		function new_user()
+		{
+			const name = $('#input_name').val();
+			const email = $('#input_email').val();
+			const pwd = $('#input_password').val();
+			
+			let re_email=/^([0-9]|[a-z])+@([0-9]|[a-z])+(.([0-9]|[a-z])+)+$/g;
+			if(email.match(re_email)==null)
+			{
+				alert('E-mailの入力に問題があります');
+				return;
+			}
+			
+			let re_pwd=/^[0-9a-zA-Z]{8,}$/g;
+			if(pwd.match(re_pwd)==null)
+			{
+				alert('パスワードの入力に問題があります');
+				return;
+			}
+			
+			let re_name=/^[^\!\@\#\$\%\^\&\*\(\)\_\+\-\=\[\]\{\}\\\|\:\;\'\"\<\>\?\,\.]+$/g;
+			if(name.match(re_name)==null)
+			{
+				alert('名前の入力に問題があります');
+				return;
+			}
+			
+			
+			const post_data   = {
+				action      : 'add_new_user',
+				name  : name,
+				email : email,
+				pwd:pwd
+			};
+			
+			let output = get_data(post_data,check_user);
+		}
+		
+		function check_user(input)
+		{
+			alert('成功しました。')
+			$('#cat_form').click();
+		}
+		
+		function check_login_func(input)    
+		{
+			console.log(input['_id']);
+			const user_id = input['_id']['$oid'];
+			const checker = input['checker'];
+			const root_level = input['root_level'];
+			if(input['checker']==null)
+			{
+				$.cookie('checker','null');
+			}
+			
+			//console.log(user_id);
+			if(user_id>'0')
+			{
+				//console.log(user_id);
+				$.cookie('user_id',user_id);
+				$.cookie('checker',checker);
+				$.cookie('root_level',root_level);
+				$('#cat_form').click();
+			}
+			else
+			{
+				console.log('unfind');
+			}
+			
+		}
+		
+		function login_box_resize()
+		{
+			let mbox_css    = thr_box_resize();
+			let mbox_wight  = mbox_css.width;
+			let mbox_height = mbox_css.height;
+			
+			if(monitor_ver_check())
+			{
+				let width  = mbox_wight*0.5;
+				let height = mbox_height*0.5;
+				let top    = (mbox_height-height)/2;
+				let left   = (mbox_wight-width)/2;
+
+				let css_dict = {
+					'top'       : top,
+					'height'    : height,
+					'left'      : left,
+					'width'     : width,
+					'font-size' : width/300+'em'
+				}
+				return( css_dict );
+			}
+			else
+			{
+				let width  = mbox_wight*0.9;
+				let height = width/3*2;
+				let top    = (mbox_height-height)/2;
+				let left   = (mbox_wight-width)/2;
+
+				let css_dict = {
+					'top'       : top,
+					'height'    : height,
+					'left'      : left,
+					'width'     : width,
+					'font-size' : width/300+'em'
+				}
+				return( css_dict );
+			}
+		}
+		
+		function search_func()
+		{
+			thr_box_reset(this);
+			
+			if( $.cookie('user_id') )
+			{
+				let btn_css = sec_btn_resize( 1, $('.sec_btn').length );
+				let top     = btn_css.top+btn_css.height/2;
+				let left    = btn_css.left+btn_css.width/2;
+				
+				make_thr_box( top, left, search_box );
+			}
+			else
+			{
+				$('#acct').click();
+			}
+		}
+		
+		function search_box()
+		{
+			let mbox = $('#thr_box');
+			let input_box = $('<input type="text" id="key_input" class="abs">');
+			let output_box = $('<div class="abs" id="output_nameList"></div>');
+			mbox.append(input_box).append(output_box);
+			input_box.keyup(search_name);
+		}
+		
+		function search_name()
+		{
+			let key = $('#key_input').val();
+			
+			const post_data   = {
+				action : 'search_user',
+				key    : key,
+				user_id:$.cookie('user_id')
+			};
+			
+			let output = get_data(post_data,show_userName);
+		}
+		
+		function show_userName(input)
+		{
+			
+			$('#output_nameList *').remove();
+			let box = $('#output_nameList');
+			let len = input.length;
+			if(len<1)
+			{
+				return;
+			}
+			let root_level = $.cookie('root_level');
+			
+			$.each(input,function( key, value ){
+				let user_box = $('<div class="user_box"><samp>'+value['user_name']+'</samp></div>');
+				if(root_level<parseInt(value['root_level']))
+				{
+					let btn = $('<input class="upLevel_btn" type="submit" value="up level">');
+					btn.click(function(){
+						up_level(value['_id']['$oid']);
+					})
+					user_box.append(btn);
+				}
+				
+				box.append(user_box);
+				if(key<(len-1))
+				{
+					box.append($('<hr class="show_user_underline">'));
+				}
+			});
+		}
+		
+		function up_level(id)
+		{
+			console.log(id);
+		}
+		
+		function UpCatList_func()
+		{
+			thr_box_reset(this);
+
+			if( $.cookie('user_id') )
+			{
+				let btn_css = sec_btn_resize( 2, $('.sec_btn').length );
+				let top     = btn_css.top+btn_css.height/2;
+				let left    = btn_css.left+btn_css.width/2;
+
+				make_thr_box( top, left, get_CatImg_list );
+			}
+			else
+			{
+				$('#acct').click();
+			}
+		}
+
+		function get_CatImg_list()
+		{
+			let mbox    = $('#thr_box');
+			let user_id = $.cookie('user_id');
+			
+			const post_data = { 
+				action  : "gat_img_array",
+				user_id : user_id
+			};
+			
+			const work_func = make_CatImg_list;
+				
+			get_data( post_data, work_func, false);
+		}
+		
+		function make_CatImg_list(input)
+		{
+			let mbox    = $('#thr_box');
+			let btn_css = sec_btn_resize(2,4);
+			let len = input.length;
+			$.each(input,function( key, value ){
+				let cat_id   = value['_id']['$oid'];
+				let box   = $('<div id="'+cat_id+'" style="top:'+btn_css.top+'px;left:'+btn_css.left+'px;height:0px;width:0px" class="img_list_box pritest abs"></div>');
+				mbox.append(box);
+				//let img   = $('<img class="img_list" src="'+ src +'" />');
+				const post_data = { 
+					action  : "id_gat_img",
+					cat_id : cat_id
+				};
+			
+				const work_func = show_cat_img;
+
+				get_data( post_data, work_func, false);
+				
+				box.animate(CatImg_list_resize(key,len),500);
+			});
+		}
+		
+		function show_cat_img(input)
+		{
+			console.log(input);
+			$.each(input,function( key, value ){
+				let cat_id = value['_id']['$oid'];
+				let box = $('#'+cat_id);
+				let img_box = $('<img class="img_list" src="'+ value['src'] +'" />');
+				box.append(img_box);
+
+				box.click(function(){
+					make_submin_btn( cat_id );
+				});
+			});
+		}
+		
+		function CatImg_list_resize(index,len)
+		{
+			let mbox        = $('#thr_box');
+			let mbox_css    = thr_box_resize();
+			let mbox_width  = mbox_css.width;
+			let mbox_height = mbox_css.height;
+			
+			if(monitor_ver_check())
+			{
+				var cont     = 5;				
+			}
+			else
+			{
+				var cont     = 3;
+			}
+			
+			let box_size     = mbox_width/( cont+( (cont-1)/2 )+2 );
+			let left_padding = box_size/2;
+			let left_start   = (mbox_width-box_size*(cont+( (cont-1)/2 )))/2;
+			let top_padding  = left_start;
+			let top_start    = top_padding;
+			let x_index      = index % cont;
+			let y_index      = ( index-x_index )/cont;
+
+			let css_dict     = {
+				'width'  : box_size,
+				'height' : box_size,
+				'top'    : top_start+y_index*( top_padding+box_size ),
+				'left'   : left_start+x_index*( box_size+left_padding )
+			}
+			return( css_dict );
+		}
+		
+		function UpLog_func()
+		{
+			thr_box_reset(this);
+			
+			if( $.cookie('user_id') )
+			{
+				let btn_css = sec_btn_resize( 3, $('.sec_btn').length );
+				let top     = btn_css.top+btn_css.height/2;
+				let left    = btn_css.left+btn_css.width/2;
+				
+				make_thr_box( top, left, make_login_box );
+			}
+			else
+			{
+				$('#acct').click();
+			}
+		}
+		
 		
 		function menu_unit_resize(index,len)
 		{
-			let mbox_width = $('#main_box').width();
+			let mbox_width  = $('#main_box').width();
 			let mbox_height = $('#main_box').height();
 			let monitor_ver = monitor_ver_check($('#main_box'));
 
 			let css_dict;
-			if(monitor_ver)
+			
+			if( monitor_ver )
 			{
-				if(menu_z<2)
+				if( menu_z < 2 )
 				{						
-					let btn_width_hight = (mbox_width*0.95)/len;
-					let btn_padding = (mbox_width*0.05)/(len+1);
-					let start_top = 0;
-					if(btn_width_hight>mbox_height)
+					let btn_width_hight = ( mbox_width*0.80 )/len;
+					let btn_padding     = ( mbox_width*0.05 )/( len+1 );
+					let start_top       = ( mbox_width-btn_width_hight*len-btn_padding*( len-1 ) )/2;
+					if( btn_width_hight > mbox_height )
 					{
 						btn_width_hight = mbox_height*0.95;
-						start_top = (mbox_width-(btn_width_hight*len)-(btn_padding*(len-1)))/2;
+						start_top       = ( mbox_width - ( btn_width_hight*len )-( btn_padding*( len-1 ) ) )/2;
 					}					
 					
 					css_dict = {
-						'top':(mbox_height-btn_width_hight)/2,
-						'left':start_top+btn_padding+((btn_width_hight+btn_padding)*index),
-						'width':btn_width_hight,
-						'height':btn_width_hight,
-						'font-size':btn_width_hight/70+'em'
+						'top'       : ( mbox_height - btn_width_hight )/2,
+						'left'      : start_top + btn_padding + ( ( btn_width_hight+btn_padding )*index ),
+						'width'     : btn_width_hight,
+						'height'    : btn_width_hight,
+						'font-size' : btn_width_hight/70+'em'
 					};
 				}
 				else
 				{
-					let btn_width_hight = (mbox_width*0.05);
+					let btn_width_hight = mbox_width*0.05;
+					let btn_padding     = btn_width_hight/2;
+					let start_top
 
-					let btn_padding = btn_width_hight/2;
-
-					if(((btn_width_hight*len)+(btn_padding*len-1))>mbox_height)
+					if((( btn_width_hight*len )+( btn_padding*len-1 )) > mbox_height)
 					{
-						btn_width_hight = mbox_height/((3*len-1)/2);
-						btn_padding = btn_width_hight/2;
+						btn_width_hight = mbox_height/(( 3*len-1 )/2);
+						btn_padding     = btn_width_hight/2;
 					}
 
-					let start_top = (mbox_height-(btn_width_hight*len)-(btn_padding*(len-1)))/2
+					start_top = ( mbox_height-( btn_width_hight*len )-( btn_padding*( len-1 )))/2
 					
 					css_dict = {
-						'top':start_top+(btn_width_hight+btn_padding)*index,
-						'left':mbox_width*0.94,
-						'width':btn_width_hight,
-						'height':btn_width_hight,
-						'font-size':btn_width_hight/70+'em'
+						'top'       : start_top+( btn_width_hight+btn_padding )*index,
+						'left'      : mbox_width*0.94,
+						'width'     : btn_width_hight,
+						'height'    : btn_width_hight,
+						'font-size' : btn_width_hight/70+'em'
 					};
-				}
-				
+				}				
 			}
 			else
 			{
-
-				if(menu_z<2)
+				if( menu_z < 2 )
 				{
-					let btn_width_hight = (mbox_height*0.95)/len;
-					let btn_padding = (mbox_height*0.05)/(len+1);
-					let start_top=0;
-					if(btn_width_hight>mbox_width)
+					let btn_width_hight = ( mbox_height*0.95 )/len;
+					let btn_padding     = ( mbox_height*0.05 )/( len+1 );
+					let start_top       = 0;
+					
+					if( btn_width_hight > mbox_width )
 					{
 						btn_width_hight = mbox_width*0.95;
-						start_top = (mbox_height-(btn_width_hight*len)-(btn_padding*(len-1)))/2;
+						start_top       = (mbox_height-( btn_width_hight*len )-( btn_padding*( len-1 )))/2;
 					}
-
 					
-
 					css_dict = {
-						'top':start_top+btn_padding+((btn_width_hight+btn_padding)*index),
-						'left':(mbox_width-btn_width_hight)/2,
-						'width':btn_width_hight,
-						'height':btn_width_hight,
-						'font-size':btn_width_hight/70+'em'
+						'top'       : start_top+btn_padding+( ( btn_width_hight+btn_padding )*index ),
+						'left'      : ( mbox_width-btn_width_hight )/2,
+						'width'     : btn_width_hight,
+						'height'    : btn_width_hight,
+						'font-size' : btn_width_hight/70+'em'
 					};
 				}
 				else
 				{
-					//console.log(len);
-					let btn_width_hight = (mbox_width*0.60)/(((3*len)-1)/2);
-
-					let btn_padding = btn_width_hight/2;
-
-					let start_left = (mbox_width-(btn_width_hight*len)-(btn_padding*(len-1)))/2
+					let btn_width_hight = ( mbox_width*0.60 )/((( 3*len )-1 )/2 );
+					let btn_padding     = btn_width_hight/2;
+					let start_left      = ( mbox_width-( btn_width_hight*len )-( btn_padding*( len-1 ) ) )/2
 
 					css_dict = {
-						'top':mbox_height*0.01,
-						'left':start_left+(btn_width_hight+btn_padding)*index,
-						'width':btn_width_hight,
-						'height':btn_width_hight,
-						'font-size':btn_width_hight/70+'em'
+						'top'       : mbox_height*0.01,
+						'left'      : start_left+( btn_width_hight+btn_padding )*index,
+						'width'     : btn_width_hight,
+						'height'    : btn_width_hight,
+						'font-size' : btn_width_hight/70+'em'
 					};
 				}
 			}
-			return(css_dict);
+			return( css_dict );
 		}
 		
 		
 		//二層目
-		function make_sec_box(btn_top,btn_left,func)
+		function make_sec_box( btn_top, btn_left, func )
 		{
-			let box = $('<div class="abs pritest effect" id="sec_box" style="top:'+btn_top+'px;left:'+btn_left+'px;width:0px;height:0px;"></div>');			
+			let box = $('<div class="abs pritest effect" id="sec_box" style="top:'+ btn_top +'px;left:'+ btn_left +'px;width:0px;height:0px;"></div>');
+			
 			$('#main_box').append(box);
 			
-			
-			box.animate(sec_box_resize(),500,func);
+			box.animate( sec_box_resize(), 500, func );
 		}
 		
 		function sec_box_resize()
 		{
-			let mbox = $('#main_box');
-			let mbox_width = mbox.width();
+			let mbox        = $('#main_box');
+			let mbox_width  = mbox.width();
 			let mbox_height = mbox.height();
 			
-			let fir_btn_css = menu_unit_resize(0,4);
-			let btn_top = fir_btn_css.top;
-			let btn_hight = fir_btn_css.height;
-			let btn_left = fir_btn_css.left;
-			let btn_wight = fir_btn_css.width;
-			
+			let fir_btn_css = menu_unit_resize( 0, 4 );
+			let btn_top     = fir_btn_css.top;
+			let btn_hight   = fir_btn_css.height;
+			let btn_left    = fir_btn_css.left;
+			let btn_wight   = fir_btn_css.width;			
 			
 			let css_dict;
-			if(monitor_ver_check(mbox))
+			
+			if( monitor_ver_check(mbox) )
 			{
 				css_dict={
-					'left':mbox_width*0.02,
-					'top':mbox_height*0.02,
-					'width':mbox_width*0.96-btn_wight,
-					'height':mbox_height*0.96
+					'left'   :mbox_width*0.02,
+					'top'    :mbox_height*0.02,
+					'width'  :mbox_width*0.96-btn_wight,
+					'height' :mbox_height*0.96
 				}
 			}
 			else
 			{
 				css_dict={
-					'left':mbox_width*0.02,
-					'top':btn_top*2+btn_hight,
-					'width':mbox_width*0.96,
-					'height':mbox_height*0.98-(btn_top*2+btn_hight),
+					'left'   :mbox_width*0.02,
+					'top'    :btn_top*2+btn_hight,
+					'width'  :mbox_width*0.96,
+					'height' :mbox_height*0.98-( btn_top*2+btn_hight ),
 				}
 			}
 			return(css_dict);
@@ -408,36 +928,39 @@
 		function make_CatForm_menu()
 		{
 			do_resize();
-			let menu_list = ['画像アップ','毛色選択','TNR選択','GPSデータ確認'];
-			let ImgId_list = ['imgup','color','tnr','gps'];
-			let func_list = [imgup_func,color_func,tnr_func,gps_func];
-			let t = 500;
 			
-			let main_btn_css = menu_unit_resize(0,$('.menu_btn').length);
-			let sec_box_css = sec_box_resize();
-			let sec_btn_css = catform_btn_resize(0,menu_list.length)
+			let menu_list  = [ '画像アップ', '毛色選択', 'TNR選択', 'GPSデータ確認' ];
+			let ImgId_list = [ 'imgup', 'color', 'tnr', 'gps' ];
+			let func_list  = [ imgup_func, color_func, tnr_func, gps_func ];
+			let t          = 500;
 			
-			let top = main_btn_css.top+main_btn_css.height/2-sec_box_css.top;
-			let left = main_btn_css.left+main_btn_css.width/2-sec_box_css.left;
+			let main_btn_css = menu_unit_resize( 0, $('.menu_btn').length );
+			let sec_box_css  = sec_box_resize();
+			let sec_btn_css  = sec_btn_resize( 0, menu_list.length );
 			
-			for(let index=0;index<menu_list.length;index++)
+			let top  = main_btn_css.top+main_btn_css.height / 2-sec_box_css.top;
+			let left = main_btn_css.left+main_btn_css.width / 2-sec_box_css.left;
+			
+			MyLatLng=0;
+			
+			for( let index=0 ; index < menu_list.length; index++ )
 			{
-				let box_css = sec_box_resize();
-				let css_dect = catform_btn_resize(index,menu_list.length);
-				//let top = (box_css.height-css_dect.height)/2;
-				//let left = (box_css.width-css_dect.width)/2;
-				let btn = $('<input type="button" id="'+ImgId_list[index]+'" class="catform_btn abs" style="width:0px;height:0px;top:'+top+'px;left:'+left+'px" value="'+menu_list[index]+'">');
+				let box_css  = sec_box_resize();
+				let css_dect = sec_btn_resize( index, menu_list.length );
+				let btn      = $('<input type="button" id="'+ ImgId_list[index] +'" class="sec_btn abs" style="width:0px;height:0px;top:'+ top +'px;left:'+ left +'px" value="'+ menu_list[index] +'">');
+				
 				$('#sec_box').append(btn);
-				if(index<menu_list.length-1)
+				
+				if( index < menu_list.length-1 )
 				{
-					btn.animate(css_dect,t,function(){
-						btn.click(func_list[index]);
+					btn.animate( css_dect, t, function(){
+						btn.click( func_list[index] );
 					});
 				}
 				else
 				{
-					btn.animate(css_dect,t,function(){
-						btn.click(func_list[index]);
+					btn.animate( css_dect, t, function(){
+						btn.click( func_list[index] );
 						$('#'+ImgId_list[0]).click();
 					});
 				}				
@@ -447,317 +970,677 @@
 		//写真登録
 		function imgup_func()
 		{
-			$('*').finish();
-			menu_z=3;
-			$('.catform_btn').removeClass('check');
-			$(this).addClass('check');
-			$('#thr_box').remove();
+			thr_box_reset(this);
+			
+			menu_z = 3;
+			
 			let css_dict = sec_box_resize();
-			let btn_css = catform_btn_resize(0,$('.catform_btn').length);
-			//console.log(btn_css);
-			make_thr_box(btn_css.top+btn_css.height/2,btn_css.left+btn_css.width/2,make_img_box);
+			let btn_css  = sec_btn_resize( 0, $('.sec_btn').length );
 			
-			
-			//make_img_box();
+			make_thr_box( btn_css.top+btn_css.height/2, btn_css.left+btn_css.width/2, make_img_box );
 		}
 		
 		function color_func()
 		{
-			$('*').finish();
-			menu_z=3;
-			$('.catform_btn').removeClass('check');
-			$(this).addClass('check');
-			$('#thr_box').remove();
+			thr_box_reset(this);
+			
+			menu_z = 3;
+			
 			let css_dict = sec_box_resize();
-			let btn_css = catform_btn_resize(1,$('.catform_btn').length);
-			//console.log(btn_css);
-			make_thr_box(btn_css.top+btn_css.height/2,btn_css.left+btn_css.width/2,make_catColor_box);
+			let btn_css  = sec_btn_resize( 1, $('.sec_btn').length );
+			
+			make_thr_box( btn_css.top+btn_css.height/2, btn_css.left+btn_css.width/2, make_catColor_box );
 		}
 		
 		function tnr_func()
 		{
-			$('*').finish();
-			menu_z=3;
-			$('.catform_btn').removeClass('check');
-			$(this).addClass('check');
-			$('#thr_box').remove();
+			thr_box_reset(this);
+			
+			menu_z = 3;
+			
 			let css_dict = sec_box_resize();
-			let btn_css = catform_btn_resize(2,$('.catform_btn').length);
-			console.log(btn_css);
-			make_thr_box(btn_css.top+btn_css.height/2,btn_css.left+btn_css.width/2,function(){console.log('test')});
+			let btn_css  = sec_btn_resize(2,$('.sec_btn').length);
+
+			make_thr_box( btn_css.top+btn_css.height/2, btn_css.left+btn_css.width/2, make_tnr_chose_box );
+		}
+		
+		function make_tnr_chose_box()
+		{
+			let btn_css  = sec_btn_resize(2,$('.sec_btn').length);
+			let top      = btn_css.top+btn_css.height/2;
+			let left     = btn_css.left+btn_css.width/2;
+			
+			let tnr_box  = $('<div id="tnr_box" class="abs pritest tnr_chose" is_tnr="1" style="top:'+ top +'px;left:'+ left +'px;width:0px;height:0px">is tnr</div>');
+			let nol_box  = $('<div id="nol_box" class="abs pritest tnr_chose" is_tnr="0" style="top:'+ top +'px;left:'+ left +'px;width:0px;height:0px">no tnr</div>');
+			
+			$('#thr_box').append(tnr_box).append(nol_box);
+			
+			tnr_box.animate(chose_box_resize(0),500,function(){
+				tnr_box.click(chose_click);
+			});
+			nol_box.animate(chose_box_resize(1),500,function(){
+				nol_box.click(chose_click);
+			});
+		}
+		
+		function chose_box_resize(index)
+		{
+			let mbox_css    = thr_box_resize();
+			let mbox_wight  = mbox_css.width;
+			let mbox_height = mbox_css.height;
+			
+			let css_dict;
+			
+			if(monitor_ver_check())
+			{
+				let box_size = mbox_height*0.3;
+				let padding  = mbox_wight*0.6-box_size*2;
+				let top      = ( mbox_height-box_size )/2;
+				let left     = ( mbox_wight-( box_size*2+padding ) )/2;
+				
+				css_dict = {
+					'width'  :box_size,
+					'height' :box_size,
+					'top'    :top,
+					'left'   :left+( box_size+padding )*index
+				}
+				return( css_dict );
+			}
+			else
+			{
+				let box_size = mbox_wight*0.3;
+				let padding  = mbox_height*0.6-box_size*2;
+				let top      = ( mbox_height-( box_size*2+padding ) )/2;
+				let left     = ( mbox_wight-box_size )/2;
+				
+				css_dict = {
+					'width'  :box_size,
+					'height' :box_size,
+					'top'    :top+( box_size+padding )*index,
+					'left'   :left
+				}
+				return( css_dict );
+			}
+		}
+		
+		function chose_click()
+		{
+			let elem = $(this);
+			
+			session.removeItem('is_tnr');
+			console.log('before',session.getItem('is_tnr'));
+			if( elem.hasClass('tnr_check') )
+			{
+				$('.tnr_chose').removeClass('tnr_check');
+				$('#tnr').removeClass('isok');
+			}
+			else
+			{
+				$('.tnr_chose').removeClass('tnr_check');
+				elem.addClass('tnr_check');
+				session.setItem( 'is_tnr', elem.attr('is_tnr') );
+				$('#tnr').addClass('isok');
+				submin_btn();
+			}
+			console.log('after',session.getItem('is_tnr'));
 		}
 		
 		//googleマップ
 		function gps_func()
 		{
-			$('*').finish();
-			menu_z=3;
-			$('.catform_btn').removeClass('check');
-			$(this).addClass('check');
-			$('#thr_box').remove();
+			thr_box_reset(this);
+			
+			menu_z = 3;
+			
 			let css_dict = sec_box_resize();
-			let btn_css = catform_btn_resize(3,$('.catform_btn').length);
-			//console.log(btn_css);
-			make_thr_box(btn_css.top+btn_css.height/2,btn_css.left+btn_css.width/2,make_gps_box);
+			let btn_css  = sec_btn_resize( 3, $('.sec_btn').length );
+
+			make_thr_box( btn_css.top+btn_css.height/2, btn_css.left+btn_css.width/2, make_gps_box );
 		}
 		
-		function catform_btn_resize(index,len)
+		
+		function submin_btn()
 		{
-			let mbox = $('#sec_box');
-			let secBoc_css = sec_box_resize();
+			let src     = now_src;
+			let color   = session.getItem('cat_color');
+			let tnr     = session.getItem('is_tnr');
+			let gps     = [ session.getItem('lat'), session.getItem('lng') ];
+			
+			if(src && color && tnr && gps[0])
+			{
+				do_submit(src,color,tnr,session.getItem('lat'),session.getItem('lng'),get_some_cat_list);
+				console.log('all ok',src,color,tnr,gps);
+			}
+			else
+			{
+				console.log('not ok');
+			}
+		}
+		
+		function make_submin_btn( cat_id )
+		{
+			const post_data = { 
+				action  : "catId_gat_All",
+				cat_id : cat_id
+			};
+
+			const work_func = show_cat_info;
+
+			get_data( post_data, work_func, false);
+			//console.log(src, color, tnr, lat, lng);
+			
+		}
+		
+		function do_submit(src,color,tnr,lat,lng,func)
+		{
+			$('#thr_box *').remove();
+			$('*').finish();
+			$('.sec_btn').removeClass('check');
+			$('#map').remove();
+			let mbox       = $('#thr_box');
+			let img_box    = $('<div class="abs" id="check_img"><img src="'+src+'"></div>');
+			let color_box  = $('<div class="abs" id="check_color"><img src="img/color/'+color+'.png"></div>');
+			let tnr_check  = $('<div class="abs" id="check_tnr">'+tnr+'</div>');
+			let map_check  = $('<div id="map" class="gps_check" class="abs pritest"></div>');
+			let submit_btn = $('<input id="check_btn" type="button" value="btn">');
+			
+			mbox.append(map_check).append(color_box).append(tnr_check).append(img_box).append(submit_btn);
+			submit_btn.click(func);
+			map_reset( lat, lng );
+		}
+		
+		function show_cat_info(input)
+		{
+			console.log('test',input)
+			input = input['0'];
+			let src = input['src'];
+			let color = input['color'];
+			let tnr = input['tnr'];
+			let lat = input['lat'];
+			let lng = input['lng'];
+			
+			$('#thr_box *').remove();
+			$('*').finish();
+			$('.sec_btn').removeClass('check');
+			$('#map').remove();
+			let mbox       = $('#thr_box');
+			let img_box    = $('<div class="abs" id="check_img"><img src="'+src+'"></div>');
+			let color_box  = $('<div class="abs" id="check_color"><img src="img/color/'+color+'.png"></div>');
+			let tnr_check  = $('<div class="abs" id="check_tnr">'+tnr+'</div>');
+			let map_check  = $('<div id="map" class="gps_check" class="abs pritest"></div>');
+			let submit_btn = $('<input id="check_btn" type="button" value="btn">');
+			
+			mbox.append(map_check).append(color_box).append(tnr_check).append(img_box).append(submit_btn);
+			//submit_btn.click(func);
+			map_reset( lat, lng );
+		}
+		
+		function map_reset( lat, lng )
+		{
+			map = null;
+			var latlng = new google.maps.LatLng( lat, lng );
+			
+					
+			var Options = {
+				zoom      : 13,      //地図の縮尺値
+				center    : latlng,  //地図の中心座標
+				mapTypeId : 'roadmap'   //地図の種類
+			};
+			
+			
+			map = new google.maps.Map( document.getElementById('map'), Options );
+			make_maker( lat, lng );
+			
+		}
+		
+		function get_some_cat_list()
+		{
+			let src     = now_src;
+			let color   = session.getItem('cat_color');
+			let tnr     = session.getItem('is_tnr');
+			let gps     = [ session.getItem('lat'), session.getItem('lng') ];
+			let user_id = $.cookie('user_id');
+			let checker = $.cookie('checker');
+			console.log(checker);
+			const post_data = { 
+				action  : "get_some_cat_array",
+				src     : src,
+				color   : color,
+				tnr     : tnr,
+				gps     : gps,
+				user_id : user_id,
+				is_first: 'true',
+				checker : checker
+			};
+			
+			const work_func = show_some_cat_list;
+				
+			get_data( post_data, work_func);
+		}
+		
+		function show_some_cat_list(input)
+		{
+			if(input['func'] == 'save')
+			{
+				console.log('save');
+				alert('完了しました');
+				$('#cat_form').click();
+			}
+			else
+			{
+				console.log(input);
+				$('#thr_box *').remove();
+				let mbox    = $('#thr_box');
+				let btn_css = sec_btn_resize(2,4);
+
+				let len = input.length;
+				$.each(input,function( key, value ){
+					console.log(key,value['color']);
+					let src   = value['src'];
+					let color = value['color'];
+					let tnr   = value['tnr'];
+					let lat   = value['lat'];
+					let lng   = value['lng'];
+					
+					let cat_id= value['_id']['$oid'];
+					let box   = $('<div id="'+cat_id+'" style="top:'+btn_css.top+'px;left:'+btn_css.left+'px;height:0px;width:0px" class="img_list_box pritest abs"></div>');
+					mbox.append(box);
+					//let img   = $('<img class="img_list" src="'+ src +'" />');
+					const post_data = { 
+						action  : "id_gat_img",
+						cat_id : cat_id
+					};
+
+					const work_func = show_cat_img;
+
+					get_data( post_data, work_func, false);
+					
+					box.css(CatImg_list_resize(key,len));
+					session.removeItem('cat_id');
+					box.click(function(){
+						get_same_cat(cat_id);
+						session.setItem( 'cat_id', cat_id );
+					});
+				});
+			}
+		}
+		
+		function get_same_cat(cat_id)
+		{
+			const post_data = { 
+				action : "CatId_get_cat_array",
+				cat_id : cat_id
+			};
+			
+			const work_func = show_cat_array;
+				
+			get_data( post_data, work_func);
+		}
+		
+		function show_cat_array(input)
+		{
+			console.log(input);
+			let under_box = $('<div id="show_some_cat" class="abs"></div>');
+			let show_box = $('<div id="show_some_cat_box" class="abs"></div>');
+			let scroll_box = $('<div id="scroll_box" class="abs"></div>');
+			let btn = $('<input id="show_some_cat_btn" class="abs" type="submit" val="転送"/>');
+			
+			show_box.append(scroll_box).append(btn);
+			under_box.append(show_box);
+			$('body').append(under_box);
+			let len = input.length;
+			$.each(input,function( key, value ){
+				let src   = value['src'];
+				let box   = $('<div style="top:0px;left:0px;height:0px;width:0px" class="img_list_box pritest abs"></div>');
+				let img   = $('<img class="img_list" src="'+ src +'" />');
+				scroll_box.append(box.append(img));
+				box.css(show_cat_box_css(key,len));
+			});
+			btn.click(submit_func);
+			under_box.click(function(e){
+				console.log($(e['target']).attr('id'));
+				if($(e['target']).attr('id')=='show_some_cat')
+				{
+					under_box.remove();
+				}
+			});
+		}
+		
+		function show_cat_box_css(index,len)
+		{
+			let cont = 1;
+			if(monitor_ver_check())
+			{
+				cont = 3;
+			}
+			
+			let height = parseFloat($('#scroll_box').css('height'));
+			let wight = parseFloat($('#scroll_box').css('width'));
+			console.log((cont-1)/2);
+			console.log((cont+((cont-1)/2)+1));
+			console.log($.type(wight));
+			console.log(wight/(cont+((cont-1)/2)+1));
+			const box_size = wight/(cont+((cont-1)/2)+1);
+			
+			if(box_size>wight*0.8)
+			{
+				box_size = wight*0.8;
+			}
+			
+			const left_padding = box_size/2;
+			const left_start = box_size/2;
+			const top_start = wight*0.1;
+			const top_padding = wight*0.1;
+			
+			const x_index = index % cont;
+			const y_index = (index-x_index)/cont;
+			
+			let css_dict     = {
+				'width'  : box_size,
+				'height' : box_size,
+				'top'    : top_start+y_index*( top_padding+box_size ),
+				'left'   : left_start+x_index*( box_size+left_padding )
+			}
+			
+			return( css_dict );
+		}
+		
+		function submit_func()
+		{
+			let src     = now_src;
+			let color   = session.getItem('cat_color');
+			let tnr     = session.getItem('is_tnr');
+			let gps     = [ session.getItem('lat'), session.getItem('lng') ];
+			let user_id = $.cookie('user_id');
+			let checker = $.cookie('checker');
+			let cat_id  = session.getItem('cat_id');
+			
+			console.log(checker);
+			const post_data = { 
+				action  : "save_data",
+				src     : src,
+				color   : color,
+				tnr     : tnr,
+				gps     : gps,
+				user_id : user_id,
+				is_first: 'false',
+				cat_id  : cat_id,
+				checker : checker
+			};
+			
+			const work_func = submit_check;
+				
+			get_data( post_data, work_func);			
+		}
+		
+		function submit_check(input)
+		{
+			console.log(input);
+			alert('完了しました');
+			$('#cat_form').click();
+			$('#show_some_cat').remove();
+		}
+		
+		function sec_btn_resize(index,len)
+		{
+			let mbox        = $('#sec_box');
+			let secBoc_css  = sec_box_resize();
 			let mbox_width  = secBoc_css.width;
 			let mbox_height = secBoc_css.height;
 			let monitor_ver = monitor_ver_check(mbox);
 			
 			let css_dict;
-			if(monitor_ver)
+			
+			if( monitor_ver )
 			{
-				let btn_width_hight = (mbox_width*0.05);
+				let btn_width_hight = ( mbox_width*0.05 );
+				let btn_padding     = btn_width_hight/2;
 
-				let btn_padding = btn_width_hight/2;
-
-				if(((btn_width_hight*len)+(btn_padding*(len-1)))>mbox_height)
+				if((( btn_width_hight*len )+( btn_padding*( len-1) ) ) > mbox_height )
 				{
-					btn_width_hight = mbox_height*0.95/((3*len-1)/2);
-					btn_padding = btn_width_hight/2;
+					btn_width_hight = mbox_height*0.95/(( 3*len-1 )/2);
+					btn_padding     = btn_width_hight/2;
 				}
 
-				let start_top = (mbox_height*0.975-(btn_width_hight*len)-(btn_padding*(len-1)))/2;
+				let start_top = ( mbox_height*0.975-( btn_width_hight*len )-( btn_padding*( len-1 ) ))/2;
 
 				css_dict = {
-					'left':mbox_width*0.93,
-					'top':start_top+(btn_width_hight+btn_padding)*index,
-					'width':btn_width_hight,
-					'height':btn_width_hight,
-					'font-size':btn_width_hight/70+'em',
+					'left'      : mbox_width*0.93,
+					'top'       : start_top+( btn_width_hight+btn_padding )*index,
+					'width'     : btn_width_hight,
+					'height'    : btn_width_hight,
+					'font-size' : btn_width_hight/70+'em',
 				}
-				
 			}
 			else
-			{				
-				//console.log(len);
-
-				let btn_width_hight = (mbox_width*0.60)/(((3*len)-1)/2);
-
-				let btn_padding = btn_width_hight/2;
-
-				let start_left = (mbox_width-(btn_width_hight*len)-(btn_padding*(len-1)))/2
+			{
+				let btn_width_hight = ( mbox_width*0.60 )/( ( ( 3*len )-1 )/2 );
+				let btn_padding     = btn_width_hight/2;
+				let start_left      = ( mbox_width-( btn_width_hight*len )-( btn_padding*( len-1 ) ) )/2
 				//console.log(start_left+(btn_width_hight+btn_padding)*index);
 				
 				css_dict = {
-					'left':start_left+(btn_width_hight+btn_padding)*index,
-					'top':mbox_height*0.01,
-					'width':btn_width_hight,
-					'height':btn_width_hight,
-					'font-size':btn_width_hight/70+'em',
+					'left'      : start_left+( btn_width_hight+btn_padding )*index,
+					'top'       : mbox_height*0.01,
+					'width'     : btn_width_hight,
+					'height'    : btn_width_hight,
+					'font-size' : btn_width_hight/70+'em',
 				}			
 			}
-			return(css_dict);
+			return( css_dict );
 		}
 		
 		//三層目
-		function make_thr_box(top,left,func)
+		function make_thr_box( top, left, func)
 		{
-			//console.log(top,left);
 			do_resize();
-			let box = $('<div class="abs pritest effect" style="top:'+top+'px;left:'+left+'px;width:0px;height:0px;" id="thr_box"></div>');
+			
+			let box = $('<div class="abs pritest effect" style="top:'+ top +'px;left:'+ left +'px;width:0px;height:0px;" id="thr_box"></div>');
+			
 			$('#sec_box').append(box);
-			box.animate(thr_box_resize(),500,func);
+			
+			box.animate( thr_box_resize(), 500, func );
 		}
 		
 		function thr_box_resize()
 		{
-			let mbox = $('#sec_box');
-			let mbox_width = mbox.width();
+			let mbox        = $('#sec_box');
+			let mbox_width  = mbox.width();
 			let mbox_height = mbox.height();
 			
-			let btn_css = catform_btn_resize(0,4);
-			let btn_wight = btn_css.width;
-			let btn_top = btn_css.top;
-			let btn_height = btn_css.height;
-			
+			let btn_css    = sec_btn_resize( 0, 4 );
+			let btn_wight  = btn_css.width;
+			let btn_left   = btn_css.left;
+			let btn_top    = btn_css.top;
+			let btn_right  = mbox_width-btn_left-btn_wight;
+			let btn_height = btn_css.height;			
 			
 			let css_dict;
 			
-			if(monitor_ver_check(mbox))
+			if( monitor_ver_check(mbox) )
 			{
 				css_dict={
-					'left':mbox_width*0.02,
-					'top':mbox_height*0.02,
-					'width':mbox_width*0.96-btn_wight,
-					'height':mbox_height*0.96,
+					'left'   : mbox_width*0.02,
+					'top'    : mbox_height*0.02,
+					'width'  : mbox_width*0.98-btn_right*2-btn_wight,
+					'height' : mbox_height*0.96,
 				}
 			}
 			else
 			{
 				css_dict={
-					'left':mbox_width*0.02,
-					'top':btn_top*2+btn_height,
-					'width':mbox_width*0.96,
-					'height':mbox_height*0.98-(btn_top*2+btn_height),
+					'left'   : mbox_width*0.02,
+					'top'    : btn_top*2+btn_height,
+					'width'  : mbox_width*0.96,
+					'height' : mbox_height*0.98-( btn_top*2+btn_height ),
 				}
 			}
-			return(css_dict);
+			return( css_dict );
 		}
 		
 		function make_img_box()
 		{
 			do_resize();
-			let btn_css = catform_btn_resize(0,$('.catform_btn').length);
-			let box_css = sec_box_resize();
 			
-			let top = (btn_css.top+btn_css.height/2)-box_css.top;
-			let left = (btn_css.left+btn_css.width/2)-box_css.left;
-			//console.log(top,left);
+			let btn_css = sec_btn_resize( 0, $('.sec_btn').length );
+			let box_css = sec_box_resize();			
+			let top     = ( btn_css.top+btn_css.height/2 )-box_css.top;
+			let left    = ( btn_css.left+btn_css.width/2 )-box_css.left;
+
 			$('#img_block').remove();
-			let img_box = $('<div style="top:'+top+'px;left:'+left+'px;height:0px;width:0px" id="img_block" class="pritest abs effect"></div>');
 			
-			$('#thr_box').append(img_box);
+			let img_box = $('<div style="top:'+ top +'px;left:'+ left +'px;height:0px;width:0px" id="img_block" class="pritest abs"></div>');
 			
+			$('#thr_box').append( img_box );
 			
+			img_box.click( upimg );
 			
-			img_box.click(upimg);			
-			img_box.animate(resize_img_box(),500,function(){
+			img_box.animate( resize_img_box(), 500, function(){
 				let show_img_box = $('<img id="show_img" src="img/IMG_1409.jpg" alt="写真をアップしてください" />');
-				img_box.append(show_img_box);
-				if(now_src!=0)
+				
+				img_box.append( show_img_box );
+				
+				if( now_src )
 				{
-					show_img_box.attr('src',now_src);
+					show_img_box.attr( 'src', now_src );
 				}
 			});
-			
 		}
 		
 		function resize_img_box()
 		{
-			let mbox = thr_box_resize();
-			let mbox_width = mbox.width;
+			let mbox        = thr_box_resize();
+			let mbox_width  = mbox.width;
 			let mbox_height = mbox.height;
-			let box_width = mbox_width*0.9;
+			let box_width   = mbox_width*0.9;
+			
 			let css_dick;
-			if(box_width/3*2>mbox_height*0.9)
+			
+			if( box_width/3*2 > mbox_height*0.9 )
 			{
-				box_width = (mbox_height*0.9)/2*3;
+				box_width = ( mbox_height*0.9 )/2*3;
 			}
 			
 			css_dick={
-				'width':box_width,
-				'height':box_width/3*2,
-				'top':(mbox_height-(box_width/3*2))/5,
-				'left':(mbox_width-box_width)/2,
+				'width'  : box_width,
+				'height' : box_width/3*2,
+				'top'    : ( mbox_height-( box_width/3*2 ) )/5,
+				'left'   : ( mbox_width-box_width )/2,
 			}
-			return(css_dick);
+			return( css_dick );
 		}
 		
 		
 		function upimg()
 		{
-			if($('#img_input').length)
+			if( $('#img_input').length )
 			{
-				$('#img_input').attr('src','');
+				$('#img_input').attr( 'src', '' );
 			}
 			else
 			{
 				var img_input = $('<input type="file" id="img_input" accept="image/png, image/jpeg" onchange="readURL(this)" hidden>');
-				$('#thr_box').append(img_input);
 				
+				$('#thr_box').append(img_input);				
 			}
-			//console.log(now_src);
 			
 			$('#img_input').click();
-			MyLatLng=1;
+			
+			MyLatLng=0;
 		}
 		
 		function readURL(input)
 		{
-			$('.catform_btn').removeClass('isok');
-			cat_color='';
-			if(input.files && input.files[0])
+			$('.sec_btn').removeClass('isok');
+			
+			session.removeItem('cat_color');
+			session.removeItem('is_tnr');
+			session.removeItem('lat');
+			session.removeItem('lng');
+			now_src = null;
+			
+			if( input.files && input.files[0] )
 			{
-				has_gps=0;
-				$('#check').remove();
-				subminimg();
-				const reader = new FileReader();
-				reader.onload = function(e){					
-					pred_img(e);					
-					
-					//$('#upcheck').remove();
-					//console.log($('#data_base').attr('gps-data-check'));
-					//console.log(MyLatLng.lat());
-					$('#imgup').addClass('isok');
-					if(has_gps)
-					{
-						$('#color').click();
-					}
-					else
-					{
-						$('#gps').click();
-					}
-					//make_check_btn();
-				}
-				reader.readAsDataURL(input.files[0]);
+				has_gps = 0;
 				
-				const post_data = {action:"read_gps"};
+				$('#check').remove();
+				
+				subminimg();
+				
+				const reader  = new FileReader();
+				
+				reader.onload = function(e){					
+					pred_img(e);
+					
+					$('#imgup').addClass('isok');
+				}
+				
+				reader.readAsDataURL( input.files[0] );
+				
+				const post_data = { action : "read_gps" };
 				const work_func = test2_func;
-				get_data(post_data,work_func);
+				
+				get_data( post_data, work_func);
 			}
 		}
 		
 		function make_check_btn(func)
 		{
 			let btn = $('<input id="check" class="abs" type="submit" value="確認">');
+			
 			$('#thr_box').append(btn);
-			btn.css(check_btn_resize());
+			
+			btn.css( check_btn_resize() );
 			btn.click(func);
 		}
 		
 		function map_check_btn_func()
 		{
-			//console.log(MyLatLng);
-			if(MyLatLng==1)
-			{
-				alert('map上で猫を目撃した場所でクリックしてください');
-			}
-			else
+			session.removeItem('lat');
+			session.removeItem('lng');
+			if( MyLatLng )
 			{
 				$('.check:not(.menu_btn)').addClass('isok');
-				$('#color').click();
+				session.setItem('lat',MyLatLng.lat());
+				session.setItem('lng',MyLatLng.lng());
+				submin_btn();
+			}
+			else
+			{				
+				alert('map上で猫を目撃した場所でクリックしてください');
 			}
 		}
 		
 		function check_btn_resize()
 		{
 			let box_css = thr_box_resize();
-			let right=box_css.width*0.02;
-			
-			
-			let bottom = box_css.height*0.02;
+			let right   = box_css.width*0.02;
+			let bottom  = box_css.height*0.02;
 			
 			let css_dict = {
-				'bottom':bottom,
-				'right':right,
-				'font-size':bottom/12+'em'
+				'bottom'   : bottom,
+				'right'    : right,
+				'font-size': bottom/12+'em'
 			}
-			return(css_dict);
+			
+			return( css_dict );
 		}
 		
 		function pred_img(e)
 		{
-			//console.log(e);
 			const img = document.querySelector("#show_img");
-			img.setAttribute("src", e.target.result);
+			
+			img.setAttribute( "src", e.target.result );
+			
 			now_src = e.target.result;
 			//console.log(now_src);
-			//console.log($('#data_base').attr('img-src-check'));
 		}
 		
 		function subminimg(){
-			var formData = new FormData($("#post_data")[0]);
-			//console.log($('#img_input')[0].files[0]);
+			var formData  = new FormData( $("#post_data")[0] );
 			var imageFile = $('#img_input')[0].files[0];
 			
-			getexif(imageFile);
-			//console.log(imageFile);
+			getexif( imageFile );
 		}
 		
 		function test2_func(input)
@@ -767,24 +1650,24 @@
 		
 		function make_catColor_box()
 		{
-			let ver_count = 3;
-			let color_count=[7,6,6];
-			let css_dict = sec_box_resize();
-			let btn_css = catform_btn_resize(1,$('.catform_btn').length);
+			let ver_count   = 3;
+			let color_count = [ 7, 6, 6 ];
+			let css_dict    = sec_box_resize();
+			let btn_css     = sec_btn_resize( 1, $('.sec_btn').length );			
+			let top         = btn_css.top+btn_css.height/2;
+			let left        = btn_css.left+btn_css.width/2;
 			
-			let top = btn_css.top+btn_css.height/2;
-			let left = btn_css.left+btn_css.width/2;
-			
-			for(let ver=0;ver<ver_count;ver++)
+			for( let ver=0; ver < ver_count; ver++ )
 			{
-				for(let color=0;color<color_count[ver];color++)
+				for( let color=0; color<color_count[ver]; color++ )
 				{
-					let img_name = (ver+1)+"_"+(color+1);
-					let src = "img/color/"+img_name+".png";
-					let img_box = $('<div class="abs color_img" id="'+img_name+'" style="top:'+top+'px;left:'+left+'px;width:0px;height:0px;"><img src="'+src+'"></div>');
-					//let img_box = $('<img src="'+src+'" class="abs color_img" id="'+img_name+'" style="top:'+top+'px;left:'+left+'px;width:0px;height:0px;border:2px green">');
-					$('#thr_box').append(img_box);
-					switch(ver)
+					let img_name = ( ver+1 )+"_"+( color+1 );
+					let src      = "img/color/"+ img_name +".png";
+					let img_box  = $('<div class="abs color_img" id="'+ img_name +'" style="top:'+ top +'px;left:'+ left +'px;width:0px;height:0px;"><img src="'+ src +'"></div>');
+
+					$('#thr_box').append( img_box );
+					
+					switch( ver )
 					{
 						case 0:
 							img_box.addClass('ver_one');
@@ -799,22 +1682,26 @@
 							break;
 					}
 					
-					if(ver<2 || color<5)
+					if( ver<2 || color<5 )
 					{
 						img_box.animate(catColor_box_resize(ver,color),500,function(e){
 							let elem = $(this);
+							
 							elem.click(check_catColor);
 						});
 					}
 					else
 					{
-						img_box.animate(catColor_box_resize(ver,color),500,function(){
+						img_box.animate( catColor_box_resize( ver, color ), 500, function(){
 							let elem = $(this);
+							
 							elem.click(check_catColor);
+							
 							do_resize();
-							if(cat_color!='')
+							
+							if( session.getItem('cat_color') )
 							{
-								$('#'+cat_color).addClass('color_check');
+								$('#'+session.getItem('cat_color')).addClass('color_check');
 								$('#color').addClass('isok');
 							}
 						});
@@ -826,29 +1713,38 @@
 		function check_catColor()
 		{		
 			let elem = $(this);
+			
 			if(elem.hasClass('color_check'))
 			{
 				elem.removeClass('color_check');
-				cat_color = '';
+				
+				session.removeItem('cat_color');
+				
 				$('#color').removeClass('isok');
 			}
 			else
 			{
 				$('.color_img').removeClass('color_check');
+				
 				elem.addClass('color_check');
-				cat_color = elem.attr('id');
+				
+				session.setItem( 'cat_color', elem.attr('id') );
+				
 				$('#color').addClass('isok');
-			}			
+				
+				submin_btn();
+			}
 		}
 		
-		function catColor_box_resize(ver_index,color_index)
+		function catColor_box_resize( ver_index, color_index )
 		{
-			let mbox_css = thr_box_resize();
-			let mbox_width = mbox_css.width;
+			let mbox_css    = thr_box_resize();
+			let mbox_width  = mbox_css.width;
 			let mbox_height = mbox_css.height;
+			
 			let color_len;
 			
-			if(ver_index==0)
+			if( ver_index == 0 )
 			{
 				color_len = 7;
 			}
@@ -860,79 +1756,80 @@
 			if(monitor_ver_check())
 			{
 				let box_size = mbox_width*0.95/10;
-				if(box_size*3>mbox_height*0.6)
+				if( box_size*3 > mbox_height*0.6 )
 				{
 					box_size = mbox_height*0.2;
 				}
-				let w_padding = box_size/2;
-				let w_start = (mbox_width-(box_size*color_len)-(w_padding*(color_len-1)))/2;
-				let h_padding = (mbox_height*0.7-(box_size*3))/2;
-				let h_start = (mbox_height-(box_size*3)-(h_padding*2))/2;
 				
-				let top = h_start+((box_size+h_padding)*ver_index);
-				let left = w_start+((box_size+w_padding)*color_index);
+				let w_padding = box_size/2;
+				let w_start   = ( mbox_width-( box_size*color_len )-( w_padding*( color_len-1 ) ) )/2;
+				let h_padding = ( mbox_height*0.7-( box_size*3 ) )/2;
+				let h_start   = ( mbox_height-( box_size*3 )-( h_padding*2 ) )/2;
+				
+				let top  = h_start+( ( box_size+h_padding )*ver_index );
+				let left = w_start+( ( box_size+w_padding )*color_index );
 				
 				let css_dict = {
-					'top':top,
-					'left':left,
-					'width':box_size,
-					'height':box_size					
-				}				
-				return(css_dict);
+					'top'    : top,
+					'left'   : left,
+					'width'  : box_size,
+					'height' : box_size					
+				}
+				
+				return( css_dict );
 			}
 			else
 			{
-				console.log('test');
+				//console.log('test');
 				let box_size = mbox_height*0.95/10;
-				if(box_size*3>mbox_width*0.6)
+				if( box_size*3 > mbox_width*0.6 )
 				{
 					console.log('test2');
 					box_size = mbox_width*0.2;
 				}
+				
 				let h_padding = box_size/2;
-				let h_start = (mbox_height-(box_size*color_len)-(h_padding*(color_len-1)))/2;
-				let w_padding = (mbox_width*0.7-(box_size*3))/2;
-				let w_start = (mbox_width-(box_size*3)-(w_padding*2))/2;
+				let h_start   = ( mbox_height-( box_size*color_len )-( h_padding*( color_len-1 ) ) )/2;
+				let w_padding = ( mbox_width*0.7-( box_size*3 ) )/2;
+				let w_start   = ( mbox_width-( box_size*3 )-( w_padding*2 ) )/2;
 				
 				
-				let top = h_start+((box_size+h_padding)*color_index);
-				let left = w_start+((box_size+w_padding)*ver_index);
+				let top  = h_start+( ( box_size+h_padding )*color_index );
+				let left = w_start+( ( box_size+w_padding )*ver_index );
 				
 				let css_dict = {
-					'top':top,
-					'left':left,
-					'width':box_size,
-					'height':box_size					
+					'top'    :top,
+					'left'   :left,
+					'width'  :box_size,
+					'height' :box_size					
 				}				
-				return(css_dict);
+				return( css_dict );
 			}			
-		}
-		
-		
+		}		
 		
 		//写真からGPSデータを取る
-		function getexif(imageFile)
+		function getexif( imageFile )
 		{
-			EXIF.getData(imageFile,function(){
+			EXIF.getData( imageFile, function(){
 				//時間
-				var DateTimeOriginal = EXIF.getTag(this,'DateTimeOriginal');
-				if(DateTimeOriginal != undefined){
+				var DateTimeOriginal = EXIF.getTag( this, 'DateTimeOriginal' );
+				
+				if( DateTimeOriginal != undefined ){
 					let date_txt = '';
-					for(let i=0 ; i<DateTimeOriginal.length;i++)
+					
+					for( let i=0 ; i<DateTimeOriginal.length; i++ )
 					{
 						let s_txt = DateTimeOriginal[i];
-						if(i<10 && s_txt==':')
+						
+						if( i<10 && s_txt == ':' )
 						{
-							s_txt = '/'
+							s_txt = '/';
 						}
+						
 						date_txt = date_txt + s_txt;
-						//console.log(i,s_txt);
 					}
 					
-					
-					const date = new Date(date_txt).valueOf();
-					//console.log('DateTimeOriginal',date_txt);
-					//console.log('date',date);
+					const date = new Date( date_txt ).valueOf();
 				}
 				else
 				{
@@ -940,21 +1837,22 @@
 				}
 				
 				//緯度
-				const GPSLatitude = EXIF.getTag(this,'GPSLatitude');
-				const GPSLongitude = EXIF.getTag(this,'GPSLongitude');
+				const GPSLatitude  = EXIF.getTag( this, 'GPSLatitude'  );
+				const GPSLongitude = EXIF.getTag( this, 'GPSLongitude' );
+				
 				if((GPSLatitude != undefined) && (GPSLongitude != undefined)){
-					var GPSLatitude_t = GPSLatitude[0]['numerator'];
-					var GPSLatitude_m = GPSLatitude[1]['numerator']/GPSLatitude[1]['denominator'];
-					let GPSLatitude_only_t = GPSLatitude_t+GPSLatitude_m/60;
+					var GPSLatitude_t       = GPSLatitude[0]['numerator'];
+					var GPSLatitude_m       = GPSLatitude[1]['numerator']/GPSLatitude[1]['denominator'];
+					var GPSLatitude_s       = GPSLatitude[2]['numerator']/GPSLatitude[2]['denominator'];
+					let GPSLatitude_only_t  = GPSLatitude_t+GPSLatitude_m/60+GPSLatitude_s/3600;
 					
-					var GPSLongitude_t = GPSLongitude[0]['numerator'];
-					var GPSLongitude_m = GPSLongitude[1]['numerator']/GPSLatitude[1]['denominator'];
-					let GPSLongitude_only_t = GPSLongitude_t+GPSLongitude_m/60;
+					var GPSLongitude_t      = GPSLongitude[0]['numerator'];
+					var GPSLongitude_m      = GPSLongitude[1]['numerator']/GPSLatitude[1]['denominator'];
+					var GPSLongitude_s      = GPSLongitude[2]['numerator']/GPSLatitude[2]['denominator'];
+					let GPSLongitude_only_t = GPSLongitude_t+GPSLongitude_m/60+GPSLongitude_s/3600;
 					
-					$('#data_base').attr('gps-data-check',1);
-					MyLatLng = new google.maps.LatLng(GPSLatitude_only_t, GPSLongitude_only_t)
-					//map.panTo(new google.maps.LatLng(GPSLatitude_only_t,GPSLongitude_only_t));
-					//make_maker(GPSLatitude_only_t,GPSLongitude_only_t,'test2','test test 2 txt')
+					$('#data_base').attr( 'gps-data-check', 1 );
+					MyLatLng = new google.maps.LatLng( GPSLatitude_only_t, GPSLongitude_only_t );
 					has_gps = 1;
 				}
 				else
@@ -970,63 +1868,56 @@
 		function make_gps_box()
 		{
 			do_resize();
-			let btn_css = catform_btn_resize(3,$('.catform_btn').length);
+			
+			let btn_css     = sec_btn_resize( 3, $('.sec_btn').length );
 			let thr_box_css = thr_box_resize();
-			let top = (btn_css.top+btn_css.height/2)-thr_box_css.top;
-			let left = (btn_css.left+btn_css.width/2)-thr_box_css.left;
-			//console.log('btn_css',btn_css);
-			//console.log('thr_box_css',thr_box_css);
-			//console.log(top,left);
-			let map_box = $('<div id="map" style="top:'+top+'px;left:'+left+'px;height:0px;wight:0px;" class="abs pritest"></div>');
+			let top         = ( btn_css.top+btn_css.height/2 )-thr_box_css.top;
+			let left        = ( btn_css.left+btn_css.width/2 )-thr_box_css.left;
+			
+			let map_box     = $('<div id="map" class="gps_box" style="top:'+ top +'px;left:'+ left +'px;height:0px;wight:0px;" class="abs pritest"></div>');
+			
 			$('#thr_box').append(map_box);
-			//console.log(map_resize());
-			//map_box.css(map_resize());
-			//initMap();
-			//console.log('<div id="map" style="top:'+top+'px;left:'+left+'px;height:10px;wight:10px;" class="abs pritest"></div>');
-			map_box.animate(map_resize(),500,initMap);		
+			
+			map_box.animate( map_resize(), 500, initMap );		
 		}
 		
 		function initMap(){
-			var nowLatLng
-			var latlng = new google.maps.LatLng(34.7577336,134.966988);
-			if(MyLatLng==1)
+			var nowLatLng;
+			
+			var latlng = new google.maps.LatLng( now_GPSLatitude, now_GPSLongitude );
+			
+			if( MyLatLng )
 			{
 				var Options = {
-					zoom: 8,      //地図の縮尺値
-					center: latlng,  //地図の中心座標
-					mapTypeId: 'roadmap'   //地図の種類
+					zoom      : 15,      //地図の縮尺値
+					center    : MyLatLng,  //地図の中心座標
+					mapTypeId : 'roadmap'   //地図の種類
 				};
 			}
 			else
 			{				
 				var Options = {
-					zoom: 8,      //地図の縮尺値
-					center: MyLatLng,  //地図の中心座標
-					mapTypeId: 'roadmap'   //地図の種類
+					zoom      : 10,      //地図の縮尺値
+					center    : latlng,  //地図の中心座標
+					mapTypeId : 'roadmap'   //地図の種類
 				};
 			}
-
 			
-			//center: nowLatLng,
-			//console.log(MyLatLng);
-			//console.log(latlng);
-			//console.log(nowLatLng);
-			map = new google.maps.Map(document.getElementById('map'), Options);
+			map = new google.maps.Map( document.getElementById('map'), Options );
 			
-			//map.setCenter(nowLatLng);
-			map.addListener("click", clickAction);
+			map.addListener( "click", clickAction );
 			
-			if(MyLatLng!=1)
+			if( MyLatLng )
 			{
-				map.panTo(MyLatLng);
-				make_maker(MyLatLng.lat(),MyLatLng.lng(),'test2','test test 2 txt');
+				map.panTo ( MyLatLng );
+				make_maker( MyLatLng.lat(), MyLatLng.lng(), 'test2', 'test test 2 txt');
 			}
-			make_check_btn(map_check_btn_func);
+			
+			make_check_btn( map_check_btn_func );
 		}
 		
 		function clickAction(overlay)
 		{
-			console.log('overlay:',overlay.latLng.lat());
 			remove_maker();
 			let latlng = overlay.latLng;
 			make_maker(latlng.lat(),latlng.lng(),'test',null);
@@ -1037,33 +1928,34 @@
 		function map_resize()
 		{
 			//console.log('test');
-			let box_size = thr_box_resize();
-			let mbox_width = box_size.width;
+			let box_size    = thr_box_resize();
+			let mbox_width  = box_size.width;
 			let mbox_height = box_size.height;
-			let box_width = mbox_width*0.9;
+			let box_width   = mbox_width*0.9;
+			
 			let css_dict;
-			//console.log(box_size);
 			
 			css_dict={
-				'width':box_width,
-				'height':mbox_height*0.9,
-				'top':mbox_height*0.05,
-				'left':mbox_width*0.05,
+				'width'  : box_width,
+				'height' : mbox_height*0.9,
+				'top'    : mbox_height*0.05,
+				'left'   : mbox_width*0.05,
 			}
-			return(css_dict);
+			
+			return( css_dict );
 		}
 		
 		function now_position()
 		{
 			const options = {
-				enableHighAccuracy: true,
-				timeout: 5000,
-				maximumAge: 0
+				enableHighAccuracy : true,
+				timeout            : 5000,
+				maximumAge         : 0
 			}
 			
 			navigator.geolocation.getCurrentPosition( 
-				function(position){ 
-					now_GPSLatitude = position['coords']['latitude'];
+				function( position ){ 
+					now_GPSLatitude  = position['coords']['latitude'];
 					now_GPSLongitude = position['coords']['longitude'];
 				},
 				get_position_error,
@@ -1071,71 +1963,81 @@
 			);
 		}
 		
+		function get_position_error(err) {
+			//console.log('ERROR('+err.code+'): '+err.message);
+		}
+		
 		function remove_maker()
 		{
 			makers.forEach(function(maker){
 				maker.setMap(null);
 			});
-			makers=[];
+			makers = [];
 		}
 		
-		function make_maker(x,y,title,txt)
+		function make_maker( x, y, title, txt )
 		{
 			
-			const latlng = new google.maps.LatLng(x,y);
+			const latlng = new google.maps.LatLng( x, y );
+			
 			const marker = new google.maps.Marker({
-				position: latlng,
-				title: title,
-				mapTypeId: google.maps.MapTypeId.ROADMAP,
-				map: map,
-				draggable:true
+				position  : latlng,
+				title     : title,
+				mapTypeId : google.maps.MapTypeId.ROADMAP,
+				map       : map,
+				draggable : true
 			});
 
 			infowindow = new google.maps.InfoWindow({
-				content: do_div_txt(txt),
-				position: latlng
+				content  : do_div_txt( txt ),
+				position : latlng
 			});
-			marker.setMap(map);
-			google.maps.event.addListener(marker, 'click', function(event) {
-				infowindow.open(map, marker);
+			
+			marker.setMap( map );
+			google.maps.event.addListener( marker, 'click', function(event){
+				infowindow.open( map, marker);
 			});
-			if(map.getZoom()<10)
+			
+			if( map.getZoom() < 10 )
 			{
 				map.setZoom(15);
 			}
 			
 			infowindows.push(infowindow);
 			makers.push(marker);
-			gps_list.push([x,y,title,txt]);
+			gps_list.push( [ x, y, title, txt ] );
 		}
 		
 		function do_div_txt(txt)
 		{
-			var div_txt = '';
-			div_txt += 	'<div style="width:100px;height:50px;background:rgb(0,255,0)">';
-			div_txt += 		'<samp>'+txt+'</samp>';
-			div_txt += 	'</div>';
+			var div_txt  = '';
+			div_txt     += 	'<div style="width:100px;height:50px;background:rgb(0,255,0)">';
+			div_txt     += 		'<samp>'+txt+'</samp>';
+			div_txt     += 	'</div>';
 			
-			return(div_txt);
+			return( div_txt );
 		}
 		
 		//ajax
-		function get_data(post_data,work_func)
+		function get_data( post_data, work_func, async=true )
 		{
+			console.log(post_data);
 			$.ajax({
-				url:php_path,
-				data:post_data,
-				type:'post',
-				success: function(output){
+				url     : php_path,
+				data    : post_data,
+				type    : 'post',
+				async   : async,
+				success : function(output){
 					const mydata = to_dict(output);
 					work_func(mydata);
 				},
-				error: function(jqXHR){ alert(jqXHR); }
+				error   : function(jqXHR){ console.log(jqXHR); }
 			});
 		}
 		
 		function to_dict(input)
 		{
+			console.log(input);
 			const jsondata = JSON.parse(input);
 			return(jsondata);
 		}
@@ -1146,9 +2048,12 @@
 		}
 		
 		$(function(){
+			//$.removeCookie('user_id');
 			$('body').append('<div id="data_base"></div>');
 			$(window).resize(do_resize);
-			
+			now_position();
+			session.clear();
+			session.setItem( 'key', 'test' );
 			start();
 		});
 	</script>
