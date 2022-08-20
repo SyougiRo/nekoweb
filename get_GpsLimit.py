@@ -56,9 +56,10 @@ def get_rimit_DD(DD):  #取得300公尺時的經緯度極限值
 
 def do_print():
     output = {}
-    input_json = sys.argv[1]
-    input_dict = json.loads(input_json)
-    DD = (float(input_dict['lat']),float(input_dict['lng']))
+    lat = sys.argv[1]
+    lng = sys.argv[2]
+    #input_dict = json.loads(input_json)
+    DD = (float(lat),float(lng))
     limit = get_rimit_DD(DD)
     gps_dict = {
         'lat_km'  : limit[0][0],
