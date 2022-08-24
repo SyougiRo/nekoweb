@@ -189,6 +189,11 @@
         global $database;
         $table_name = $database.'.cat';
         $work = 'insert';
+        $date = date("j, n, Y");
+        $now = explode(", ", $date);
+        $year = $now[2];
+        $month = $now[1];
+        $day = $now[0];
 
         if($is_first=='true')
         {
@@ -221,7 +226,10 @@
                 'shi'     => $shi,
                 'ku'      => $ku,
                 'isfirst' => $is_first,
-                'ispass'  => $ispass
+                'ispass'  => $ispass,
+                'year'    => $year,
+                'month'   => $month,
+                'day'     => $day
             ];
 
             do_data($table_name,$work,$cat_data);
@@ -483,5 +491,65 @@
         $output = do_data( $table_name,$work,$data)->toArray();
 
         return($output);
+    }
+
+    function isTnrCount($fushiku,$addr)
+    {
+        global $database;
+        $table_name = $database.'.cat';
+
+        $work='search';
+
+        $data=[
+            'isfirst' => 'true',
+            'tnr'=>'1'
+        ];
+
+        if($fushiku!='all')
+        {
+            $data[$fushiku] = $addr;
+        }
+
+        $opt=[
+            'projection' => ['_id'=>1]
+        ];
+
+        $output = do_data( $table_name,$work,$data,$opt)->toArray();
+
+        $count = count($output);
+
+        return($count);
+    }
+
+    function noTnrCount($fushiku,$addr)
+    {
+        global $database;
+        $table_name = $database.'.cat';
+
+        $work='search';
+
+        $data=[
+            'isfirst' => 'true',
+            'tnr'=>'0'
+        ];
+
+        if($fushiku!='all')
+        {
+            $data=[
+                'isfirst' => 'true',
+                'tnr'=>'0',
+                $fushiku=>$addr
+            ];
+        }
+
+        $opt=[
+            'projection' => ['_id'=>1]
+        ];
+
+        $output = do_data( $table_name,$work,$data,$opt)->toArray();
+
+        $count = count($output);
+
+        return($count);
     }
 ?>

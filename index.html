@@ -28,6 +28,14 @@
 	
 	<!--cookie-->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+	
+	<!--chart.js-->
+	<script
+	  src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.2.0/chart.min.js"
+	  integrity="sha512-VMsZqo0ar06BMtg0tPsdgRADvl0kDHpTbugCBBrL55KmucH6hP9zWdLIWY//OTfMnzz6xWQRxQqsUFefwHuHyg=="
+	  crossorigin="anonymous">
+	</script>
+	<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@next/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 </head>
 
 <body>
@@ -51,6 +59,7 @@
 		var img_input;
 		var now_src;
 		var map;
+		var myChart;
 		
 		function monitor_ver_check(melem)
 		{
@@ -141,6 +150,11 @@
 				let len = $('.img_list_box').length;
 				$(value).css( CatImg_list_resize( key, len ) );
 			})
+			
+			if( $('#tnrcount_ctx_box').length )
+			{
+				$('#tnrcount_ctx_box').css(resize_ctx($('#tnrcount_ctx_box')));
+			}
 		}
 		
 		//一層目
@@ -172,9 +186,9 @@
 			do_resize();
 			
 			const t         = 500;
-			const nuit_list = [ '猫を登録', 'TNRの記録', '猫数の変化', '私のアカウント' ];
-			const id_list   = [ 'cat_form', 'TNR_log', 'count_glf', 'my_acc' ];
-			const func_list = [ case_cat_form, case_tnr_log, case_count_glf, case_my_acc];
+			const nuit_list = [ '猫を登録', '記録', '猫数の変化', '私のアカウント' ];
+			const id_list   = [ 'cat_form', 'log', 'count_glf', 'my_acc' ];
+			const func_list = [ case_cat_form, case_log, case_count_glf, case_my_acc];
 			
 			for( let index = 0; index < nuit_list.length; index++ )
 			{
@@ -270,7 +284,7 @@
 			}
 		}
 		
-		function case_tnr_log()
+		function case_log()
 		{
 			sec_box_reset(this);
 			
@@ -288,7 +302,7 @@
 			if( menu_z < 2)
 			{
 				menu_z = 2;
-				fri_box_animet( 1, function(){console.log('test');} );	
+				fri_box_animet( 1, make_log_menu );	
 			}
 			else
 			{
@@ -297,8 +311,255 @@
 				let btn_top  = css_dect.height/2+css_dect.top;
 				let btn_left = css_dect.width/2+css_dect.left;
 				
-				make_sec_box( btn_top, btn_left, function(){console.log('test');} );
+				make_sec_box( btn_top, btn_left, make_log_menu );
 			}
+		}
+		
+		function make_log_menu()
+		{
+			do_resize();
+			
+			let menu_list  = [ 'tnr比例', '数', '探す', 'TNR記録' ];
+			let ImgId_list = [ 'tnr_r', 'count', 'search_cat', 'tnr_log' ];
+			let func_list  = [ make_tnrchart_box, make_count_box, make_search_box, make_tnrlog_box ];
+			let t          = 500;
+			
+			let main_btn_css = menu_unit_resize( 1, $('.menu_btn').length );
+			let sec_box_css  = sec_box_resize();
+			let sec_btn_css  = sec_btn_resize( 1, menu_list.length );
+			
+			let top  = main_btn_css.top+main_btn_css.height / 2-sec_box_css.top;
+			let left = main_btn_css.left+main_btn_css.width / 2-sec_box_css.left;
+			
+			MyLatLng=0;
+			
+			for( let index=0 ; index < menu_list.length; index++ )
+			{
+				let box_css  = sec_box_resize();
+				let css_dect = sec_btn_resize( index, menu_list.length );
+				let btn      = $('<input type="button" id="'+ ImgId_list[index] +'" class="sec_btn abs" style="width:0px;height:0px;top:'+ top +'px;left:'+ left +'px" value="'+ menu_list[index] +'">');
+				
+				$('#sec_box').append(btn);
+				
+				if( index < menu_list.length-1 )
+				{
+					btn.animate( css_dect, t, function(){
+						btn.click( function(e){
+							sec_func(e,index,func_list[index]);
+						} );
+					});
+				}
+				else
+				{
+					btn.animate( css_dect, t, function(){
+						btn.click( function(e){
+							sec_func(e,index,func_list[index]);
+						} );
+						$('#'+ImgId_list[0]).click();
+					});
+				}				
+			}
+		}
+		
+		function sec_func(e,index,func)
+		{
+			thr_box_reset($('#'+e.target.id));
+			//console.log(e.target.id);
+			//console.log($('#'+e.target.id));
+			menu_z = 3;
+			//$($('.sec_btn')[index]).addClass('check');
+			let css_dict = sec_box_resize();
+			let btn_css  = sec_btn_resize( index, $('.sec_btn').length );
+			
+			make_thr_box( btn_css.top+btn_css.height/2, btn_css.left+btn_css.width/2, func );
+		}
+		
+		function make_count_box()
+		{
+			do_resize();
+			//console.log('test');
+			let btn_css = sec_btn_resize( 0, $('.sec_btn').length );
+			let box_css = sec_box_resize();			
+			let top     = ( btn_css.top+btn_css.height/2 )-box_css.top;
+			let left    = ( btn_css.left+btn_css.width/2 )-box_css.left;
+
+			$('#img_block').remove();
+			
+			console.log('make_tnrchart_box');
+			
+			let mbox = $('#thr_box');
+			let box = $('<div id="tnr_ctx_box" class="abs"></div>');
+			let ctx = $('<canvas id="mychart"></canvas>');
+			box.append(ctx);
+			mbox.append(box);
+			
+			var myChart = new Chart(ctx, {
+				type: 'line',
+				data: {
+				  labels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+					datasets: [{
+						label: 'Red',
+						data: [20, 35, 40, 30, 45, 35, 40],
+						borderColor: '#f88',
+					}, {
+						label: 'Green',
+						data: [20, 15, 30, 25, 30, 40, 35],
+						borderColor: '#484',
+					}, {
+						label: 'Blue',
+						data: [30, 25, 10, 5, 25, 30, 20],
+						borderColor: '#48f',
+					}],
+				},
+				options: {
+					y: {
+						min: 0,
+						max: 60,
+					},
+				},
+			});		
+		}
+		
+		function make_tnrchart_box()
+		{			
+			do_resize();
+			const post_data   = {
+				action : 'get_addr_array',
+			};
+			
+			let output = get_data(post_data,show_tnrchart_box);
+			//console.log('test');
+		}
+		
+		function show_tnrchart_box(input)
+		{			
+			let btn_css = sec_btn_resize( 0, $('.sec_btn').length );
+			let box_css = sec_box_resize();			
+			let top     = ( btn_css.top+btn_css.height/2 )-box_css.top;
+			let left    = ( btn_css.left+btn_css.width/2 )-box_css.left;
+			showaddr(JSON.parse(input['addr']));
+			let isTnrCount = input['isTnrCount'];
+			let noTnrCount = input['noTnrCount'];
+			$('#img_block').remove();
+			
+			console.log('make_count_box');
+			let mbox = $('#thr_box');
+			let box = $('<div id="tnrcount_ctx_box" class="abs"></div>');
+			let ctx = $('<canvas id="mychart"></canvas>');
+			let choose_box = $('<div id="tnrcount_choose_box" class="abs"></div>');
+			
+			resize_ctx(box);
+			box.append(ctx);
+			mbox.append(box);
+			
+			myChart = new Chart(ctx, {
+				type: 'pie',
+				data: {
+					labels: ['tnr', 'no tnr'],
+					datasets: [{
+						data: [isTnrCount, noTnrCount],
+						backgroundColor: ['#f88', '#484'],
+						weight: 100,
+					}],
+				},
+			});
+		}
+		
+		function showaddr(addr)
+		{
+			let mbox = $('#thr_box');
+			let select = $('<select id="addr_select"></select>');
+			let opt0 =$('<option selected="selected">------</option>');
+			select.append(opt0);
+			$.each(addr,function(index1, value1){
+				let optgroup = $('<optgroup label="'+index1+'"></optgroup>');
+				$.each(value1,function(index2, value2){
+					let opt1 =$('<option>'+index2+'</option>');
+					optgroup.append(opt1);					
+					$.each(value2,function(index3,value3){
+						let opt2 =$('<option>'+'--'+index3+'</option>');
+						optgroup.append(opt2);
+						$.each(value3,function(index4,value4){
+							let opt3 =$('<option>'+'----'+index4+'</option>');
+							optgroup.append(opt3);
+							//console.log(index4);
+						});	
+					});
+				});
+				select.append(optgroup);
+			});
+			
+			mbox.append(select);
+			select.change(get_count_data);
+		}
+		
+		function get_count_data()
+		{
+			let addr = $('#addr_select').val();
+			console.log(addr);
+			const post_data   = {
+				action : 'get_count_data',
+				addr:addr
+			};
+			
+			let output = get_data(post_data,updata_count_ctx);
+		}
+		
+		function updata_count_ctx(input)
+		{
+			console.log(input);
+			let data = [input['isTnrCount'],input['noTnrCount']];
+				
+			myChart.data.datasets[0].data = data;
+   			myChart.update();
+		}
+		
+		
+		function resize_ctx(elem)
+		{
+			let mbox_css = thr_box_resize();
+			let ctx_size = 0;
+			if(monitor_ver_check)
+			{
+				ctx_size = mbox_css.height*0.8;
+			}
+			else
+			{
+				ctx_size = mbox_css.width*0.8;
+			}
+			elem.css({
+				'width': ctx_size,
+				'top'   : (mbox_css.height-ctx_size)/2,
+				'left'  : (mbox_css.width-ctx_size)/2,
+			});
+		}
+		
+		function make_search_box()
+		{
+			do_resize();
+			//console.log('test');
+			let btn_css = sec_btn_resize( 0, $('.sec_btn').length );
+			let box_css = sec_box_resize();			
+			let top     = ( btn_css.top+btn_css.height/2 )-box_css.top;
+			let left    = ( btn_css.left+btn_css.width/2 )-box_css.left;
+
+			$('#img_block').remove();
+			
+			console.log('make_search_box');
+		}
+		
+		function make_tnrlog_box()
+		{
+			do_resize();
+			//console.log('test');
+			let btn_css = sec_btn_resize( 0, $('.sec_btn').length );
+			let box_css = sec_box_resize();			
+			let top     = ( btn_css.top+btn_css.height/2 )-box_css.top;
+			let left    = ( btn_css.left+btn_css.width/2 )-box_css.left;
+
+			$('#img_block').remove();
+			
+			console.log('make_tnrlog_box');
 		}
 		
 		function case_count_glf()
