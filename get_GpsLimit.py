@@ -72,4 +72,5 @@ def do_print():
     print(json.dumps(gps_dict))
 
 if __name__=="__main__":
+    #print(sys.argv)
     do_print()

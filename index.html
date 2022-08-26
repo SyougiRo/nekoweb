@@ -450,7 +450,7 @@
 			let box_css = sec_box_resize();			
 			let top     = ( btn_css.top+btn_css.height/2 )-box_css.top;
 			let left    = ( btn_css.left+btn_css.width/2 )-box_css.left;
-			showaddr(JSON.parse(input['addr']));
+			showaddr(JSON.parse(input['addr']),get_tnrcount_data);
 			let isTnrCount = input['isTnrCount'];
 			let noTnrCount = input['noTnrCount'];
 			$('#img_block').remove();
@@ -478,7 +478,7 @@
 			});
 		}
 		
-		function showaddr(addr)
+		function showaddr(addr,func)
 		{
 			let mbox = $('#thr_box');
 			let select = $('<select id="addr_select"></select>');
@@ -503,10 +503,23 @@
 			});
 			
 			mbox.append(select);
-			select.change(get_tnrcount_data);
+			select.change(func);
 		}
 		
 		function get_tnrcount_data()
+		{
+			let addr = $('#addr_select').val();
+			console.log(addr);
+			const post_data   = {
+				action : 'get_count_data',
+				addr:addr
+			};
+			
+			let output = get_data(post_data,updata_count_ctx);
+		}
+		
+		//now
+		function get_count_data()
 		{
 			let addr = $('#addr_select').val();
 			console.log(addr);
@@ -935,8 +948,14 @@
 		}
 		
 		function up_level(id)
-		{
-			console.log(id);
+		{			
+			const post_data   = {
+				action  : 'up_level',
+				user_id : $.cookie('user_id'),
+				tag_id  : id,
+			};
+			
+			let output = get_data(post_data,function(input){console.log(input)});
 		}
 		
 		function UpCatList_func()

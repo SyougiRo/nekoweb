@@ -507,7 +507,8 @@
 
         $data=[
             'isfirst' => 'true',
-            'tnr'=>'1'
+            'tnr'=>'1',
+            'ispass'=>'true'
         ];
 
         if($fushiku!='all')
@@ -535,16 +536,13 @@
 
         $data=[
             'isfirst' => 'true',
-            'tnr'=>'0'
+            'tnr'=>'0',
+            'ispass'=>'true'
         ];
 
         if($fushiku!='all')
         {
-            $data=[
-                'isfirst' => 'true',
-                'tnr'=>'0',
-                $fushiku=>$addr
-            ];
+            $data[$fushiku] = $addr;
         }
 
         $opt=[
@@ -568,17 +566,13 @@
         $data=[
             'isfirst' => 'true',
             'tnr'=>'0',
-            'year'=>$year
+            'year'=>strval($year),
+            'ispass'=>'true'
         ];
 
         if($fushiku!='all')
         {
-            $data=[
-                'isfirst' => 'true',
-                'tnr'=>'0',
-                'year'=>$year,
-                $fushiku=>$addr
-            ];
+            $data[$fushiku] = $addr;
         }
 
         $opt=[
@@ -590,5 +584,22 @@
         $count = count($output);
 
         return($count);
+    }
+
+    function update_level($tag_id,$user_id,$level)
+    {
+        global $database;
+        $table_name = $database.'.user';
+
+        $work='update';
+
+        $data = [
+            '$set' => ['root_level'=>$level,'checker'=>do_id($user_id)]
+        ];
+        $opt = [];
+        $relu = ['_id'=>do_id($tag_id)];
+        do_data( $table_name,$work,$data,$opt,$relu);
+
+        return;
     }
 ?>
