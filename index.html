@@ -378,37 +378,50 @@
 		{
 			do_resize();
 			//console.log('test');
+			const post_data   = {
+				action : 'get_count_array',
+			};
+			
+			let output = get_data(post_data,show_countchart_box);
+			
+		}
+		
+		function show_countchart_box(input)
+		{
 			let btn_css = sec_btn_resize( 0, $('.sec_btn').length );
 			let box_css = sec_box_resize();			
 			let top     = ( btn_css.top+btn_css.height/2 )-box_css.top;
 			let left    = ( btn_css.left+btn_css.width/2 )-box_css.left;
 
 			$('#img_block').remove();
-			
-			console.log('make_tnrchart_box');
+			showaddr(JSON.parse(input['addr']));
+			console.log(input);
 			
 			let mbox = $('#thr_box');
 			let box = $('<div id="tnr_ctx_box" class="abs"></div>');
 			let ctx = $('<canvas id="mychart"></canvas>');
 			box.append(ctx);
 			mbox.append(box);
+			const now_year = new Date().getFullYear();
+			const year_array = new Array();
+			const data_array = new Array();
+			for(let year = 0; year < 10; ++year)
+			{
+				let year_str = now_year-9+year;
+				year_array.push(year_str);
+				data_array.push(input[year_str]);
+			}
+			
+			console.log(data_array);
 			
 			var myChart = new Chart(ctx, {
 				type: 'line',
 				data: {
-				  labels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+				  labels: year_array,
 					datasets: [{
 						label: 'Red',
-						data: [20, 35, 40, 30, 45, 35, 40],
+						data: data_array,
 						borderColor: '#f88',
-					}, {
-						label: 'Green',
-						data: [20, 15, 30, 25, 30, 40, 35],
-						borderColor: '#484',
-					}, {
-						label: 'Blue',
-						data: [30, 25, 10, 5, 25, 30, 20],
-						borderColor: '#48f',
 					}],
 				},
 				options: {
@@ -490,10 +503,10 @@
 			});
 			
 			mbox.append(select);
-			select.change(get_count_data);
+			select.change(get_tnrcount_data);
 		}
 		
-		function get_count_data()
+		function get_tnrcount_data()
 		{
 			let addr = $('#addr_select').val();
 			console.log(addr);
@@ -784,7 +797,8 @@
 		
 		function check_login_func(input)    
 		{
-			console.log(input['_id']);
+			console.log(input);
+			input = input[0];
 			const user_id = input['_id']['$oid'];
 			const checker = input['checker'];
 			const root_level = input['root_level'];

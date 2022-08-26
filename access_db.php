@@ -189,11 +189,12 @@
         global $database;
         $table_name = $database.'.cat';
         $work = 'insert';
-        $date = date("j, n, Y");
-        $now = explode(", ", $date);
-        $year = $now[2];
+
+        $date  = date("j, n, Y");
+        $now   = explode(", ", $date);
+        $year  = $now[2];
         $month = $now[1];
-        $day = $now[0];
+        $day   = $now[0];
 
         if($is_first=='true')
         {
@@ -300,18 +301,22 @@
         ];
         
         $output = do_data($table_name,$work,$user_data)->toArray();
-        $res = current($output);
         
-        if(empty($res))
+        
+        if(count($output)==0)
         {
-            return(0);
+            $output['email']=$Email;
+            $output['pwd'] = $pwd;
+            $output['erro']='no_acc';
         }
         elseif(count($output)>1)
         {
-            return(-1);
+            $output['email']=$Email;
+            $output['pwd'] = $pwd;
+            $output['erro']='over_acc';
         }
 
-        return($res);
+        return($output);
     }
     
     function add_tag_log($user_id,$gps,$time,$img_src,$address)
@@ -538,6 +543,40 @@
             $data=[
                 'isfirst' => 'true',
                 'tnr'=>'0',
+                $fushiku=>$addr
+            ];
+        }
+
+        $opt=[
+            'projection' => ['_id'=>1]
+        ];
+
+        $output = do_data( $table_name,$work,$data,$opt)->toArray();
+
+        $count = count($output);
+
+        return($count);
+    }
+
+    function get_year_count($year,$fushiku,$addr)
+    {
+        global $database;
+        $table_name = $database.'.cat';
+
+        $work='search';
+
+        $data=[
+            'isfirst' => 'true',
+            'tnr'=>'0',
+            'year'=>$year
+        ];
+
+        if($fushiku!='all')
+        {
+            $data=[
+                'isfirst' => 'true',
+                'tnr'=>'0',
+                'year'=>$year,
                 $fushiku=>$addr
             ];
         }

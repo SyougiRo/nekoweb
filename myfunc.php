@@ -1514,7 +1514,7 @@
 		echo $return_txt;
 	}
 
-	function get_count_data()
+	function get_tnrcount_data()
 	{
 		$addr_str = $_POST['addr'];
 		if(preg_match('/^-{6}/i',$addr_str))
@@ -1547,6 +1547,28 @@
 		echo $return_txt;
 	}
 
+	function get_count_array()
+	{
+		$addtlist_str = address_list();
+		$return_array['addr'] = $addtlist_str;
+
+		$date  = date("j, n, Y");
+        $now   = explode(", ", $date);
+        $year  = $now[2];
+        $month = $now[1];
+        $day   = $now[0];
+
+		foreach (range(0, 10) as $number) {
+			$get_year = $year-$number;
+			$return_array[$get_year] = get_year_count($get_year,'all','all');
+		}
+
+		$return_txt = json_encode(
+			$return_array
+		);
+		echo $return_txt;
+	}
+
     if(isset($_POST['action']))
     {
         $action = $_POST['action'];
@@ -1567,7 +1589,8 @@
 			case 'id_gat_img':return(id_gat_img());
 			case 'catId_gat_All':return(catId_gat_All());
 			case 'get_addr_array':return(get_addr_array());
-			case 'get_count_data':return(get_count_data());
+			case 'get_tnrcount_data':return(get_tnrcount_data());
+			case 'get_count_array':return(get_count_array());
         }
     }
 ?>
