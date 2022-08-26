@@ -1,3 +1,6 @@
+:root{
+	
+}
 html,body {
     height: 100%;
     padding: 0;
@@ -311,4 +314,15 @@ html,body {
 
 .upLevel_btn{
     float: right;	
+}
+
+#tnr_ctx_box{
+	width: 70%;
+	height: 60%;
+	top:20%;
+	left: 15%;
+}
+
+#tnrcount_ctx_box{
+	
 }
