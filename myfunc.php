@@ -1345,9 +1345,9 @@
             $ispass='false';
         }
 
-		exec("python3 dogeopy.py ".$gps['0']." ".$gps['1'],$testoutput);
+		exec("python dogeopy.py ".$gps['0']." ".$gps['1'],$testoutput);
 		$file_name = buffer_file($src);
-		exec('python3 resizebase.py '.$file_name ,$resizebase);
+		exec('python resizebase.py '.$file_name ,$resizebase);
 		$src = $resizebase[0];
 		$fu  = json_decode($testoutput[0])->{'fu'};
 		$shi = json_decode($testoutput[0])->{'shi'};
@@ -1402,7 +1402,7 @@
 		$color   = $_POST['color'];
 		$gps     = $_POST['gps'];
 
-		exec('python3 get_GpsLimit.py '.$gps['0'].' '.$gps['1'],$limitoutput);
+		exec('python get_GpsLimit.py '.$gps['0'].' '.$gps['1'],$limitoutput);
 
 		$data = json_decode($limitoutput[0]);
 		$lat_min = $data -> {'lat_min'};
@@ -1569,6 +1569,20 @@
 		echo $return_txt;
 	}
 
+	function up_level()
+	{
+		$taget_id = $_POST['tag_id'];
+		$user_id = $_POST['user_id'];
+
+		update_level($taget_id,$user_id,'2');
+
+		$return_array['tagid'] = $taget_id;
+		$return_array['userid'] = $user_id;
+
+		$return_txt = json_encode($return_array);
+		echo $return_txt;
+	}
+
     if(isset($_POST['action']))
     {
         $action = $_POST['action'];
@@ -1591,6 +1605,7 @@
 			case 'get_addr_array':return(get_addr_array());
 			case 'get_tnrcount_data':return(get_tnrcount_data());
 			case 'get_count_array':return(get_count_array());
+			case 'up_level':return(up_level());
         }
     }
 ?>
