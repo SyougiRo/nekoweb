@@ -394,7 +394,7 @@
 			let left    = ( btn_css.left+btn_css.width/2 )-box_css.left;
 
 			$('#img_block').remove();
-			showaddr(JSON.parse(input['addr']));
+			showaddr(JSON.parse(input['addr']),get_count_data);
 			console.log(input);
 			
 			let mbox = $('#thr_box');
@@ -414,7 +414,7 @@
 			
 			console.log(data_array);
 			
-			var myChart = new Chart(ctx, {
+			myChart = new Chart(ctx, {
 				type: 'line',
 				data: {
 				  labels: year_array,
@@ -511,32 +511,47 @@
 			let addr = $('#addr_select').val();
 			console.log(addr);
 			const post_data   = {
-				action : 'get_count_data',
+				action : 'get_tnrcount_data',
 				addr:addr
 			};
 			
-			let output = get_data(post_data,updata_count_ctx);
+			let output = get_data(post_data,updata_tnrcount_ctx);
 		}
 		
-		//now
 		function get_count_data()
 		{
 			let addr = $('#addr_select').val();
 			console.log(addr);
 			const post_data   = {
-				action : 'get_count_data',
+				action : 'get_count_array_for_addr',
 				addr:addr
 			};
 			
 			let output = get_data(post_data,updata_count_ctx);
 		}
 		
-		function updata_count_ctx(input)
+		function updata_tnrcount_ctx(input)
 		{
 			console.log(input);
 			let data = [input['isTnrCount'],input['noTnrCount']];
 				
 			myChart.data.datasets[0].data = data;
+   			myChart.update();
+		}
+		
+		function updata_count_ctx(input)
+		{
+			console.log(input);
+			const now_year = new Date().getFullYear();
+			const data_array = new Array();
+			for(let year = 0; year < 10; ++year)
+			{
+				let year_str = now_year-9+year;
+				data_array.push(input[year_str]);
+			}
+			let data = [input['isTnrCount'],input['noTnrCount']];
+				
+			myChart.data.datasets[0].data = data_array;
    			myChart.update();
 		}
 		
@@ -561,17 +576,71 @@
 		}
 		
 		function make_search_box()
-		{
+		{			
 			do_resize();
+			const post_data   = {
+				action : 'get_addr_array',
+			};
+			
+			let output = get_data(post_data,show_search_box);
 			//console.log('test');
-			let btn_css = sec_btn_resize( 0, $('.sec_btn').length );
-			let box_css = sec_box_resize();			
-			let top     = ( btn_css.top+btn_css.height/2 )-box_css.top;
-			let left    = ( btn_css.left+btn_css.width/2 )-box_css.left;
-
-			$('#img_block').remove();
+		}
+		
+		function show_search_box(input)
+		{
+			showaddr(JSON.parse(input['addr']),get_search_data);
+			make_color_chose();
+			//console.log('test');
+			let mbox = $('#thr_box');
+			let show_box = $('<div id="show_search_box" class="abs"></div>');
+			mbox.append(show_box);
 			
 			console.log('make_search_box');
+		}
+		
+		function get_search_data()
+		{
+			let addr = $('#addr_select').val();
+			let color = $('#color_select').val();
+			console.log(addr);
+			const post_data   = {
+				action : 'get_search_data',
+				addr:addr,
+				color:color
+			};
+			
+			let output = get_data(post_data,show_search_img);
+		}
+		
+		function make_color_chose()
+		{
+			let mbox = $('#thr_box');
+			const color_list=['1_1','1_2','1_3','1_4','1_5','1_6','1_7','2_1','2_2','2_3','2_4','2_5','2_6','3_1','3_2','3_3','3_4','3_5','3_6'];
+			let select = $('<select id="color_select"></select>');
+			let opt =$('<option value="------" selected="selected">ALL</option>');
+			select.append(opt);
+			$.each(color_list,function(index, value){
+				let opt =$('<option value="'+value+'"></option>');
+				let img = $('<div width="100px">'+value+'<img src="img/color/'+ value +'.png"></div>');
+				opt.append(img);
+				select.append(opt);	
+			})
+			mbox.append(select);
+			select.change(get_search_data);
+		}
+		
+		function show_search_img(input)
+		{
+			let box = $('#show_search_box');
+			$('#show_search_box *').remove();
+			console.log(input['data']);
+			let data = input['data'];
+			$.each(data,function(index, value){
+				
+				let img = $('<div id="'+value['_id']['$oid']+'" class="img_list_box pritest"><img src="'+value['src']+'"></div>');
+				box.append(img);
+				console.log(value['src']);
+			});
 		}
 		
 		function make_tnrlog_box()
@@ -652,9 +721,9 @@
 		{
 			do_resize();
 			
-			let menu_list  = [ '基本情報', '探す', '登録済み', '登録きろ' ];
-			let ImgId_list = [ 'acct', 'search', 'up_cat_list', 'up_log' ];
-			let func_list  = [ acct_func, search_func, UpCatList_func, UpLog_func ];
+			let menu_list  = [ '基本情報', '探す', '登録済み', 'message' ];
+			let ImgId_list = [ 'acct', 'search', 'up_cat_list', 'message' ];
+			let func_list  = [ acct_func, search_func, UpCatList_func, message_func ];
 			let t          = 500;
 			
 			let main_btn_css = menu_unit_resize( 3, $('.menu_btn').length );
@@ -744,7 +813,7 @@
 			
 			//console.log("do login");
 		}
-		//now
+	
 		function add_new_user()
 		{
 			$('#thr_box *').remove();
@@ -930,7 +999,7 @@
 			
 			$.each(input,function( key, value ){
 				let user_box = $('<div class="user_box"><samp>'+value['user_name']+'</samp></div>');
-				if(root_level<parseInt(value['root_level']))
+				if(root_level<parseInt(value['root_level']) && parseInt(value['root_level'])>9)
 				{
 					let btn = $('<input class="upLevel_btn" type="submit" value="up level">');
 					btn.click(function(){
@@ -1061,23 +1130,92 @@
 			}
 			return( css_dict );
 		}
-		
-		function UpLog_func()
+		function message_func()
+		{			
+			do_resize();
+			const post_data   = {
+				action : 'get_addr_array',
+			};
+			
+			let output = get_data(post_data,make_message_box);
+			//console.log('test');
+		}
+		//now
+		function make_message_box(input)
 		{
 			thr_box_reset(this);
 			
-			if( $.cookie('user_id') )
+			let css_dict = sec_box_resize();
+			let btn_css  = sec_btn_resize( 3, $('.sec_btn').length );
+			
+			make_thr_box( btn_css.top+btn_css.height/2, btn_css.left+btn_css.width/2, function(){
+				showaddr(JSON.parse(input['addr']),get_message);
+			
+				let mbox = $('#thr_box');
+				let message_box = $('<div id="message_div" class="abs"></div>');
+				let txt_input = $('<input type="text" id="txt_input" class="abs">');
+				let txt_btn = $('<input type="submit" id="txt_btn" class="abs">');
+				message_box[0].scrollTop = message_box[0].scrollHeight;
+				mbox.append(message_box).append(txt_input).append(txt_btn);
+				txt_btn.click(submit_message);
+			} );
+			
+			
+		}
+		
+		function get_message()
+		{
+			let addr = $('#addr_select').val();
+			const post_data = { 
+				action  : "get_message",
+				addr:addr
+			};			
+			
+			get_data( post_data, show_message);
+		}
+		
+		function show_message(input)
+		{
+			$('#message_div *').remove();
+			let message_div = $('#message_div');
+			
+			$.each(input['data'],function(key,value){
+				let msg_box = $('<div calss="msg_box"></div>');
+				let user_name = $('<p><samp>'+value['user_name']+'</samp><samp>'+time_str_to_data(value['time'])+'</samp></p>');
+				let msg = $('<p>'+value['txt']+'</p>')
+				msg_box.append(user_name).append(msg);
+				message_div.append(msg_box);
+				console.log(value);
+			});
+			
+		}
+		
+		function time_str_to_data(time_str)
+		{
+			let time_s = parseInt(time_str)*1000;
+			let data = new Date(time_s);
+			let formatted_date = data.getFullYear() + "-" + (data.getMonth() + 1) + "-" + data.getDate() + " " + data.getHours() + ":" + data.getMinutes() + ":" + data.getSeconds();
+			return formatted_date;
+		}
+		
+		function submit_message()
+		{
+			let addr = $('#addr_select').val();
+			let txt = $('#txt_input').val();
+			if(txt.length==0)
 			{
-				let btn_css = sec_btn_resize( 3, $('.sec_btn').length );
-				let top     = btn_css.top+btn_css.height/2;
-				let left    = btn_css.left+btn_css.width/2;
-				
-				make_thr_box( top, left, make_login_box );
+				console.log('return');
+				return;
 			}
-			else
-			{
-				$('#acct').click();
-			}
+			console.log('start');
+			const post_data = { 
+				action  : "add_message",
+				addr:addr,
+				user_id:$.cookie('user_id'),
+				txt:txt,
+			};			
+			
+			get_data( post_data, get_message);
 		}
 		
 		

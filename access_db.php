@@ -565,7 +565,6 @@
 
         $data=[
             'isfirst' => 'true',
-            'tnr'=>'0',
             'year'=>strval($year),
             'ispass'=>'true'
         ];
@@ -601,5 +600,96 @@
         do_data( $table_name,$work,$data,$opt,$relu);
 
         return;
+    }
+
+    function search_cat($fushiku,$addr,$color)
+    {
+        global $database;
+        $table_name = $database.'.cat';
+
+        $work='search';
+        
+        $data=[
+            'isfirst' => 'true',
+            'ispass'=>'true',
+            
+        ];
+
+        if($fushiku!='all')
+        {
+            $data[$fushiku] = $addr;
+        }
+
+        if($color!='all')
+        {
+            $data['color']= $color;
+        }
+
+        $opt=[
+            'projection' => ['_id'=>1,'src'=>1]
+        ];
+
+        $output = do_data( $table_name,$work,$data,$opt)->toArray();
+
+        return($output);
+    }
+
+    function addMessage($user_name,$txt,$now,$fu,$shi,$ku)
+    {
+        global $database;
+        $table_name = $database.'.message';
+        $work = 'insert';
+
+        $data=[
+            'user_name' => $user_name,
+            'txt'=>$txt,
+            'time'=>$now,
+            'fu' =>$fu,
+            'shi'=>$shi,
+            'ku'=>$ku            
+        ];
+
+        do_data($table_name,$work,$data);
+    }
+
+    function UserId_get_UserName($user_id)
+    {
+        global $database;
+        $table_name = $database.'.user';
+
+        $work='search';
+        
+        $data = [
+            '_id'=>do_id($user_id),
+        ];
+
+        $opt=[
+            'projection' => ['user_name'=>1]
+        ];
+
+        $output = do_data( $table_name,$work,$data,$opt)->toArray();
+        //print_r($output[0]->{'user_name'});
+        return($output[0]->{'user_name'});
+    }
+
+    function getMessage($fushiku,$addr)
+    {
+        global $database;
+        $table_name = $database.'.message';
+
+        $work='search';
+        $data =[];
+
+        if($fushiku!='all')
+        {
+            $data = [
+                $fushiku=>$addr,
+            ];
+        }
+
+        $output = do_data( $table_name,$work,$data)->toArray();
+
+        return($output);
+        
     }
 ?>

@@ -323,6 +323,18 @@ html,body {
 	left: 15%;
 }
 
-#tnrcount_ctx_box{
-	
+#show_search_box{
+    width: 90%;
+    height: 80%;
+    top: 15%;
+    left: 5%;
+	display: flex;
+	flex-wrap: wrap;
+	gap : 10px 10px;
+	justify-content :center;
+	overflow-y: auto;
+}
+
+#message_div{
+	overflow-y: auto;
 }

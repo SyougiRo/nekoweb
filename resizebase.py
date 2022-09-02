@@ -15,7 +15,7 @@ def pillow_to_base64(image):
 def resize_base64():
     file_name = sys.argv[1]
 
-    with open(file_name,mode='r') as f:
+    with open('./buffer/'+file_name,mode='r') as f:
         input_json = f.read()
     
     img_base = input_json.split(',')[1]
@@ -29,6 +29,7 @@ def resize_base64():
     base_str = "data:image/jpeg;base64,"+str(pillow_to_base64(image).decode("utf-8"))
         
     print(base_str)
+    os.remove('./buffer/'+file_name)
 
 
 if __name__=="__main__":

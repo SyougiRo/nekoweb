@@ -1302,7 +1302,7 @@
 
         $file_name = $randomString;
 		
-		$myfile = fopen($file_name, "w") or die("Unable to open file!");
+		$myfile = fopen('./buffer/'.$file_name, "w") or die("Unable to open file!");
 		fwrite($myfile, $txt);
 		fclose($myfile);
 
@@ -1569,6 +1569,49 @@
 		echo $return_txt;
 	}
 
+	function get_count_array_for_addr()
+	{
+		$addr_str = $_POST['addr'];
+		$date  = date("j, n, Y");
+        $now   = explode(", ", $date);
+        $year  = $now[2];
+        $month = $now[1];
+        $day   = $now[0];
+
+		if(preg_match('/^-{6}/i',$addr_str))
+		{
+			$fushiku='all';
+			$addr = 'all';
+		}
+		elseif(preg_match('/^-{4}/i',$addr_str))
+		{
+			$fushiku='ku';
+			$addr = str_replace('----',' ',$addr_str);
+		}
+		elseif(preg_match('/^-{2}/i',$addr_str))
+		{
+			$fushiku='shi';
+			$addr = str_replace('--',' ',$addr_str);
+		}
+		else
+		{
+			$fushiku='fu';
+			$addr = ' '.$addr_str;
+		}
+
+		$return_array[$fushiku]=$addr;
+
+		foreach (range(0, 10) as $number) {
+			$get_year = $year-$number;
+			$return_array[$get_year] = get_year_count($get_year,$fushiku,$addr);
+		}
+
+		$return_txt = json_encode(
+			$return_array
+		);
+		echo $return_txt;
+	}
+
 	function up_level()
 	{
 		$taget_id = $_POST['tag_id'];
@@ -1581,6 +1624,186 @@
 
 		$return_txt = json_encode($return_array);
 		echo $return_txt;
+	}
+
+	function get_search_data()
+	{
+		$addr_str = $_POST['addr'];
+		$color_str = $_POST['color'];
+
+
+		if(preg_match('/^-{6}/i',$addr_str))
+		{
+			$fushiku='all';
+			$addr = 'all';
+		}
+		elseif(preg_match('/^-{4}/i',$addr_str))
+		{
+			$fushiku='ku';
+			$addr = str_replace('----',' ',$addr_str);
+		}
+		elseif(preg_match('/^-{2}/i',$addr_str))
+		{
+			$fushiku='shi';
+			$addr = str_replace('--',' ',$addr_str);
+		}
+		else
+		{
+			$fushiku='fu';
+			$addr = ' '.$addr_str;
+		}
+
+		if($color_str=='------')
+		{
+			$color = 'all';
+		}
+		else
+		{
+			$color = $color_str;
+		}
+
+		$return_array[$fushiku]=$addr;
+
+		$return_array['data'] = search_cat($fushiku,$addr,$color);
+
+		$return_txt = json_encode(
+			$return_array
+		);
+
+		echo $return_txt;
+	}
+
+	function get_message()
+	{
+		$addr_str = $_POST['addr'];
+
+		if(preg_match('/^-{6}/i',$addr_str))
+		{
+			$fushiku='all';
+			$addr = 'all';
+		}
+		elseif(preg_match('/^-{4}/i',$addr_str))
+		{
+			$fushiku='ku';
+			$addr = str_replace('----',' ',$addr_str);
+		}
+		elseif(preg_match('/^-{2}/i',$addr_str))
+		{
+			$fushiku='shi';
+			$addr = str_replace('--',' ',$addr_str);
+		}
+		else
+		{
+			$fushiku='fu';
+			$addr = ' '.$addr_str;
+		}
+
+		$return_array['test'] = $addr_str;
+		$return_array['data'] = getMessage($fushiku,$addr);
+
+		$return_txt = json_encode(
+			$return_array
+		);
+
+		echo $return_txt;
+	}
+
+	function add_message()
+	{
+		$addr_str = $_POST['addr'];
+		$user_id = $_POST['user_id'];
+		$txt = $_POST['txt'];
+		$now = strval(time());
+		$user_name = UserId_get_UserName($user_id);
+
+		if(preg_match('/^-{6}/i',$addr_str))
+		{
+			$fushiku='all';
+			$addr = 'all';
+			$fu = null;
+			$shi = null;
+			$ku = null;
+		}
+		elseif(preg_match('/^-{4}/i',$addr_str))
+		{
+			$fushiku='ku';
+			$addr = str_replace('----',' ',$addr_str);
+			$addr_array = ku_search_shi_and_fu($addr);
+			$fu = $addr_array['fu'];
+			$shi = $addr_array['shi'];
+			$ku = $addr_array['ku'];
+		}
+		elseif(preg_match('/^-{2}/i',$addr_str))
+		{
+			$fushiku='shi';
+			$addr = str_replace('--',' ',$addr_str);
+			$addr_array = shi_search_fu($addr);
+			$fu = $addr_array['fu'];
+			$shi = $addr_array['shi'];
+			$ku = $addr_array['ku'];
+		}
+		else
+		{
+			$fushiku='fu';
+			$addr = ' '.$addr_str;
+			$fu = $addr;
+			$shi = null;
+			$ku = null;
+		}
+
+		addMessage($user_name,$txt,$now,$fu,$shi,$ku);
+
+		$return_array['test'] = [$user_name,$txt,$now,$fu,$shi,$ku];
+
+		$return_txt = json_encode(
+			$return_array
+		);
+
+		echo $return_txt;
+	}
+
+	function ku_search_shi_and_fu($ku_target)
+	{
+		$addr_array = (array)json_decode(address_list());
+		foreach(array_keys($addr_array) as $eria)
+		{
+			$fu_array = (array)$addr_array[$eria];
+			foreach(array_keys($fu_array) as $fu)
+			{
+				$shi_array = (array)$fu_array[$fu];
+				foreach(array_keys($shi_array) as $shi)
+				{
+					$ku_array = (array)$shi_array[$shi];
+					foreach(array_keys($ku_array) as $ku)
+					{
+						if(' '.$ku==$ku_target)
+						{
+							return ['fu'=>' '.$fu,'shi'=>' '.$shi,'ku'=>' '.$ku];
+						}
+					}
+				}
+			}			
+		}
+	}
+
+	function shi_search_fu($shi_target)
+	{
+		$addr_array = (array)json_decode(address_list());
+		foreach(array_keys($addr_array) as $eria)
+		{
+			$fu_array = (array)$addr_array[$eria];
+			foreach(array_keys($fu_array) as $fu)
+			{
+				$shi_array = (array)$fu_array[$fu];
+				foreach(array_keys($shi_array) as $shi)
+				{					
+					if(' '.$shi==$shi_target)
+					{
+						return ['fu'=>' '.$fu,'shi'=>' '.$shi,'ku'=>null];
+					}					
+				}
+			}			
+		}
 	}
 
     if(isset($_POST['action']))
@@ -1606,6 +1829,10 @@
 			case 'get_tnrcount_data':return(get_tnrcount_data());
 			case 'get_count_array':return(get_count_array());
 			case 'up_level':return(up_level());
+			case 'get_count_array_for_addr':return(get_count_array_for_addr());
+			case 'get_search_data':return(get_search_data());
+			case 'get_message':return(get_message());
+			case 'add_message':return(add_message());
         }
     }
 ?>
