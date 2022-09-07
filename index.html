@@ -186,9 +186,9 @@
 			do_resize();
 			
 			const t         = 500;
-			const nuit_list = [ '猫を登録', '記録', '猫数の変化', '私のアカウント' ];
-			const id_list   = [ 'cat_form', 'log', 'count_glf', 'my_acc' ];
-			const func_list = [ case_cat_form, case_log, case_count_glf, case_my_acc];
+			const nuit_list = [ '猫を登録', '記録',  '私のアカウント' ];
+			const id_list   = [ 'cat_form', 'log',  'my_acc' ];
+			const func_list = [ case_cat_form, case_log,  case_my_acc];
 			
 			for( let index = 0; index < nuit_list.length; index++ )
 			{
@@ -646,15 +646,87 @@
 		function make_tnrlog_box()
 		{
 			do_resize();
-			//console.log('test');
-			let btn_css = sec_btn_resize( 0, $('.sec_btn').length );
-			let box_css = sec_box_resize();			
-			let top     = ( btn_css.top+btn_css.height/2 )-box_css.top;
-			let left    = ( btn_css.left+btn_css.width/2 )-box_css.left;
-
-			$('#img_block').remove();
 			
-			console.log('make_tnrlog_box');
+			const post_data   = {
+				action : 'get_tnr_map',
+			};
+			
+			let output = get_data(post_data,show_tnr_map);
+		}
+		
+		function show_tnr_map(input)
+		{
+			$('#thr_box *').remove();
+			let mbox = $('#thr_box');
+			let img = $('<div id="tnr_img" class="img_list_box pritest abs"><img src="'+input['src']+'"></div>');
+			let input_btn = $('<input type="submit" value="登録">');
+			mbox.append(img);
+			if($.cookie('root_level') < 10)
+			{
+				mbox.append(input_btn);
+			}
+			input_btn.click(make_tnrdata_input);
+		}
+		
+		function make_tnrdata_input()
+		{
+			do_resize();
+			MyLatLng = 0;
+			$('#thr_box *').remove();
+			let mbox = $('#thr_box');
+			let map_box = $('<div id="map" class="tnr_map" class="abs pritest"></div>');
+
+			mbox.append(map_box);
+			
+			//map_box.css( map_resize(), 500, initMap );
+			
+			initMap()
+			$('#check').remove();
+			let count_div = $('<div id="count_div" class="abs"><samp>猫の数</samp><input id="count_input" type="number"></div>');
+			let date_time = $('<input id="time_input" type="datetime-local" class="abs" value="'+getFormat()+'">');
+			let check_btn = $('<input id="tnr_check" class="abs" type="submit" value="登録">');
+			mbox.append(count_div).append(date_time).append(check_btn);
+			check_btn.click(submit_tnr_data);
+		}
+		
+		function getFormat(){
+			format = "";
+			var nTime = new Date();
+			format += nTime.getFullYear()+"-";
+			format += (nTime.getMonth()+1)<10?"0"+(nTime.getMonth()+1):(nTime.getMonth()+1);
+			format += "-";
+			format += nTime.getDate()<10?"0"+(nTime.getDate()):(nTime.getDate());
+			format += "T";
+			format += nTime.getHours()<10?"0"+(nTime.getHours()):(nTime.getHours());
+			format += ":";
+			format += nTime.getMinutes()<10?"0"+(nTime.getMinutes()):(nTime.getMinutes());
+			format += ":00";
+			
+			return format;
+		}
+		
+		function submit_tnr_data()
+		{
+			let count = $('#count_input').val();
+			let date_time = $('#time_input').val();
+			let lat = MyLatLng.lat();
+			let lon = MyLatLng.lng();
+			
+			const post_data = { 
+				action  : "upload_tnr_data",
+				count : count,
+				date_time:date_time,
+				lat:lat,
+				lon:lon,
+				user_id:$.cookie('user_id')
+			};
+
+			get_data( post_data, show_tnr_map);
+		}
+		
+		function show_tnr_map_after_up_load(input)
+		{
+			console.log(input);
 		}
 		
 		function case_count_glf()
@@ -663,7 +735,7 @@
 			
 			if($.cookie('user_id'))
 			{
-				//console.log($.cookie('user_id'));
+				//console.log(($.cookie)('user_id'));
 			}
 			else
 			{
@@ -721,9 +793,16 @@
 		{
 			do_resize();
 			
-			let menu_list  = [ '基本情報', '探す', '登録済み', 'message' ];
-			let ImgId_list = [ 'acct', 'search', 'up_cat_list', 'message' ];
-			let func_list  = [ acct_func, search_func, UpCatList_func, message_func ];
+			let menu_list  = [ '基本情報',  '登録済み' ];
+			let ImgId_list = [ 'acct', 'up_cat_list' ];
+			let func_list  = [ acct_func,  UpCatList_func ];
+			
+			if($.cookie('root_level') < 10)
+			{
+				menu_list  = [ '基本情報', '探す', '登録済み', 'message' ];
+			    ImgId_list = [ 'acct', 'search', 'up_cat_list', 'message' ];
+				func_list  = [ acct_func, search_func, UpCatList_func, message_func ];
+			}
 			let t          = 500;
 			
 			let main_btn_css = menu_unit_resize( 3, $('.menu_btn').length );
@@ -880,6 +959,11 @@
 		function check_login_func(input)    
 		{
 			console.log(input);
+			if(input['erro']=='no_acc')
+			{
+				alert('E-mailがパスワードが違います');
+				return
+			}
 			input = input[0];
 			const user_id = input['_id']['$oid'];
 			const checker = input['checker'];

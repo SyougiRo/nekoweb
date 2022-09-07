@@ -338,3 +338,34 @@ html,body {
 #message_div{
 	overflow-y: auto;
 }
+
+#tnr_img{
+	top :10%;
+	left: 10%;
+	height: 80%;
+	width: 80%;
+	background: rgba(0,0,0,0.00);
+	overflow: hidden;
+}
+
+.tnr_map{
+	top :20%;
+	left: 15%;
+	height: 70%;
+	width: 70%;
+}
+
+#count_div{
+    top : 5%;
+    left: 20%;
+}
+
+#time_input{
+	top : 5%;
+    left: 45%;
+}
+
+#tnr_check{
+	top : 5%;
+    left: 70%;
+}
