@@ -186,15 +186,15 @@
 			do_resize();
 			
 			const t         = 500;
-			const nuit_list = [ '猫を登録', '記録', '猫数の変化', '私のアカウント' ];
-			const id_list   = [ 'cat_form', 'log', 'count_glf', 'my_acc' ];
-			const func_list = [ case_cat_form, case_log, case_count_glf, case_my_acc];
+			const nuit_list = [ '猫を登録', '記録',  '私のアカウント' ];
+			const id_list   = [ 'cat_form', 'log',  'my_acc' ];
+			const func_list = [ case_cat_form, case_log,  case_my_acc];
 			
 			for( let index = 0; index < nuit_list.length; index++ )
 			{
 				if( index < nuit_list.length-1 )
 				{
-					let btn = $('<input type="button" style="height:1px;width:1px" the_count="'+ index +'" id="'+ id_list[index] +'" class="menu_btn abs" value="'+ nuit_list[index] +'">');
+					let btn = $('<input type="button" style="height:1px;width:1px" the_count="'+ index +'" id="'+ id_list[index] +'" class="btn_css menu_btn abs" value="'+ nuit_list[index] +'">');
 					$('#main_box').append(btn);
 					btn.animate( menu_unit_resize( index,nuit_list.length ), function(){
 						btn.click( func_list[index] );
@@ -202,7 +202,7 @@
 				}
 				else
 				{
-					let btn = $('<input type="button" style="height:1px;width:1px" the_count="'+ index +'" id="'+ id_list[index] +'" class="menu_btn abs" value="'+ nuit_list[index] +'">');
+					let btn = $('<input type="button" style="height:1px;width:1px" the_count="'+ index +'" id="'+ id_list[index] +'" class="btn_css menu_btn abs" value="'+ nuit_list[index] +'">');
 					$('#main_box').append(btn);
 					btn.animate( menu_unit_resize( index,nuit_list.length ), function(){
 						btn.click( func_list[index] );
@@ -337,7 +337,7 @@
 			{
 				let box_css  = sec_box_resize();
 				let css_dect = sec_btn_resize( index, menu_list.length );
-				let btn      = $('<input type="button" id="'+ ImgId_list[index] +'" class="sec_btn abs" style="width:0px;height:0px;top:'+ top +'px;left:'+ left +'px" value="'+ menu_list[index] +'">');
+				let btn      = $('<input type="button" id="'+ ImgId_list[index] +'" class="btn_css sec_btn abs" style="width:0px;height:0px;top:'+ top +'px;left:'+ left +'px" value="'+ menu_list[index] +'">');
 				
 				$('#sec_box').append(btn);
 				
@@ -481,34 +481,83 @@
 		function showaddr(addr,func)
 		{
 			let mbox = $('#thr_box');
-			let select = $('<select id="addr_select"></select>');
+			let box = $('<div id="addr_box" class="abs"></div>')
+			let hid_input = $('<input id="hid_input" type="hidden">');
+			let select1 = $('<select id="addr_select1" class="addr_selects"></select>');
+			let select2 = $('<select id="addr_select2" class="addr_selects"></select>');
+			let select3 = $('<select id="addr_select3" class="addr_selects"></select>');
 			let opt0 =$('<option selected="selected">------</option>');
-			select.append(opt0);
+			let opt1 =$('<option selected="selected">------</option>');
+			let opt2 =$('<option selected="selected">------</option>');
+			select1.append(opt0);
+			select2.append(opt1);
+			select3.append(opt2);
 			$.each(addr,function(index1, value1){
 				let optgroup = $('<optgroup label="'+index1+'"></optgroup>');
 				$.each(value1,function(index2, value2){
-					let opt1 =$('<option>'+index2+'</option>');
+					let opt1 =$('<option class="sel">'+index2+'</option>');
 					optgroup.append(opt1);					
 					$.each(value2,function(index3,value3){
-						let opt2 =$('<option>'+'--'+index3+'</option>');
-						optgroup.append(opt2);
+						let opt2 =$('<option value="--'+index3+'" class="sel select2 '+index2+'">'+index3+'</option>');
+						select2.append(opt2);
 						$.each(value3,function(index4,value4){
-							let opt3 =$('<option>'+'----'+index4+'</option>');
-							optgroup.append(opt3);
+							let opt3 =$('<option value="----'+index4+'" class="sel select2 select3 '+index2+' '+index3+'">'+index4+'</option>');
+							select3.append(opt3);
 							//console.log(index4);
 						});	
 					});
 				});
-				select.append(optgroup);
+				select1.append(optgroup);
 			});
-			
-			mbox.append(select);
-			select.change(func);
+			mbox.append(box);
+			box.append(hid_input);
+			box.append(select1);
+			box.append(select2);
+			box.append(select3);
+			$('.addr_selects').change(function(){
+				let target_id = $(this).attr('id');
+				
+				let val = $(this).val();
+				hid_input.val(val);
+				console.log(hid_input.val());
+				if( target_id=='addr_select1' && val == '------')
+				{
+					$('.sel').show();
+					select2.val('------');
+					select3.val('------');
+				}
+				else if( target_id=='addr_select2' && val == '------' )
+				{
+					hid_input.val($('#addr_select1').val());
+					console.log(hid_input.val());
+					select3.val('------');
+					$('.'+$('#addr_select1').val()).show();
+				}
+				else if( val == '------' )
+				{
+					hid_input.val($('#addr_select2').val());
+				}
+				else if(target_id=='addr_select1')
+				{
+					$('.select2').hide();
+					
+					$('.'+val.replace(/-+/,'')).show();
+				}
+				else if(target_id=='addr_select2')
+				{
+					$('.select3').hide();
+					
+					$('.'+val.replace(/-+/,'')).show();
+				}
+				
+				func();
+			});
 		}
 		
 		function get_tnrcount_data()
 		{
-			let addr = $('#addr_select').val();
+			
+			let addr = $('#hid_input').val();
 			console.log(addr);
 			const post_data   = {
 				action : 'get_tnrcount_data',
@@ -520,7 +569,7 @@
 		
 		function get_count_data()
 		{
-			let addr = $('#addr_select').val();
+			let addr = $('#hid_input').val();
 			console.log(addr);
 			const post_data   = {
 				action : 'get_count_array_for_addr',
@@ -600,7 +649,7 @@
 		
 		function get_search_data()
 		{
-			let addr = $('#addr_select').val();
+			let addr = $('#hid_input').val();
 			let color = $('#color_select').val();
 			console.log(addr);
 			const post_data   = {
@@ -646,15 +695,109 @@
 		function make_tnrlog_box()
 		{
 			do_resize();
-			//console.log('test');
-			let btn_css = sec_btn_resize( 0, $('.sec_btn').length );
-			let box_css = sec_box_resize();			
-			let top     = ( btn_css.top+btn_css.height/2 )-box_css.top;
-			let left    = ( btn_css.left+btn_css.width/2 )-box_css.left;
-
-			$('#img_block').remove();
 			
-			console.log('make_tnrlog_box');
+			const post_data   = {
+				action : 'get_tnr_map',
+			};
+			
+			let output = get_data(post_data,show_tnr_map);
+		}
+		
+		function make_tnrlog_box_for_addr()
+		{
+			do_resize();
+			let addr = $('#hid_input').val();
+			const post_data   = {
+				action : 'get_tnr_map',
+				addr : addr,
+			};
+			
+			let output = get_data(post_data,update_map);
+		}
+		
+		function update_map(input)
+		{
+			//console.log(input['src']);
+			$('#tnr_img').remove();
+			let mbox = $('#thr_box');
+			let img = $('<div id="tnr_img" class="img_list_box pritest abs"><img src="'+input['src']+'"></div>');
+			mbox.append(img);
+		}
+		
+		function show_tnr_map(input)
+		{
+			$('#thr_box *').remove();
+			let mbox = $('#thr_box');
+			showaddr(JSON.parse(input['addr']),make_tnrlog_box_for_addr);
+			let img = $('<div id="tnr_img" class="img_list_box pritest abs"><img src="'+input['src']+'"></div>');
+			let input_btn = $('<input type="submit" value="登録">');
+			mbox.append(img);
+			if($.cookie('root_level') < 10)
+			{
+				$('#addr_box').append(input_btn);
+			}
+			input_btn.click(make_tnrdata_input);
+		}
+		
+		function make_tnrdata_input()
+		{
+			do_resize();
+			MyLatLng = 0;
+			$('#thr_box *').remove();
+			let mbox = $('#thr_box');
+			let map_box = $('<div id="map" class="tnr_map" class="abs pritest"></div>');
+
+			mbox.append(map_box);
+			
+			//map_box.css( map_resize(), 500, initMap );
+			
+			initMap()
+			$('#check').remove();
+			let count_div = $('<div id="count_div" class="abs"><samp>猫の数</samp><input id="count_input" type="number"></div>');
+			let date_time = $('<input id="time_input" type="datetime-local" class="abs" value="'+getFormat()+'">');
+			let check_btn = $('<input id="tnr_check" class="abs" type="submit" value="登録">');
+			mbox.append(count_div).append(date_time).append(check_btn);
+			check_btn.click(submit_tnr_data);
+		}
+		
+		function getFormat(){
+			format = "";
+			var nTime = new Date();
+			format += nTime.getFullYear()+"-";
+			format += (nTime.getMonth()+1)<10?"0"+(nTime.getMonth()+1):(nTime.getMonth()+1);
+			format += "-";
+			format += nTime.getDate()<10?"0"+(nTime.getDate()):(nTime.getDate());
+			format += "T";
+			format += nTime.getHours()<10?"0"+(nTime.getHours()):(nTime.getHours());
+			format += ":";
+			format += nTime.getMinutes()<10?"0"+(nTime.getMinutes()):(nTime.getMinutes());
+			format += ":00";
+			
+			return format;
+		}
+		//now
+		function submit_tnr_data()
+		{
+			let count = $('#count_input').val();
+			let date_time = $('#time_input').val();
+			let lat = MyLatLng.lat();
+			let lon = MyLatLng.lng();
+			
+			const post_data = { 
+				action  : "upload_tnr_data",
+				count : count,
+				date_time:date_time,
+				lat:lat,
+				lon:lon,
+				user_id:$.cookie('user_id')
+			};
+
+			get_data( post_data, show_tnr_map);
+		}
+		
+		function show_tnr_map_after_up_load(input)
+		{
+			console.log(input);
 		}
 		
 		function case_count_glf()
@@ -663,7 +806,7 @@
 			
 			if($.cookie('user_id'))
 			{
-				//console.log($.cookie('user_id'));
+				//console.log(($.cookie)('user_id'));
 			}
 			else
 			{
@@ -721,9 +864,16 @@
 		{
 			do_resize();
 			
-			let menu_list  = [ '基本情報', '探す', '登録済み', 'message' ];
-			let ImgId_list = [ 'acct', 'search', 'up_cat_list', 'message' ];
-			let func_list  = [ acct_func, search_func, UpCatList_func, message_func ];
+			let menu_list  = [ '基本情報',  '登録済み' ];
+			let ImgId_list = [ 'acct', 'up_cat_list' ];
+			let func_list  = [ acct_func,  UpCatList_func ];
+			
+			if($.cookie('root_level') < 10)
+			{
+				menu_list  = [ '基本情報', '探す', '登録済み', 'message' ];
+			    ImgId_list = [ 'acct', 'search', 'up_cat_list', 'message' ];
+				func_list  = [ acct_func, search_func, UpCatList_func, message_func ];
+			}
 			let t          = 500;
 			
 			let main_btn_css = menu_unit_resize( 3, $('.menu_btn').length );
@@ -736,7 +886,7 @@
 			{
 				let box_css  = sec_box_resize();
 				let css_dect = sec_btn_resize( index, menu_list.length );
-				let btn      = $('<input type="button" id="'+ ImgId_list[index] +'" class="sec_btn abs" style="width:0px;height:0px;top:'+ top +'px;left:'+ left +'px" value="'+ menu_list[index] +'">');
+				let btn      = $('<input type="button" id="'+ ImgId_list[index] +'" class="btn_css sec_btn abs" style="width:0px;height:0px;top:'+ top +'px;left:'+ left +'px" value="'+ menu_list[index] +'">');
 				
 				$('#sec_box').append(btn);
 				
@@ -880,6 +1030,11 @@
 		function check_login_func(input)    
 		{
 			console.log(input);
+			if(input['erro']=='no_acc')
+			{
+				alert('E-mailがパスワードが違います');
+				return
+			}
 			input = input[0];
 			const user_id = input['_id']['$oid'];
 			const checker = input['checker'];
@@ -1140,7 +1295,7 @@
 			let output = get_data(post_data,make_message_box);
 			//console.log('test');
 		}
-		//now
+		
 		function make_message_box(input)
 		{
 			thr_box_reset(this);
@@ -1165,7 +1320,7 @@
 		
 		function get_message()
 		{
-			let addr = $('#addr_select').val();
+			let addr = $('#hid_input').val();
 			const post_data = { 
 				action  : "get_message",
 				addr:addr
@@ -1379,7 +1534,7 @@
 			{
 				let box_css  = sec_box_resize();
 				let css_dect = sec_btn_resize( index, menu_list.length );
-				let btn      = $('<input type="button" id="'+ ImgId_list[index] +'" class="sec_btn abs" style="width:0px;height:0px;top:'+ top +'px;left:'+ left +'px" value="'+ menu_list[index] +'">');
+				let btn      = $('<input type="button" id="'+ ImgId_list[index] +'" class="btn_css sec_btn abs" style="width:0px;height:0px;top:'+ top +'px;left:'+ left +'px" value="'+ menu_list[index] +'">');
 				
 				$('#sec_box').append(btn);
 				

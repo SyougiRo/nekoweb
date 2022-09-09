@@ -692,4 +692,51 @@
         return($output);
         
     }
+
+    function getTnrArray($fushiku='all',$addr='all')
+    {
+        global $database;
+        $table_name = $database.'.tnr_log';
+
+        $work='search';
+
+        $data = [];
+
+        if($fushiku!='all')
+        {
+            $data = [
+                $fushiku=>$addr,
+            ];
+        }
+
+        $output = do_data( $table_name,$work,$data)->toArray();
+        if(count($output)<1)
+        {
+            $data = [];
+            $output = do_data( $table_name,$work,$data)->toArray();
+        }
+
+        return($output);
+    }
+
+    function insertTnrData($user_id,$count,$time_str,$lat,$lon,$fu,$shi,$ku)
+    {
+        global $database;
+        $table_name = $database.'.tnr_log';
+
+        $work='insert';
+
+        $data=[
+            'user_id' => do_id($user_id),
+            'count'=>$count,
+            'txt'=>$time_str,
+            'fu' =>$fu,
+            'shi'=>$shi,
+            'ku'=>$ku,
+            'lat'=>$lat,
+            'lon'=>$lon          
+        ];
+
+        do_data($table_name,$work,$data);
+    }
 ?>

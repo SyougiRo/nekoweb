@@ -1517,26 +1517,11 @@
 	function get_tnrcount_data()
 	{
 		$addr_str = $_POST['addr'];
-		if(preg_match('/^-{6}/i',$addr_str))
-		{
-			$fushiku='all';
-			$addr = 'all';
-		}
-		elseif(preg_match('/^-{4}/i',$addr_str))
-		{
-			$fushiku='ku';
-			$addr = str_replace('----',' ',$addr_str);
-		}
-		elseif(preg_match('/^-{2}/i',$addr_str))
-		{
-			$fushiku='shi';
-			$addr = str_replace('--',' ',$addr_str);
-		}
-		else
-		{
-			$fushiku='fu';
-			$addr = ' '.$addr_str;
-		}
+		$addr_data = decode_str($addr_str);
+
+		$fushiku = $addr_data['fushiku'];
+		$addr = $addr_data['addr'];
+
 		$return_array[$fushiku]=$addr;
 		$return_array['isTnrCount'] = isTnrCount($fushiku,$addr);
 		$return_array['noTnrCount'] = noTnrCount($fushiku,$addr);
@@ -1578,26 +1563,11 @@
         $month = $now[1];
         $day   = $now[0];
 
-		if(preg_match('/^-{6}/i',$addr_str))
-		{
-			$fushiku='all';
-			$addr = 'all';
-		}
-		elseif(preg_match('/^-{4}/i',$addr_str))
-		{
-			$fushiku='ku';
-			$addr = str_replace('----',' ',$addr_str);
-		}
-		elseif(preg_match('/^-{2}/i',$addr_str))
-		{
-			$fushiku='shi';
-			$addr = str_replace('--',' ',$addr_str);
-		}
-		else
-		{
-			$fushiku='fu';
-			$addr = ' '.$addr_str;
-		}
+		$addr_data = decode_str($addr_str);
+
+		$fushiku = $addr_data['fushiku'];
+		$addr = $addr_data['addr'];
+
 
 		$return_array[$fushiku]=$addr;
 
@@ -1632,26 +1602,7 @@
 		$color_str = $_POST['color'];
 
 
-		if(preg_match('/^-{6}/i',$addr_str))
-		{
-			$fushiku='all';
-			$addr = 'all';
-		}
-		elseif(preg_match('/^-{4}/i',$addr_str))
-		{
-			$fushiku='ku';
-			$addr = str_replace('----',' ',$addr_str);
-		}
-		elseif(preg_match('/^-{2}/i',$addr_str))
-		{
-			$fushiku='shi';
-			$addr = str_replace('--',' ',$addr_str);
-		}
-		else
-		{
-			$fushiku='fu';
-			$addr = ' '.$addr_str;
-		}
+		$addr_data = decode_str($addr_str);
 
 		if($color_str=='------')
 		{
@@ -1661,6 +1612,9 @@
 		{
 			$color = $color_str;
 		}
+
+		$fushiku = $addr_data['fushiku'];
+		$addr = $addr_data['addr'];
 
 		$return_array[$fushiku]=$addr;
 
@@ -1673,10 +1627,8 @@
 		echo $return_txt;
 	}
 
-	function get_message()
+	function decode_str($addr_str)
 	{
-		$addr_str = $_POST['addr'];
-
 		if(preg_match('/^-{6}/i',$addr_str))
 		{
 			$fushiku='all';
@@ -1698,8 +1650,22 @@
 			$addr = ' '.$addr_str;
 		}
 
+		$return_dict['fushiku'] = $fushiku;
+		$return_dict['addr'] = $addr;
+		
+
+		return $return_dict;
+	}
+
+	function get_message()
+	{
+		$addr_str = $_POST['addr'];
+
+		$addr_data = decode_str($addr_str);
+
 		$return_array['test'] = $addr_str;
-		$return_array['data'] = getMessage($fushiku,$addr);
+
+		$return_array['data'] = getMessage($addr_data['fushiku'],$addr_data['addr']);
 
 		$return_txt = json_encode(
 			$return_array
@@ -1806,6 +1772,77 @@
 		}
 	}
 
+	function get_tnr_map()
+	{
+		
+		if(isset($_POST['addr']))
+		{
+			$addr_str = $_POST['addr'];
+			$addr_data = decode_str($addr_str);
+			$data['addr'] = getTnrArray($addr_data['fushiku'],$addr_data['addr']);
+			$data['z'] = 0.1;
+			$return_txt = json_encode(
+				$data
+			);
+		}
+		else
+		{
+			$data['addr'] = getTnrArray();
+			$data['z'] = 4;
+			$return_txt = json_encode(
+				$data
+			);
+		}
+		$file_name = buffer_file($return_txt);
+		
+    	exec("activate tg2.0 && python make_basemap.py ".$file_name." && conda deactivate",$output);
+		$return_data['src'] = $output[0];
+		$addtlist_str = address_list();
+		$return_data['addr'] = $addtlist_str;
+		$return_txt = json_encode(
+			$return_data
+		);
+	
+		echo $return_txt;
+	}
+
+	function upload_tnr_data()
+	{
+		$count = $_POST['count'];
+		$date_time = $_POST['date_time'];
+		$lat = $_POST['lat'];
+		$lon = $_POST['lon'];
+		$user_id=$_POST['user_id'];
+
+		exec("python dogeopy.py ".$lat." ".$lon,$testoutput);
+
+		$fu  = json_decode($testoutput[0])->{'fu'};
+		$shi = json_decode($testoutput[0])->{'shi'};
+		$ku  = json_decode($testoutput[0])->{'ku'};
+		
+		$time_str = str_replace('T',' ',$date_time);
+
+		insertTnrData($user_id,$count,$time_str,$lat,$lon,$fu,$shi,$ku);
+
+		$data_array['addr'] = getTnrArray('fu',$fu);
+		$addr_array['z'] = 0.1;
+		$return_txt = json_encode(
+			$data_array
+		);
+	
+		$file_name = buffer_file($return_txt);
+		
+    	exec("activate tg2.0 && python make_basemap.py ".$file_name." && conda deactivate",$output);
+		$addtlist_str = address_list();
+		$return_data['addr'] = $addtlist_str;
+		$return_data['src'] = $output[0];
+		$return_txt = json_encode(
+			$return_data
+		);
+	
+		echo $return_txt;
+	}
+
     if(isset($_POST['action']))
     {
         $action = $_POST['action'];
@@ -1833,6 +1870,8 @@
 			case 'get_search_data':return(get_search_data());
 			case 'get_message':return(get_message());
 			case 'add_message':return(add_message());
+			case 'get_tnr_map':return(get_tnr_map());
+			case 'upload_tnr_data':return(upload_tnr_data());
         }
     }
 ?>

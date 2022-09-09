@@ -30,4 +30,3 @@ if __name__=='__main__':
     #print(sys.argv[1])
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
     func()
-    print('test')
