@@ -1774,15 +1774,31 @@
 
 	function get_tnr_map()
 	{
-		$data = getTnrArray();
-    	$return_txt = json_encode(
-			$data
-		);
-
+		
+		if(isset($_POST['addr']))
+		{
+			$addr_str = $_POST['addr'];
+			$addr_data = decode_str($addr_str);
+			$data['addr'] = getTnrArray($addr_data['fushiku'],$addr_data['addr']);
+			$data['z'] = 0.1;
+			$return_txt = json_encode(
+				$data
+			);
+		}
+		else
+		{
+			$data['addr'] = getTnrArray();
+			$data['z'] = 4;
+			$return_txt = json_encode(
+				$data
+			);
+		}
 		$file_name = buffer_file($return_txt);
 		
     	exec("activate tg2.0 && python make_basemap.py ".$file_name." && conda deactivate",$output);
 		$return_data['src'] = $output[0];
+		$addtlist_str = address_list();
+		$return_data['addr'] = $addtlist_str;
 		$return_txt = json_encode(
 			$return_data
 		);
@@ -1808,15 +1824,17 @@
 
 		insertTnrData($user_id,$count,$time_str,$lat,$lon,$fu,$shi,$ku);
 
-		$data = getTnrArray('fu',$fu);
-
+		$data_array['addr'] = getTnrArray('fu',$fu);
+		$addr_array['z'] = 0.1;
 		$return_txt = json_encode(
-			$data
+			$data_array
 		);
 	
 		$file_name = buffer_file($return_txt);
 		
     	exec("activate tg2.0 && python make_basemap.py ".$file_name." && conda deactivate",$output);
+		$addtlist_str = address_list();
+		$return_data['addr'] = $addtlist_str;
 		$return_data['src'] = $output[0];
 		$return_txt = json_encode(
 			$return_data

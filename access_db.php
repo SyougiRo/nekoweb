@@ -710,6 +710,11 @@
         }
 
         $output = do_data( $table_name,$work,$data)->toArray();
+        if(count($output)<1)
+        {
+            $data = [];
+            $output = do_data( $table_name,$work,$data)->toArray();
+        }
 
         return($output);
     }

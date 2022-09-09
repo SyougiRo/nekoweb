@@ -369,3 +369,17 @@ html,body {
 	top : 5%;
     left: 70%;
 }
+
+#addr_box{
+	width: 100%;
+	display: flex;
+  	/* 水平置中 */
+  	justify-content: center;    
+  	/* 垂直置中 */
+  	align-items: center;
+	top: 3%;
+}
+
+.btn_css{
+	background-color:rgba(96,237,255,1.00);
+}

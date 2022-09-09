@@ -8,6 +8,8 @@ import sys
 import base64
 from io import BytesIO
 import json
+import numpy as np
+import pandas as pd
 
 class mapchart():
     def __init__(self) -> None:
@@ -22,10 +24,11 @@ class mapchart():
         extent=[lon-z*3,lon+z*3,lat-z,lat+z]
         self.ax.set_extent(extent)
 
-    def make_maker(self,lat,lon,txt='',ms=10):
+    def make_maker(self,lat,lon,txt="",ms=10):
         mklon,mklat = self.crs.transform_point(lon, lat, ccrs.PlateCarree())
         self.ax.plot(mklon,mklat, marker='o', transform=self.crs, ms=ms)
-        self.ax.text(mklon+500,mklat+500,txt)
+        if(txt!=""):
+            self.ax.text(mklon+500,mklat+500,txt)
 
     def to_base64(self):
         file_name = str(uuid.uuid4())+'.png'
@@ -38,16 +41,24 @@ class mapchart():
             base64_str = base64.b64encode(byte_data)
             base_str = "data:image/png;base64,"+str(base64_str.decode("utf-8"))
             print(base_str)
-        os.remove(file_name)
+        #os.remove(file_name)
 
 
 def returndata():
     mymap = mapchart()
     datas = json_decode()
-    mymap.initmap(get_lat_center(datas),get_lon_center(datas))
-    for data in datas:
-        #print(data)
-        mymap.make_maker(float(data['lat']),float(data['lon']),data['txt'],int(data['count']))
+    data_addr = pd.DataFrame.from_dict(datas['addr'])
+
+    mymap.initmap(get_center(data_addr['lat']),get_center(data_addr['lon']),float(datas['z']))
+    #print(datas['z']==4)
+    if(datas['z']==4):
+        for index, row in data_addr.iterrows():
+            #print(row['lat'], row['lon'])
+            mymap.make_maker(float(row['lat']),float(row['lon']),row['count'])
+    else:
+        for index, row in data_addr.iterrows():
+            #print(row['lat'], row['lon'])
+            mymap.make_maker(float(row['lat']),float(row['lon']),row['txt'],row['count'])
     mymap.to_base64()
 
 def json_decode():
@@ -59,20 +70,14 @@ def json_decode():
 
     return data
 
-def get_lat_center(datas):
+def get_center(datas):
     #print(len(datas))
     sum_lat = 0
     for data in datas:
-        sum_lat += float(data['lat'])
+        sum_lat += float(data)
     
     return sum_lat/len(datas)
 
-def get_lon_center(datas):
-    sum_lon = 0
-    for data in datas:
-        sum_lon += float(data['lon'])
-    
-    return sum_lon/len(datas)
 
 if __name__=='__main__':
     returndata()
