@@ -41,7 +41,7 @@ class mapchart():
             base64_str = base64.b64encode(byte_data)
             base_str = "data:image/png;base64,"+str(base64_str.decode("utf-8"))
             print(base_str)
-        #os.remove(file_name)
+        os.remove(file_name)
 
 
 def returndata():
