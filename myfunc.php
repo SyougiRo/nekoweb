@@ -1825,7 +1825,7 @@
 		insertTnrData($user_id,$count,$time_str,$lat,$lon,$fu,$shi,$ku);
 
 		$data_array['addr'] = getTnrArray('fu',$fu);
-		$addr_array['z'] = 0.1;
+		$data_array['z'] = 0.1;
 		$return_txt = json_encode(
 			$data_array
 		);
