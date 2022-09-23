@@ -61,6 +61,10 @@
 		var map;
 		var myChart;
 		
+		$.removeCookie('user_id');
+		$.removeCookie('root_level');
+		$.removeCookie('checker');
+		
 		function monitor_ver_check(melem)
 		{
 			let monitor_ver;
@@ -161,8 +165,11 @@
 		function make_main_box()
 		{			
 			let box = $('<div class="abs pritest effect" id="main_box"></div>');
+			let how_use_btn=$('<input id="how_use_btn" type="submit" class="abs" value="説明">');
 			$('body').append(box);
+			box.append(how_use_btn);
 			box.animate( main_box_resize(), 1000, make_unit);
+			how_use_btn.click(gray_window);
 			//console.log('test1');
 		}
 		
@@ -186,9 +193,9 @@
 			do_resize();
 			
 			const t         = 500;
-			const nuit_list = [ '猫を登録', '記録',  '私のアカウント' ];
-			const id_list   = [ 'cat_form', 'log',  'my_acc' ];
-			const func_list = [ case_cat_form, case_log,  case_my_acc];
+			const nuit_list = [ '猫登録','TNR登録', '閲覧',  'アカウント' ];
+			const id_list   = [ 'cat_form','tnr_form' ,'log',  'my_acc' ];
+			const func_list = [ case_cat_form,tnr_form ,case_log,  case_my_acc];
 			
 			for( let index = 0; index < nuit_list.length; index++ )
 			{
@@ -284,6 +291,51 @@
 			}
 		}
 		
+		function tnr_form()
+		{
+			sec_box_reset(this);
+			if($.cookie('user_id'))
+			{
+				//console.log($.cookie('user_id'));
+			}
+			else
+			{
+				$('#my_acc').click();
+				//alert('loginしてください');
+				return;
+			}
+			
+			if( menu_z < 2)
+			{
+				menu_z = 2;
+				fri_box_animet( 1, make_tnr_form );	
+			}
+			else
+			{
+				let len      = $('.menu_btn').length;
+				let css_dect = menu_unit_resize( 1, len);
+				let btn_top  = css_dect.height/2+css_dect.top;
+				let btn_left = css_dect.width/2+css_dect.left;
+				
+				make_sec_box( btn_top, btn_left, make_tnr_form );
+			}	
+			
+		}
+		
+		function make_tnr_form()
+		{
+			
+			let btn_css = sec_btn_resize( 1, $('.sec_btn').length );
+			let top     = btn_css.top+btn_css.height/2;
+			let left    = btn_css.left+btn_css.width/2;
+
+			make_thr_box( top, left, function(){
+				MyLatLng = 0;
+				make_tnrdata_input();
+			} );
+			
+		}
+		
 		function case_log()
 		{
 			sec_box_reset(this);
@@ -319,7 +371,7 @@
 		{
 			do_resize();
 			
-			let menu_list  = [ 'tnr比例', '数', '探す', 'TNR記録' ];
+			let menu_list  = [ 'tnr比率', '猫の数', '探す', 'TNR記録' ];
 			let ImgId_list = [ 'tnr_r', 'count', 'search_cat', 'tnr_log' ];
 			let func_list  = [ make_tnrchart_box, make_count_box, make_search_box, make_tnrlog_box ];
 			let t          = 500;
@@ -730,13 +782,13 @@
 			let mbox = $('#thr_box');
 			showaddr(JSON.parse(input['addr']),make_tnrlog_box_for_addr);
 			let img = $('<div id="tnr_img" class="img_list_box pritest abs"><img src="'+input['src']+'"></div>');
-			let input_btn = $('<input type="submit" value="登録">');
+			//let input_btn = $('<input type="submit" value="登録">');
 			mbox.append(img);
-			if($.cookie('root_level') < 10)
-			{
-				$('#addr_box').append(input_btn);
-			}
-			input_btn.click(make_tnrdata_input);
+			//if($.cookie('root_level') < 10)
+			//{
+				//$('#addr_box').append(input_btn);
+			//}
+			//input_btn.click(make_tnrdata_input);
 		}
 		
 		function make_tnrdata_input()
@@ -792,7 +844,7 @@
 				user_id:$.cookie('user_id')
 			};
 
-			get_data( post_data, show_tnr_map);
+			get_data( post_data, function(){alert('登録成功')});
 		}
 		
 		function show_tnr_map_after_up_load(input)
@@ -864,13 +916,13 @@
 		{
 			do_resize();
 			
-			let menu_list  = [ '基本情報',  '登録済み' ];
+			let menu_list  = [ '登録',  '登録済み' ];
 			let ImgId_list = [ 'acct', 'up_cat_list' ];
 			let func_list  = [ acct_func,  UpCatList_func ];
 			
 			if($.cookie('root_level') < 10)
 			{
-				menu_list  = [ '基本情報', '探す', '登録済み', 'message' ];
+				menu_list  = [ '登録', '探す', '登録済み', 'message' ];
 			    ImgId_list = [ 'acct', 'search', 'up_cat_list', 'message' ];
 				func_list  = [ acct_func, search_func, UpCatList_func, message_func ];
 			}
@@ -2632,6 +2684,23 @@
 		function start()
 		{
 			make_main_box();
+		}
+		
+		function gray_window()
+		{
+			let box = $('<div id="gray_window" class="abs"></div>');
+			let message_box = $('<div id="message_box" class="abs"></div>');
+			let cat_msg = $('<div id="cat_msg" class="msg_box msg_uline"><div class="col_1">猫登録</div>   <div class="col_2"><p>新しい猫と出会った時にクリックしてください。ここで</p></div></div>');
+			let tnr_msg = $('<div id="tnr_msg" class="msg_box msg_uline"><div class="col_1">TNR登録</div>  <div class="col_2"><p>TNR説明文</p></div></div>');
+			let gla_msg = $('<div id="gla_msg" class="msg_box msg_uline"><div class="col_1">閲覧</div>     <div class="col_2"><p>閲覧説明文</p></div></div>');
+			let acc_msg = $('<div id="acc_msg" class="msg_box">          <div class="col_1">アカウント</div><div class="col_2"><p>アカウント説明文</p></div></div>');
+			
+			$('body').append(box);
+			message_box.append(cat_msg).append(tnr_msg).append(gla_msg).append(acc_msg);
+			box.append(message_box);
+			box.click(function(){
+				box.remove();
+			});
 		}
 		
 		$(function(){
