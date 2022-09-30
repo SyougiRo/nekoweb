@@ -2690,10 +2690,11 @@
 		{
 			let box = $('<div id="gray_window" class="abs"></div>');
 			let message_box = $('<div id="message_box" class="abs"></div>');
-			let cat_msg = $('<div id="cat_msg" class="msg_box msg_uline"><div class="col_1">猫登録</div>   <div class="col_2"><p>新しい猫と出会った時にクリックしてください。ここで</p></div></div>');
-			let tnr_msg = $('<div id="tnr_msg" class="msg_box msg_uline"><div class="col_1">TNR登録</div>  <div class="col_2"><p>TNR説明文</p></div></div>');
-			let gla_msg = $('<div id="gla_msg" class="msg_box msg_uline"><div class="col_1">閲覧</div>     <div class="col_2"><p>閲覧説明文</p></div></div>');
-			let acc_msg = $('<div id="acc_msg" class="msg_box">          <div class="col_1">アカウント</div><div class="col_2"><p>アカウント説明文</p></div></div>');
+			
+			let cat_msg = $('<div id="cat_msg" class="msg_box msg_uline"><div class="col_1">猫登録</div><div class="col_2"><p>新しい猫と出会った時にクリックしてください。ここで猫の写真と情報を登録出来ます。</p><p>画像アップ:</br>中央の写真をクリックしてアップしたい写真を選べます。少し待ってその写真が表示されたら成功です。</p><p>毛色選択:</br>ここはアップした猫の毛色を選択します。同じ毛色の画像を選んでクリックしてください。</p><p>TNR選択:</br>ここは猫のTNR状態を選択します。アップした猫のTNR状態と同じ画像をクリックしてください。</p><p>GPSデータ:</br>この猫の写真を撮った場所を入力します。写真を撮った時にGPSが使っているなら自動に入力されます。もし場所が違う場合はマップで正しい場合はクリックしてください。確認した後確認を押しって転送します。</p><p>もし近くに似てる猫が発見された事がありましたらその写真は表示されます。発見した猫が表示されだ猫と同じ猫ならその写真をクリックしてください。</p></div></div>');
+			let tnr_msg = $('<div id="tnr_msg" class="msg_box msg_uline"><div class="col_1">TNR登録</div><div class="col_2"><p>TNRを行う時にその場所等々のを記録出来ます。</br>マップに行う場所をクリックして時間と猫の数を入力して登録を押すと完了です。</p></div></div>');
+			let gla_msg = $('<div id="gla_msg" class="msg_box msg_uline"><div class="col_1">閲覧</div><div class="col_2"><p>猫保護に関する現状を見れる部分です。</p><p>TNR比率:</br>TNRを行った猫と行ってない猫の比率が見えます。上の住所をクリックすることで場所を絞ることが出来ます。</p><p>猫の数:</br>こと10年の間で新しく記録された猫の数が見えます。これを見てTNRの効果が分かります。</p><p>探す:</br>他の人がアップした猫が見えます。ここで猫の外見と場所を入力することでこの猫が誰がに登録されたがが分かります。</p><p>TNR記録:</br>以前TNRを行った記録が見えます。上の住所をクリックすることで場所を絞ることが出来ます。</p></div></div>');
+			let acc_msg = $('<div id="acc_msg" class="msg_box"><div class="col_1">アカウント</div><div class="col_2"><p>アカウントを管理する場所です。</p><p>登録:</br>毎回サイトを開く時に登録を行う。新しい使用者の場合は新規登録をクリックしてアカウントを作れます。但し新しいアカウントは全部の機能を使えないから管理者のアカウントを持っている人に申請します。</p><p>探す:</br>アカウントのランクアップをする場所です。管理者のアカウントで操作する時にlevel upをクリックするとそのアカウントが全機能が使えます。</p><p>登録済み:</br>以前自分がアップした猫が見えます。</p><p>message:</br>メッセージを残す為の場所です。上の住所をクリックすることで場所を指定することが出来ます。</p></div></div>');
 			
 			$('body').append(box);
 			message_box.append(cat_msg).append(tnr_msg).append(gla_msg).append(acc_msg);
