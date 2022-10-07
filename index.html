@@ -18,8 +18,9 @@
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>	-->	
 
 	<!-- google map API -->
-	<script src="https://maps.google.com/maps/api/js?key=AIzaSyB-9a0T7sfcoJUoCR2Avg6dv7j_5qJCgXg&language=ja"></script>
-
+	<!-- <script src="https://maps.google.com/maps/api/js?key=AIzaSyB-9a0T7sfcoJUoCR2Avg6dv7j_5qJCgXg&language=ja"></script> -->
+	<script src="https://maps.google.com/maps/api/js?key=AIzaSyCKBFYmGpdE3P2uH7lCv1FTTK2VzdAM4mw&language=ja"></script>
+	
 	<!-- mycss and myjs -->
 	<link href="css/ALLCss.css" rel="stylesheet" type="text/css">
 
@@ -770,25 +771,72 @@
 		function update_map(input)
 		{
 			//console.log(input['src']);
-			$('#tnr_img').remove();
+			$('#map').remove();
 			let mbox = $('#thr_box');
-			let img = $('<div id="tnr_img" class="img_list_box pritest abs"><img src="'+input['src']+'"></div>');
-			mbox.append(img);
+			//let img = $('<div id="tnr_img" class="img_list_box pritest abs"><img src="'+input['src']+'"></div>');
+			//mbox.append(img);
+			let map_box     = $('<div id="map" class="tnr_map" class="abs pritest"></div>');
+			
+			$('#thr_box').append(map_box);
+			initMap();
+			//console.log(input['tnr_ary']);
+			let lat_sum = 0;
+			let lon_sum = 0;
+			let array_len = input['tnr_ary'].length
+			
+			$.each(input['tnr_ary'],function( key, value ){
+				console.log(value['txt']);
+				make_maker( value['lat'], value['lon'], value['count'], value['txt']);
+				lat_sum +=  parseFloat(value['lat']);
+				lon_sum +=  parseFloat(value['lon']);
+			});
+			
+			map.setZoom(10);
+			console.log(lat_sum/array_len,lon_sum/array_len);
+			tnrlatlon = new google.maps.LatLng(lat_sum/array_len,lon_sum/array_len);
+			//34.79247410954125 135.23503584694765
+			map.setCenter(tnrlatlon);
 		}
 		
 		function show_tnr_map(input)
 		{
 			$('#thr_box *').remove();
 			let mbox = $('#thr_box');
+			//console.log(input);
 			showaddr(JSON.parse(input['addr']),make_tnrlog_box_for_addr);
-			let img = $('<div id="tnr_img" class="img_list_box pritest abs"><img src="'+input['src']+'"></div>');
+			//let img = $('<div id="tnr_img" class="img_list_box pritest abs"><img src="'+input['src']+'"></div>');
 			//let input_btn = $('<input type="submit" value="登録">');
-			mbox.append(img);
+			//mbox.append(img);
 			//if($.cookie('root_level') < 10)
 			//{
 				//$('#addr_box').append(input_btn);
 			//}
 			//input_btn.click(make_tnrdata_input);
+			
+			let map_box     = $('<div id="map" class="tnr_map" class="abs pritest"></div>');
+			
+			$('#thr_box').append(map_box);
+			initMap(true);
+			//console.log(input['tnr_ary']);
+			let lat_sum = 0;
+			let lon_sum = 0;
+			let array_len = input['tnr_ary'].length
+			
+			$.each(input['tnr_ary'],function( key, value ){
+				console.log(value);
+				make_maker( value['lat'], value['lon'], value['count'], value['txt']);
+				lat_sum +=  parseFloat(value['lat']);
+				lon_sum +=  parseFloat(value['lon']);
+			});
+			
+			map.setZoom(6);
+			 
+			tnrlatlon = new google.maps.LatLng(lat_sum/array_len,lon_sum/array_len);
+			//34.79247410954125 135.23503584694765
+			map.setCenter(tnrlatlon);
+			//map.panTo ( MyLatLng );
+			//make_maker( MyLatLng.lat(), MyLatLng.lng(), 'test2', 'test test 2 txt');
+			//map_box.animate( map_resize(), 500, initMap );
 		}
 		
 		function make_tnrdata_input()
@@ -990,7 +1038,7 @@
 			let top     = btn_css.top;
 			let left    = btn_css.left;
 			
-			let box = $('<div class="login abs pritest" id="login" style="top:'+ top +'px;left:'+ left +'px;width:0px;height:0px;"><samp>E-mail:&nbsp;&nbsp;&nbsp;<input type="email" id="email_input" placeholder="sample@gmail.com"></samp><samp>パスワード:<input type="password" id="password_input"></samp><input id="new_user_btn" type="submit" value="新規登録"><input id="login_btn" type="submit"　value="登録"></div>');
+																							       let box = $('<div class="login abs pritest" id="login" style="top:'+ top +'px;left:'+ left +'px;width:0px;height:0px;"><samp>E-mail:&nbsp;&nbsp;&nbsp;<input type="email" id="email_input" placeholder="sample@gmail.com"></samp><samp>パスワード:<input type="password" id="password_input"></samp><input id="new_user_btn" type="submit" value="new acc"><input id="login_btn" type="submit" value="login"></div>');
 			
 			$('#thr_box').append(box);
 			
@@ -1781,7 +1829,7 @@
 			let color_box  = $('<div class="abs" id="check_color"><img src="img/color/'+color+'.png"></div>');
 			let tnr_check  = $('<div class="abs" id="check_tnr">'+tnr+'</div>');
 			let map_check  = $('<div id="map" class="gps_check" class="abs pritest"></div>');
-			let submit_btn = $('<input id="check_btn" type="button" value="btn">');
+			let submit_btn = $('<input id="check_btn" type="button" value="転送">');
 			
 			mbox.append(map_check).append(color_box).append(tnr_check).append(img_box).append(submit_btn);
 			submit_btn.click(func);
@@ -2520,7 +2568,7 @@
 			map_box.animate( map_resize(), 500, initMap );		
 		}
 		
-		function initMap(){
+		function initMap(not_click=false){
 			var nowLatLng;
 			
 			var latlng = new google.maps.LatLng( now_GPSLatitude, now_GPSLongitude );
@@ -2543,6 +2591,11 @@
 			}
 			
 			map = new google.maps.Map( document.getElementById('map'), Options );
+			
+			if(not_click)
+			{
+				return
+			}
 			
 			map.addListener( "click", clickAction );
 			
@@ -2614,7 +2667,7 @@
 			makers = [];
 		}
 		
-		function make_maker( x, y, title, txt )
+		function make_maker( x, y, title, txt,size=10 )
 		{
 			
 			const latlng = new google.maps.LatLng( x, y );
@@ -2624,16 +2677,20 @@
 				title     : title,
 				mapTypeId : google.maps.MapTypeId.ROADMAP,
 				map       : map,
-				draggable : true
+				draggable : true,
+				//icon:
+				//{
+				//	scaledSize: new google.maps.Size(50, 50),
+				//}
 			});
+			
+			console.log(marker.getIcon());
 
-			infowindow = new google.maps.InfoWindow({
-				content  : do_div_txt( txt ),
-				position : latlng
-			});
+			infowindow = new google.maps.InfoWindow();
 			
 			marker.setMap( map );
 			google.maps.event.addListener( marker, 'click', function(event){
+				infowindow.setContent(do_div_txt( txt ));
 				infowindow.open( map, marker);
 			});
 			
@@ -2650,7 +2707,7 @@
 		function do_div_txt(txt)
 		{
 			var div_txt  = '';
-			div_txt     += 	'<div style="width:100px;height:50px;background:rgb(0,255,0)">';
+			div_txt     += 	'<div class="map_txt">';
 			div_txt     += 		'<samp>'+txt+'</samp>';
 			div_txt     += 	'</div>';
 			
@@ -2690,10 +2747,14 @@
 		{
 			let box = $('<div id="gray_window" class="abs"></div>');
 			let message_box = $('<div id="message_box" class="abs"></div>');
-			let cat_msg = $('<div id="cat_msg" class="msg_box msg_uline"><div class="col_1">猫登録</div>   <div class="col_2"><p>新しい猫と出会った時にクリックしてください。ここで</p></div></div>');
-			let tnr_msg = $('<div id="tnr_msg" class="msg_box msg_uline"><div class="col_1">TNR登録</div>  <div class="col_2"><p>TNR説明文</p></div></div>');
-			let gla_msg = $('<div id="gla_msg" class="msg_box msg_uline"><div class="col_1">閲覧</div>     <div class="col_2"><p>閲覧説明文</p></div></div>');
-			let acc_msg = $('<div id="acc_msg" class="msg_box">          <div class="col_1">アカウント</div><div class="col_2"><p>アカウント説明文</p></div></div>');
+			
+			let cat_msg = $('<div id="cat_msg" class="msg_box msg_uline"><div class="col_1">猫登録</div><div class="col_2"><p>新しい猫と出会った時にクリックしてください。ここで猫の写真と情報を登録出来ます。以下の4つの情報を入力する必要があります。</p><p>1.画像アップ:</br>中央の写真をクリックしてアップロードしたい写真を選びます。少し待ってその写真が表示されたら成功です。</p><p>2.毛色選択:</br>ここはアップした猫の毛色を選択します。同じ（最も似ている）毛色の画像を選んでクリックしてください。</p><p>3.TNR選択:</br>ここは猫のTNR状態を選択します。アップロードした猫のTNR状態と同じ画像をクリックしてください。</p><p>4.GPSデータ:</br>この猫の写真を撮った場所を入力します。もし写真にGPS情報を埋め込む機能を持ったカメラで撮影した場合は、位置が自動的に入力されます。機能が無い場合は、手動でマップ上の位置をクリックしてください。</p><p>転送後、猫の重複登録防止のため、過去に近くで似た猫が発見されていた場合には、その猫の写真が表示されます。もし同じ猫だと思った場合は「登録キャンセル」ボタンを、別の猫だと思った場合は「そのまま登録」ボタンをクリックしてください。</p></div></div>');
+
+			let tnr_msg = $('<div id="tnr_msg" class="msg_box msg_uline"><div class="col_1">TNR登録</div><div class="col_2"><p>ここでは、TNR実施状況を登録します。もしTNRを実施した場合は、猫の数と日時を入力し、実施場所をクリックの上、登録ボタンを押してください。</p></div></div>');
+
+			let gla_msg = $('<div id="gla_msg" class="msg_box msg_uline"><div class="col_1">データ閲覧</div><div class="col_2"><p>ここは、猫登録やTNR登録のデータや状況を閲覧できるページです。</p><p>TNR比率:</br>現在登録されている猫のTNR比率が見えます。上の住所をクリックすることで場所を絞ることが出来ます。</p><p>猫の数:</br>新しく記録された猫数の推移を見ることができます。これを見てTNRの効果が推測できます。</p><p>探す:</br>他地域の猫を管理している人がアップロードした猫が見えます。ここで猫の外見と場所を入力することで、どの猫を誰が管理しているかが分かります。</p><p>TNR記録:</br>「TNR登録ページ」で登録された結果を見ることができます。上の住所をクリックすることで場所を絞ることが出来ます。</p></div></div>');
+
+			let acc_msg = $('<div id="acc_msg" class="msg_box"><div class="col_1">アカウント</div><div class="col_2"><p>アカウントを管理する場所です。</p><p>登録:</br>毎回サイトを開く時に登録を行う。新しい使用者の場合は新規登録をクリックしてアカウントを作れます。但し新しいアカウントは全部の機能を使えないから管理者のアカウントを持っている人に申請します。</p><p>探す:</br>アカウントのランクアップをする場所です。管理者のアカウントで操作する時にlevel upをクリックするとそのアカウントが全機能が使えます。</p><p>登録済み:</br>以前自分がアップした猫が見えます。</p><p>message:</br>メッセージを残す為の場所です。上の住所をクリックすることで場所を指定することが出来ます。</p></div></div>');
 			
 			$('body').append(box);
 			message_box.append(cat_msg).append(tnr_msg).append(gla_msg).append(acc_msg);

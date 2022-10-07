@@ -403,13 +403,21 @@ html,body {
 }
 
 #message_box{
-	width: 80%;
-	height: 80%;
-	top:10%;
-	left:10%;
-	display: flex;
-	flex-direction: column;
-	align-content:space-around;
+    width: 80%;
+    height: 80%;
+    top: 10%;
+    left: 10%;
+    background-color: antiquewhite;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    align-content: space-around;
+    border: 3px outset rgba(0,0,0,1.00);
+}
+
+.col_2 p{
+    font-size: xx-large;
 }
 
 .msg_box{
@@ -430,4 +438,10 @@ html,body {
 
 .msg_uline{
     border-bottom: 2px double rgba(0,0,0,1.00);
+}
+
+.map_txt{
+    width: 200px;
+    height: 100px;
+    font-size: x-large;
 }
