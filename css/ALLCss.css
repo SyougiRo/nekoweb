@@ -439,3 +439,9 @@ html,body {
 .msg_uline{
     border-bottom: 2px double rgba(0,0,0,1.00);
 }
+
+.map_txt{
+    width: 200px;
+    height: 100px;
+    font-size: x-large;
+}

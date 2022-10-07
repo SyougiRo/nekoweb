@@ -1345,9 +1345,9 @@
             $ispass='false';
         }
 
-		exec("python dogeopy.py ".$gps['0']." ".$gps['1'],$testoutput);
+		exec("python3 dogeopy.py ".$gps['0']." ".$gps['1'],$testoutput);
 		$file_name = buffer_file($src);
-		exec('python resizebase.py '.$file_name ,$resizebase);
+		exec('python3 resizebase.py '.$file_name ,$resizebase);
 		$src = $resizebase[0];
 		$fu  = json_decode($testoutput[0])->{'fu'};
 		$shi = json_decode($testoutput[0])->{'shi'};
@@ -1402,7 +1402,7 @@
 		$color   = $_POST['color'];
 		$gps     = $_POST['gps'];
 
-		exec('python get_GpsLimit.py '.$gps['0'].' '.$gps['1'],$limitoutput);
+		exec('python3 get_GpsLimit.py '.$gps['0'].' '.$gps['1'],$limitoutput);
 
 		$data = json_decode($limitoutput[0]);
 		$lat_min = $data -> {'lat_min'};
@@ -1773,8 +1773,7 @@
 	}
 
 	function get_tnr_map()
-	{
-		
+	{		
 		if(isset($_POST['addr']))
 		{
 			$addr_str = $_POST['addr'];
@@ -1793,16 +1792,14 @@
 				$data
 			);
 		}
-		$file_name = buffer_file($return_txt);
 		
-    	exec("activate tg2.0 && python make_basemap.py ".$file_name." && conda deactivate",$output);
-		$return_data['src'] = $output[0];
+		$return_data['tnr_ary'] = $data['addr'];
 		$addtlist_str = address_list();
 		$return_data['addr'] = $addtlist_str;
 		$return_txt = json_encode(
 			$return_data
 		);
-	
+		
 		echo $return_txt;
 	}
 
@@ -1814,7 +1811,7 @@
 		$lon = $_POST['lon'];
 		$user_id=$_POST['user_id'];
 
-		exec("python dogeopy.py ".$lat." ".$lon,$testoutput);
+		exec("python3 dogeopy.py ".$lat." ".$lon,$testoutput);
 
 		$fu  = json_decode($testoutput[0])->{'fu'};
 		$shi = json_decode($testoutput[0])->{'shi'};
@@ -1832,7 +1829,7 @@
 	
 		$file_name = buffer_file($return_txt);
 		
-    	exec("activate tg2.0 && python make_basemap.py ".$file_name." && conda deactivate",$output);
+    	exec("python3 make_basemap.py ".$file_name,$output);
 		$addtlist_str = address_list();
 		$return_data['addr'] = $addtlist_str;
 		$return_data['src'] = $output[0];
