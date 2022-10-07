@@ -785,7 +785,7 @@
 			let array_len = input['tnr_ary'].length
 			
 			$.each(input['tnr_ary'],function( key, value ){
-				console.log(value);
+				console.log(value['txt']);
 				make_maker( value['lat'], value['lon'], value['count'], value['txt']);
 				lat_sum +=  parseFloat(value['lat']);
 				lon_sum +=  parseFloat(value['lon']);
@@ -816,7 +816,7 @@
 			let map_box     = $('<div id="map" class="tnr_map" class="abs pritest"></div>');
 			
 			$('#thr_box').append(map_box);
-			initMap();
+			initMap(true);
 			//console.log(input['tnr_ary']);
 			let lat_sum = 0;
 			let lon_sum = 0;
@@ -2568,7 +2568,7 @@
 			map_box.animate( map_resize(), 500, initMap );		
 		}
 		
-		function initMap(){
+		function initMap(not_click=false){
 			var nowLatLng;
 			
 			var latlng = new google.maps.LatLng( now_GPSLatitude, now_GPSLongitude );
@@ -2591,6 +2591,11 @@
 			}
 			
 			map = new google.maps.Map( document.getElementById('map'), Options );
+			
+			if(not_click)
+			{
+				return
+			}
 			
 			map.addListener( "click", clickAction );
 			
@@ -2662,7 +2667,7 @@
 			makers = [];
 		}
 		
-		function make_maker( x, y, title, txt )
+		function make_maker( x, y, title, txt,size=10 )
 		{
 			
 			const latlng = new google.maps.LatLng( x, y );
@@ -2672,16 +2677,20 @@
 				title     : title,
 				mapTypeId : google.maps.MapTypeId.ROADMAP,
 				map       : map,
-				draggable : true
+				draggable : true,
+				//icon:
+				//{
+				//	scaledSize: new google.maps.Size(50, 50),
+				//}
 			});
+			
+			console.log(marker.getIcon());
 
-			infowindow = new google.maps.InfoWindow({
-				content  : do_div_txt( txt ),
-				position : latlng
-			});
+			infowindow = new google.maps.InfoWindow();
 			
 			marker.setMap( map );
 			google.maps.event.addListener( marker, 'click', function(event){
+				infowindow.setContent(do_div_txt( txt ));
 				infowindow.open( map, marker);
 			});
 			
