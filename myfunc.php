@@ -1600,9 +1600,11 @@
 	{
 		$addr_str = $_POST['addr'];
 		$color_str = $_POST['color'];
+		$addr1_str = $_POST['addr1'];
+		$addr2_str = $_POST['addr2'];
+		$addr3_str = $_POST['addr3'];
 
-
-		$addr_data = decode_str($addr_str);
+		//$addr_data = decode_str($addr_str);
 
 		if($color_str=='------')
 		{
@@ -1613,12 +1615,12 @@
 			$color = $color_str;
 		}
 
-		$fushiku = $addr_data['fushiku'];
-		$addr = $addr_data['addr'];
+		//$fushiku = $addr_data['fushiku'];
+		//$addr = $addr_data['addr'];
 
-		$return_array[$fushiku]=$addr;
-
-		$return_array['data'] = search_cat($fushiku,$addr,$color);
+		//$return_array[$fushiku]=$addr;
+		//$data['addr'] = getTnrArray('fushiku','addr',$addr1_str,$addr2_str,$addr3_str);
+		$return_array['data'] = search_cat('fushiku','addr',$color,$addr1_str,$addr2_str,$addr3_str);
 
 		$return_txt = json_encode(
 			$return_array
@@ -1776,9 +1778,12 @@
 	{		
 		if(isset($_POST['addr']))
 		{
-			$addr_str = $_POST['addr'];
-			$addr_data = decode_str($addr_str);
-			$data['addr'] = getTnrArray($addr_data['fushiku'],$addr_data['addr']);
+			//$addr_str = $_POST['addr'];
+			$addr1_str = $_POST['addr1'];
+			$addr2_str = $_POST['addr2'];
+			$addr3_str = $_POST['addr3'];
+			//$addr_data = decode_str($addr_str);
+			$data['addr'] = getTnrArray('fushiku','addr',$addr1_str,$addr2_str,$addr3_str);
 			$data['z'] = 0.1;
 			$return_txt = json_encode(
 				$data

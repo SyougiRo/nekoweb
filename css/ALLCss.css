@@ -381,7 +381,8 @@ html,body {
 }
 
 .btn_css{
-	background-color:rgba(96,237,255,1.00);
+    background-color: rgba(96,237,255,1.00);
+    /*font-size: medium;*/
 }
 
 #gray_window{
@@ -444,4 +445,25 @@ html,body {
     width: 200px;
     height: 100px;
     font-size: x-large;
+}
+
+#addr_select1{
+	margin-right: 5%
+}
+
+#addr_select2{
+	margin-right: 5%
+}
+
+#show_color{
+	top: 5%;
+	width: 90%;
+	height: 90%;
+}
+
+#sel_btn{
+	top: 5%;
+	left: 5%;
+	width: 10%;
+	height: 10%;
 }

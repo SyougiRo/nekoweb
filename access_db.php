@@ -602,7 +602,7 @@
         return;
     }
 
-    function search_cat($fushiku,$addr,$color)
+    function search_cat($fushiku='all',$addr='all',$color='all',$fu='------',$shi='------',$ku='------')
     {
         global $database;
         $table_name = $database.'.cat';
@@ -615,9 +615,22 @@
             
         ];
 
-        if($fushiku!='all')
+        if($fu!='------')
         {
-            $data[$fushiku] = $addr;
+            $data['fu'] =' '.$fu;
+            /*
+            $data = [
+                'fu'=>' '.$fu,
+            ];
+            */
+        }
+        if($shi!='------')
+        {
+            $data['shi'] = str_replace('--',' ',$shi);
+        }
+        if($ku!='------')
+        {
+            $data['ku'] = str_replace('----',' ',$ku);
         }
 
         if($color!='all')
@@ -693,7 +706,7 @@
         
     }
 
-    function getTnrArray($fushiku='all',$addr='all')
+    function getTnrArray($fushiku='all',$addr='all',$fu='------',$shi='------',$ku='------')
     {
         global $database;
         $table_name = $database.'.tnr_log';
@@ -702,20 +715,35 @@
 
         $data = [];
 
-        if($fushiku!='all')
+        
+        if($fu!='------')
         {
+            $data['fu'] =' '.$fu;
+            /*
             $data = [
-                $fushiku=>$addr,
+                'fu'=>' '.$fu,
             ];
+            */
         }
+        if($shi!='------')
+        {
+            $data['shi'] = str_replace('--',' ',$shi);
+        }
+        if($ku!='------')
+        {
+            $data['ku'] = str_replace('----',' ',$ku);
+        }
+            
+        
 
         $output = do_data( $table_name,$work,$data)->toArray();
+        /*
         if(count($output)<1)
         {
             $data = [];
             $output = do_data( $table_name,$work,$data)->toArray();
         }
-
+        */
         return($output);
     }
 

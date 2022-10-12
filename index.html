@@ -194,7 +194,7 @@
 			do_resize();
 			
 			const t         = 500;
-			const nuit_list = [ '猫登録','TNR登録', '閲覧',  'アカウント' ];
+			const nuit_list = [ '猫登録','TNR登録', '閲覧',  'マイページ' ];
 			const id_list   = [ 'cat_form','tnr_form' ,'log',  'my_acc' ];
 			const func_list = [ case_cat_form,tnr_form ,case_log,  case_my_acc];
 			
@@ -325,8 +325,9 @@
 		
 		function make_tnr_form()
 		{
-			
-			let btn_css = sec_btn_resize( 1, $('.sec_btn').length );
+			let len      = $('.menu_btn').length;
+			let btn_css = menu_unit_resize( 1, len);
+			//let btn_css = sec_btn_resize( 1, $('.sec_btn').length );
 			let top     = btn_css.top+btn_css.height/2;
 			let left    = btn_css.left+btn_css.width/2;
 
@@ -360,7 +361,7 @@
 			else
 			{
 				let len      = $('.menu_btn').length;
-				let css_dect = menu_unit_resize( 1, len);
+				let css_dect = menu_unit_resize( 2, len);
 				let btn_top  = css_dect.height/2+css_dect.top;
 				let btn_left = css_dect.width/2+css_dect.left;
 				
@@ -377,9 +378,9 @@
 			let func_list  = [ make_tnrchart_box, make_count_box, make_search_box, make_tnrlog_box ];
 			let t          = 500;
 			
-			let main_btn_css = menu_unit_resize( 1, $('.menu_btn').length );
+			let main_btn_css = menu_unit_resize( 2, $('.menu_btn').length );
 			let sec_box_css  = sec_box_resize();
-			let sec_btn_css  = sec_btn_resize( 1, menu_list.length );
+			let sec_btn_css  = sec_btn_resize( 2, menu_list.length );
 			
 			let top  = main_btn_css.top+main_btn_css.height / 2-sec_box_css.top;
 			let left = main_btn_css.left+main_btn_css.width / 2-sec_box_css.left;
@@ -704,11 +705,17 @@
 		{
 			let addr = $('#hid_input').val();
 			let color = $('#color_select').val();
+			let addr1 = $('#addr_select1').val();
+			let addr2 = $('#addr_select2').val();
+			let addr3 = $('#addr_select3').val();
 			console.log(addr);
 			const post_data   = {
 				action : 'get_search_data',
 				addr:addr,
-				color:color
+				color:color,
+				addr1  : addr1,
+				addr2  : addr2,
+				addr3  : addr3,
 			};
 			
 			let output = get_data(post_data,show_search_img);
@@ -718,7 +725,10 @@
 		{
 			let mbox = $('#thr_box');
 			const color_list=['1_1','1_2','1_3','1_4','1_5','1_6','1_7','2_1','2_2','2_3','2_4','2_5','2_6','3_1','3_2','3_3','3_4','3_5','3_6'];
-			let select = $('<select id="color_select"></select>');
+			//let select = $('<select id="color_select"></select>');
+			let hid_sel = $('<input id="color_select"></input>').hide();
+			let sel_btn = $('<div id="sel_btn" class="abs"><div>');
+			/*
 			let opt =$('<option value="------" selected="selected">ALL</option>');
 			select.append(opt);
 			$.each(color_list,function(index, value){
@@ -727,8 +737,34 @@
 				opt.append(img);
 				select.append(opt);	
 			})
-			mbox.append(select);
-			select.change(get_search_data);
+			*/
+			mbox.append(sel_btn);
+			mbox.append(hid_sel);
+			sel_btn.append($('<div>ALL</div>'));
+			//select.change(get_search_data);
+			//now
+			sel_btn.click(function(){
+				t_box = $('<div id="show_color" class="abs"></div>');
+				$('#show_search_box *').remove();
+				mbox.append(t_box);
+				make_catColor_box(t_box,function(){
+					console.log($('.color_check').attr('id'));
+					let now_src = $('.color_check img').attr('src');
+					$('#sel_btn *').remove();
+					if(now_src==undefined)
+					{
+						hid_sel.val("------");
+						sel_btn.append($('<div>ALL</div>'));
+					}
+					else
+					{
+						sel_btn.append($('<img src="'+ now_src +'">'));
+						hid_sel.val($('.color_check').attr('id'));
+					}
+					$('#show_color').remove();
+					get_search_data();
+				});
+			});
 		}
 		
 		function show_search_img(input)
@@ -759,10 +795,16 @@
 		function make_tnrlog_box_for_addr()
 		{
 			do_resize();
-			let addr = $('#hid_input').val();
+			let addr  = $('#hid_input').val();
+			let addr1 = $('#addr_select1').val();
+			let addr2 = $('#addr_select2').val();
+			let addr3 = $('#addr_select3').val();
 			const post_data   = {
 				action : 'get_tnr_map',
-				addr : addr,
+				addr   : addr,
+				addr1  : addr1,
+				addr2  : addr2,
+				addr3  : addr3,
 			};
 			
 			let output = get_data(post_data,update_map);
@@ -770,7 +812,7 @@
 		
 		function update_map(input)
 		{
-			//console.log(input['src']);
+			console.log(input['tnr_ary']);
 			$('#map').remove();
 			let mbox = $('#thr_box');
 			//let img = $('<div id="tnr_img" class="img_list_box pritest abs"><img src="'+input['src']+'"></div>');
@@ -964,16 +1006,17 @@
 		{
 			do_resize();
 			
-			let menu_list  = [ '登録',  '登録済み' ];
+			let menu_list  = [ 'ログイン',  'マイキャット' ];
 			let ImgId_list = [ 'acct', 'up_cat_list' ];
 			let func_list  = [ acct_func,  UpCatList_func ];
 			
 			if($.cookie('root_level') < 10)
 			{
-				menu_list  = [ '登録', '探す', '登録済み', 'message' ];
-			    ImgId_list = [ 'acct', 'search', 'up_cat_list', 'message' ];
-				func_list  = [ acct_func, search_func, UpCatList_func, message_func ];
+				menu_list  = [ 'ログイン', 'マイキャット', 'アカウント管理', 'メッセージ' ];
+			    ImgId_list = [ 'acct',  'up_cat_list', 'search','message' ];
+				func_list  = [ acct_func,  UpCatList_func, search_func, message_func ];
 			}
+			
 			let t          = 500;
 			
 			let main_btn_css = menu_unit_resize( 3, $('.menu_btn').length );
@@ -1017,8 +1060,8 @@
 		function acct_func()
 		{
 			thr_box_reset(this);
-			
-			let btn_css = sec_btn_resize( 0, 4 );
+			let len     = $('.sec_btn').length;
+			let btn_css = sec_btn_resize( 0, len );
 			let top     = btn_css.top+btn_css.height/2;
 			let left    = btn_css.left+btn_css.width/2;
 			
@@ -1034,12 +1077,13 @@
 		
 		function make_login_box()
 		{
-			let btn_css = sec_btn_resize( 0, 4 );
+			let len     = $('.sec_btn').length;
+			let btn_css = sec_btn_resize( 0, len );
 			let top     = btn_css.top;
 			let left    = btn_css.left;
 			
-																							       let box = $('<div class="login abs pritest" id="login" style="top:'+ top +'px;left:'+ left +'px;width:0px;height:0px;"><samp>E-mail:&nbsp;&nbsp;&nbsp;<input type="email" id="email_input" placeholder="sample@gmail.com"></samp><samp>パスワード:<input type="password" id="password_input"></samp><input id="new_user_btn" type="submit" value="new acc"><input id="login_btn" type="submit" value="login"></div>');
-			
+		   let box = $('<div class="login abs pritest" id="login" style="top:'+ top +'px;left:'+ left +'px;width:0px;height:0px;"><samp>E-mail:&nbsp;&nbsp;&nbsp;<input type="email" id="email_input" placeholder="sample@gmail.com"></samp><samp>パスワード:<input type="password" id="password_input"></samp><input id="new_user_btn" type="submit" value="新規登録"><input id="login_btn" type="submit" value="ログイン"></div>');
+
 			$('#thr_box').append(box);
 			
 			box.animate( login_box_resize(), 500, function(){ 
@@ -1178,7 +1222,7 @@
 					'height'    : height,
 					'left'      : left,
 					'width'     : width,
-					'font-size' : width/300+'em'
+					'font-size' : width/350+'em'
 				}
 				return( css_dict );
 			}
@@ -1194,7 +1238,7 @@
 					'height'    : height,
 					'left'      : left,
 					'width'     : width,
-					'font-size' : width/300+'em'
+					'font-size' : width/350+'em'
 				}
 				return( css_dict );
 			}
@@ -1206,7 +1250,7 @@
 			
 			if( $.cookie('user_id') )
 			{
-				let btn_css = sec_btn_resize( 1, $('.sec_btn').length );
+				let btn_css = sec_btn_resize( 2, $('.sec_btn').length );
 				let top     = btn_css.top+btn_css.height/2;
 				let left    = btn_css.left+btn_css.width/2;
 				
@@ -1288,7 +1332,7 @@
 
 			if( $.cookie('user_id') )
 			{
-				let btn_css = sec_btn_resize( 2, $('.sec_btn').length );
+				let btn_css = sec_btn_resize( 1, $('.sec_btn').length );
 				let top     = btn_css.top+btn_css.height/2;
 				let left    = btn_css.left+btn_css.width/2;
 
@@ -2335,7 +2379,7 @@
 			console.log(input);
 		}
 		
-		function make_catColor_box()
+		function make_catColor_box(mbox = $('#thr_box'),func=NaN)
 		{
 			let ver_count   = 3;
 			let color_count = [ 7, 6, 6 ];
@@ -2343,6 +2387,7 @@
 			let btn_css     = sec_btn_resize( 1, $('.sec_btn').length );			
 			let top         = btn_css.top+btn_css.height/2;
 			let left        = btn_css.left+btn_css.width/2;
+			//let mbox        = $('#thr_box');
 			
 			for( let ver=0; ver < ver_count; ver++ )
 			{
@@ -2352,7 +2397,7 @@
 					let src      = "img/color/"+ img_name +".png";
 					let img_box  = $('<div class="abs color_img" id="'+ img_name +'" style="top:'+ top +'px;left:'+ left +'px;width:0px;height:0px;"><img src="'+ src +'"></div>');
 
-					$('#thr_box').append( img_box );
+					mbox.append( img_box );
 					
 					switch( ver )
 					{
@@ -2373,16 +2418,31 @@
 					{
 						img_box.animate(catColor_box_resize(ver,color),500,function(e){
 							let elem = $(this);
-							
 							elem.click(check_catColor);
+							if(func!=NaN)
+							{
+								elem.click(func);
+							}
+							else
+							{
+								elem.click(check_catColor);
+							}
 						});
 					}
 					else
 					{
 						img_box.animate( catColor_box_resize( ver, color ), 500, function(){
 							let elem = $(this);
-							
 							elem.click(check_catColor);
+							
+							if(func!=NaN)
+							{
+								elem.click(func);
+							}
+							else
+							{
+								elem.click(check_catColor);
+							}
 							
 							do_resize();
 							
@@ -2684,7 +2744,7 @@
 				//}
 			});
 			
-			console.log(marker.getIcon());
+			//console.log(marker.getIcon());
 
 			infowindow = new google.maps.InfoWindow();
 			
@@ -2754,7 +2814,7 @@
 
 			let gla_msg = $('<div id="gla_msg" class="msg_box msg_uline"><div class="col_1">データ閲覧</div><div class="col_2"><p>ここは、猫登録やTNR登録のデータや状況を閲覧できるページです。</p><p>TNR比率:</br>現在登録されている猫のTNR比率が見えます。上の住所をクリックすることで場所を絞ることが出来ます。</p><p>猫の数:</br>新しく記録された猫数の推移を見ることができます。これを見てTNRの効果が推測できます。</p><p>探す:</br>他地域の猫を管理している人がアップロードした猫が見えます。ここで猫の外見と場所を入力することで、どの猫を誰が管理しているかが分かります。</p><p>TNR記録:</br>「TNR登録ページ」で登録された結果を見ることができます。上の住所をクリックすることで場所を絞ることが出来ます。</p></div></div>');
 
-			let acc_msg = $('<div id="acc_msg" class="msg_box"><div class="col_1">アカウント</div><div class="col_2"><p>アカウントを管理する場所です。</p><p>登録:</br>毎回サイトを開く時に登録を行う。新しい使用者の場合は新規登録をクリックしてアカウントを作れます。但し新しいアカウントは全部の機能を使えないから管理者のアカウントを持っている人に申請します。</p><p>探す:</br>アカウントのランクアップをする場所です。管理者のアカウントで操作する時にlevel upをクリックするとそのアカウントが全機能が使えます。</p><p>登録済み:</br>以前自分がアップした猫が見えます。</p><p>message:</br>メッセージを残す為の場所です。上の住所をクリックすることで場所を指定することが出来ます。</p></div></div>');
+			let acc_msg = $('<div id="acc_msg" class="msg_box"><div class="col_1">マイページ</div><div class="col_2"><p>アカウントを管理するページです。</p><p>ログイン:</br>毎回サイトを開く時にメールアドレスとパスワードを入力してログインしてください。新しい使用者の場合は新規登録をクリックしてアカウントを作ることができます。</p><p>マイキャット:</br>以前自身がアップした猫を見ることができます。</p><p>アカウント管理:</br>アカウント管理:</p><p>メッセージ:</br>このボタンは管理者アカウントにのみ表示されます。メッセージを残す為の場所です。上の住所をクリックすることで場所を指定することが出来ます。</p></div></div>');
 			
 			$('body').append(box);
 			message_box.append(cat_msg).append(tnr_msg).append(gla_msg).append(acc_msg);
