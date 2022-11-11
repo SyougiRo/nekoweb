@@ -166,7 +166,8 @@
 		function make_main_box()
 		{			
 			let box = $('<div class="abs pritest effect" id="main_box"></div>');
-			let how_use_btn=$('<input id="how_use_btn" type="submit" class="abs" value="説明">');
+			//let how_use_btn=$('<input id="how_use_btn" type="submit" class="abs" value="説明">');
+			let how_use_btn=$('<div id="how_use_btn" class="abs btn_css"><img class="abs btn_icon" src="img/help.png"><div class="abs">help</div></div>');
 			$('body').append(box);
 			box.append(how_use_btn);
 			box.animate( main_box_resize(), 1000, make_unit);
@@ -192,17 +193,18 @@
 		{
 			$('#main *').remove();
 			do_resize();
-			
+			//page0
 			const t         = 500;
 			const nuit_list = [ '猫登録','TNR登録', '閲覧',  'マイページ' ];
 			const id_list   = [ 'cat_form','tnr_form' ,'log',  'my_acc' ];
 			const func_list = [ case_cat_form,tnr_form ,case_log,  case_my_acc];
+			const icon = ['—Pngtree—cat-icon.png','map_icon.png','log.png','use_icon.png'];
 			
 			for( let index = 0; index < nuit_list.length; index++ )
 			{
 				if( index < nuit_list.length-1 )
 				{
-					let btn = $('<input type="button" style="height:1px;width:1px" the_count="'+ index +'" id="'+ id_list[index] +'" class="btn_css menu_btn abs" value="'+ nuit_list[index] +'">');
+					let btn = $('<div type="button" style="height:1px;width:1px" the_count="'+ index +'" id="'+ id_list[index] +'" class="btn_css menu_btn abs" ><img class="abs btn_icon" src="img/'+icon[index]+'"><div class="abs">'+ nuit_list[index] +'</div></div>');
 					$('#main_box').append(btn);
 					btn.animate( menu_unit_resize( index,nuit_list.length ), function(){
 						btn.click( func_list[index] );
@@ -210,7 +212,7 @@
 				}
 				else
 				{
-					let btn = $('<input type="button" style="height:1px;width:1px" the_count="'+ index +'" id="'+ id_list[index] +'" class="btn_css menu_btn abs" value="'+ nuit_list[index] +'">');
+					let btn = $('<div type="button" style="height:1px;width:1px" the_count="'+ index +'" id="'+ id_list[index] +'" class="btn_css menu_btn abs" "><img class="abs btn_icon" src="img/'+icon[index]+'"><div class="abs">'+ nuit_list[index] +'</div></div>');
 					$('#main_box').append(btn);
 					btn.animate( menu_unit_resize( index,nuit_list.length ), function(){
 						btn.click( func_list[index] );
@@ -372,11 +374,12 @@
 		function make_log_menu()
 		{
 			do_resize();
-			
+			//page3
 			let menu_list  = [ 'tnr比率', '猫の数', '探す', 'TNR記録' ];
 			let ImgId_list = [ 'tnr_r', 'count', 'search_cat', 'tnr_log' ];
 			let func_list  = [ make_tnrchart_box, make_count_box, make_search_box, make_tnrlog_box ];
 			let t          = 500;
+			const icon = ['char1.png','char2.png','serch.png','count.png'];
 			
 			let main_btn_css = menu_unit_resize( 2, $('.menu_btn').length );
 			let sec_box_css  = sec_box_resize();
@@ -391,7 +394,8 @@
 			{
 				let box_css  = sec_box_resize();
 				let css_dect = sec_btn_resize( index, menu_list.length );
-				let btn      = $('<input type="button" id="'+ ImgId_list[index] +'" class="btn_css sec_btn abs" style="width:0px;height:0px;top:'+ top +'px;left:'+ left +'px" value="'+ menu_list[index] +'">');
+				//let btn      = $('<input type="button" id="'+ ImgId_list[index] +'" class="btn_css sec_btn abs" style="width:0px;height:0px;top:'+ top +'px;left:'+ left +'px" value="'+ menu_list[index] +'">');
+				let btn = $('<div type="button" style="height:1px;width:1px;top:'+ top +'px;left:'+ left +'px" the_count="'+ index +'" id="'+ ImgId_list[index] +'" class="btn_css sec_btn abs"><img id="'+ ImgId_list[index] +'" class="abs btn_icon" src="img/'+icon[index]+'"><div id="'+ ImgId_list[index] +'" class="abs">'+ menu_list[index] +'</div></div>');
 				
 				$('#sec_box').append(btn);
 				
@@ -417,8 +421,10 @@
 		
 		function sec_func(e,index,func)
 		{
+			//console.log('test');
+			//console.log(e);
 			thr_box_reset($('#'+e.target.id));
-			//console.log(e.target.id);
+			
 			//console.log($('#'+e.target.id));
 			menu_z = 3;
 			//$($('.sec_btn')[index]).addClass('check');
@@ -1005,16 +1011,18 @@
 		function acct_btn()
 		{
 			do_resize();
-			
+			//page4
 			let menu_list  = [ 'ログイン',  'マイキャット' ];
 			let ImgId_list = [ 'acct', 'up_cat_list' ];
 			let func_list  = [ acct_func,  UpCatList_func ];
+			let icon = ['—Pngtree—cat-icon.png','mycat.png'];
 			
 			if($.cookie('root_level') < 10)
 			{
 				menu_list  = [ 'ログイン', 'マイキャット', 'アカウント管理', 'メッセージ' ];
 			    ImgId_list = [ 'acct',  'up_cat_list', 'search','message' ];
 				func_list  = [ acct_func,  UpCatList_func, search_func, message_func ];
+				icon = ['—Pngtree—cat-icon.png','mycat.png','log.png','use_icon.png'];
 			}
 			
 			let t          = 500;
@@ -1029,7 +1037,8 @@
 			{
 				let box_css  = sec_box_resize();
 				let css_dect = sec_btn_resize( index, menu_list.length );
-				let btn      = $('<input type="button" id="'+ ImgId_list[index] +'" class="btn_css sec_btn abs" style="width:0px;height:0px;top:'+ top +'px;left:'+ left +'px" value="'+ menu_list[index] +'">');
+				//let btn      = $('<input type="button" id="'+ ImgId_list[index] +'" class="btn_css sec_btn abs" style="width:0px;height:0px;top:'+ top +'px;left:'+ left +'px" value="'+ menu_list[index] +'">');
+				let btn = $('<div type="button" style="height:1px;width:1px;top:'+ top +'px;left:'+ left +'px" the_count="'+ index +'" id="'+ ImgId_list[index] +'" class="btn_css sec_btn abs"><img class="abs btn_icon" src="img/'+icon[index]+'"><div class="abs">'+ menu_list[index] +'</div></div>');
 				
 				$('#sec_box').append(btn);
 				
@@ -1461,13 +1470,18 @@
 			
 			
 		}
-		
+		//now
 		function get_message()
 		{
-			let addr = $('#hid_input').val();
+			let addr1 = $('#addr_select1').val();
+			let addr2 = $('#addr_select2').val();
+			let addr3 = $('#addr_select3').val();
+			
 			const post_data = { 
 				action  : "get_message",
-				addr:addr
+				addr1:addr1,
+				addr2:addr2,
+				addr3:addr3
 			};			
 			
 			get_data( post_data, show_message);
@@ -1499,7 +1513,9 @@
 		
 		function submit_message()
 		{
-			let addr = $('#addr_select').val();
+			let addr1 = $('#addr_select1').val();
+			let addr2 = $('#addr_select2').val();
+			let addr3 = $('#addr_select3').val();
 			let txt = $('#txt_input').val();
 			if(txt.length==0)
 			{
@@ -1509,7 +1525,9 @@
 			console.log('start');
 			const post_data = { 
 				action  : "add_message",
-				addr:addr,
+				addr1:addr1,
+				addr2:addr2,
+				addr3:addr3,
 				user_id:$.cookie('user_id'),
 				txt:txt,
 			};			
@@ -1659,11 +1677,12 @@
 		function make_CatForm_menu()
 		{
 			do_resize();
-			
+			//page1
 			let menu_list  = [ '画像アップ', '毛色選択', 'TNR選択', 'GPSデータ確認' ];
 			let ImgId_list = [ 'imgup', 'color', 'tnr', 'gps' ];
 			let func_list  = [ imgup_func, color_func, tnr_func, gps_func ];
 			let t          = 500;
+			const icon = ['cat.png','color.png','tnr.png','ping_icon.png'];
 			
 			let main_btn_css = menu_unit_resize( 0, $('.menu_btn').length );
 			let sec_box_css  = sec_box_resize();
@@ -1678,7 +1697,8 @@
 			{
 				let box_css  = sec_box_resize();
 				let css_dect = sec_btn_resize( index, menu_list.length );
-				let btn      = $('<input type="button" id="'+ ImgId_list[index] +'" class="btn_css sec_btn abs" style="width:0px;height:0px;top:'+ top +'px;left:'+ left +'px" value="'+ menu_list[index] +'">');
+				//let btn      = $('<input type="button" id="'+ ImgId_list[index] +'" class="btn_css sec_btn abs" style="width:0px;height:0px;top:'+ top +'px;left:'+ left +'px" value="'+ menu_list[index] +'">');
+				let btn = $('<div type="button" style="height:1px;width:1px;top:'+ top +'px;left:'+ left +'px" the_count="'+ index +'" id="'+ ImgId_list[index] +'" class="btn_css sec_btn abs" ><img class="abs btn_icon" src="img/'+icon[index]+'"><div class="abs">'+ menu_list[index] +'</div></div>');
 				
 				$('#sec_box').append(btn);
 				
@@ -1839,7 +1859,7 @@
 			
 			if(src && color && tnr && gps[0])
 			{
-				do_submit(src,color,tnr,session.getItem('lat'),session.getItem('lng'),get_some_cat_list);
+				do_submit(src,color,tnr,session.getItem('lat'),session.getItem('lng'),cat_msg_box);
 				console.log('all ok',src,color,tnr,gps);
 			}
 			else
@@ -1932,6 +1952,7 @@
 			let gps     = [ session.getItem('lat'), session.getItem('lng') ];
 			let user_id = $.cookie('user_id');
 			let checker = $.cookie('checker');
+			let msg  = session.getItem('cat_msg');
 			console.log(checker);
 			const post_data = { 
 				action  : "get_some_cat_array",
@@ -1940,13 +1961,29 @@
 				tnr     : tnr,
 				gps     : gps,
 				user_id : user_id,
+				msg     : msg,
 				is_first: 'true',
 				checker : checker
 			};
-			
 			const work_func = show_some_cat_list;
 				
 			get_data( post_data, work_func);
+		}
+		
+		function cat_msg_box()
+		{
+			$('#thr_box *').remove();
+			let mbox = $('#thr_box');
+			//let box = $('<div id="gray_window" class="abs"></div>');
+			let message_box = $('<div id="message_box" class="abs"></div>');
+			let msg_box = $('<textarea  id="msg_box" class="abs"></textarea >');
+			let btn = $('<input id="msg_btn" type="submit" class="abs" val="確認"></input>');
+			message_box.append(msg_box).append(btn);
+			mbox.append(message_box);
+			btn.click(function(){
+				session.setItem('cat_msg',msg_box.val());
+				get_some_cat_list();
+			})
 		}
 		
 		function show_some_cat_list(input)
@@ -2085,6 +2122,7 @@
 			let user_id = $.cookie('user_id');
 			let checker = $.cookie('checker');
 			let cat_id  = session.getItem('cat_id');
+			let msg = session.getItem('cat_msg');
 			
 			console.log(checker);
 			const post_data = { 
@@ -2094,6 +2132,7 @@
 				tnr     : tnr,
 				gps     : gps,
 				user_id : user_id,
+				msg     : msg,
 				is_first: 'false',
 				cat_id  : cat_id,
 				checker : checker

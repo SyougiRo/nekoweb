@@ -7,7 +7,7 @@ def cunter_gps_val_erro(gps_val): #調整經緯度在負數時的加減法
     else: #在負數時乘上-1
         return -1 
 
-def get_rimit_DD(DD):  #取得300公尺時的經緯度極限值
+def get_rimit_DD(DD):  #取得經緯度極限值
     from geopy.distance import geodesic
     rimit_m = 6000 #設定した距離
     Latitude,Longitude = DD

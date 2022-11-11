@@ -184,7 +184,7 @@
         return($output);
     }
 
-    function add_cat_data($src, $color, $tnr, $lat, $lng, $fu, $shi, $ku, $user_id,$is_first,$cat_id=null,$ispass='true')
+    function add_cat_data($src, $color, $tnr, $lat, $lng, $fu, $shi, $ku, $user_id,$msg ,$is_first,$cat_id=null,$ispass='true')
     {
         global $database;
         $table_name = $database.'.cat';
@@ -230,7 +230,8 @@
                 'ispass'  => $ispass,
                 'year'    => $year,
                 'month'   => $month,
-                'day'     => $day
+                'day'     => $day,
+                'msg'     => $msg
             ];
 
             do_data($table_name,$work,$cat_data);
@@ -647,7 +648,7 @@
         return($output);
     }
 
-    function addMessage($user_name,$txt,$now,$fu,$shi,$ku)
+    function addMessage($user_name,$txt,$now,$fu=null,$shi=null,$ku=null)
     {
         global $database;
         $table_name = $database.'.message';
@@ -656,11 +657,20 @@
         $data=[
             'user_name' => $user_name,
             'txt'=>$txt,
-            'time'=>$now,
-            'fu' =>$fu,
-            'shi'=>$shi,
-            'ku'=>$ku            
+            'time'=>$now,      
         ];
+        if($fu!=null)
+        {
+            $data['fu'] = ' '.$fu;
+        }
+        if($shi!=null)
+        {
+            $data['shi'] = str_replace('--',' ',$shi);
+        }
+        if($ku!=null)
+        {
+            $data['ku'] = str_replace('--',' ',$ku);
+        }
 
         do_data($table_name,$work,$data);
     }
@@ -685,7 +695,7 @@
         return($output[0]->{'user_name'});
     }
 
-    function getMessage($fushiku,$addr)
+    function getMessage($fu=null,$shi=null,$ku=null)
     {
         global $database;
         $table_name = $database.'.message';
@@ -693,11 +703,17 @@
         $work='search';
         $data =[];
 
-        if($fushiku!='all')
+        if($fu!=null)
         {
-            $data = [
-                $fushiku=>$addr,
-            ];
+            $data['fu'] = ' '.$fu;
+        }
+        if($shi!=null)
+        {
+            $data['shi'] = str_replace('--',' ',$shi);
+        }
+        if($ku!=null)
+        {
+            $data['ku'] = str_replace('----',' ',$ku);
         }
 
         $output = do_data( $table_name,$work,$data)->toArray();
