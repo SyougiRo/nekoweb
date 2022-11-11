@@ -4,6 +4,7 @@
 	function dogeopy()
 	{
 		$gps = $_POST['gps'];
+		$str_command = 'python dogeopy.py {\"lat\":'+$gps[0]+',\"lng\":'+$gps[1]+'}';
 		$str_command = 'python3 dogeopy.py {\"lat\":'+$gps[0]+',\"lng\":'+$gps[1]+'}';
 		exec($str_command,$output_json);
 		$data = json_decode($output_json[0]);
@@ -12,6 +13,7 @@
 	function getGpsLimit()
 	{
 		$gps = $_POST['gps'];
+		$str_command = 'python get_GpsLimit.py {\"lat\":'+$gps[0]+',\"lng\":'+$gps[1]+'}';
 		$str_command = 'python3 get_GpsLimit.py {\"lat\":'+$gps[0]+',\"lng\":'+$gps[1]+'}';
 		exec($str_command,$output_json);
 		$data = json_decode($output_json[0]);
@@ -1327,6 +1329,7 @@
 		$gps     = $_POST['gps'];
 		$user_id = $_POST['user_id'];
 		$is_first= $_POST['is_first'];
+		$msg= $_POST['msg'];
 		$cat_id = null;
 		$ispass = 'true';
 		//file_put_contents('image.png', base64_decode($src));
@@ -1344,9 +1347,10 @@
         {
             $ispass='false';
         }
-
+		exec("python dogeopy.py ".$gps['0']." ".$gps['1'],$testoutput);
 		exec("python3 dogeopy.py ".$gps['0']." ".$gps['1'],$testoutput);
 		$file_name = buffer_file($src);
+		exec('python resizebase.py '.$file_name ,$resizebase);
 		exec('python3 resizebase.py '.$file_name ,$resizebase);
 		$src = $resizebase[0];
 		$fu  = json_decode($testoutput[0])->{'fu'};
@@ -1369,7 +1373,7 @@
 		//		)
 		//);
 
-		$cat_oid = add_cat_data( $src, $color, $tnr, $lat, $lng, $fu, $shi, $ku, $user_id, $is_first,$cat_id,$ispass);
+		$cat_oid = add_cat_data( $src, $color, $tnr, $lat, $lng, $fu, $shi, $ku, $user_id, $msg, $is_first,$cat_id,$ispass);
 		$return_txt = json_encode(
 			$cat_oid
 		);
@@ -1401,7 +1405,7 @@
 	{
 		$color   = $_POST['color'];
 		$gps     = $_POST['gps'];
-
+		exec('python get_GpsLimit.py '.$gps['0'].' '.$gps['1'],$limitoutput);
 		exec('python3 get_GpsLimit.py '.$gps['0'].' '.$gps['1'],$limitoutput);
 
 		$data = json_decode($limitoutput[0]);
@@ -1600,9 +1604,11 @@
 	{
 		$addr_str = $_POST['addr'];
 		$color_str = $_POST['color'];
+		$addr1_str = $_POST['addr1'];
+		$addr2_str = $_POST['addr2'];
+		$addr3_str = $_POST['addr3'];
 
-
-		$addr_data = decode_str($addr_str);
+		//$addr_data = decode_str($addr_str);
 
 		if($color_str=='------')
 		{
@@ -1613,12 +1619,12 @@
 			$color = $color_str;
 		}
 
-		$fushiku = $addr_data['fushiku'];
-		$addr = $addr_data['addr'];
+		//$fushiku = $addr_data['fushiku'];
+		//$addr = $addr_data['addr'];
 
-		$return_array[$fushiku]=$addr;
-
-		$return_array['data'] = search_cat($fushiku,$addr,$color);
+		//$return_array[$fushiku]=$addr;
+		//$data['addr'] = getTnrArray('fushiku','addr',$addr1_str,$addr2_str,$addr3_str);
+		$return_array['data'] = search_cat('fushiku','addr',$color,$addr1_str,$addr2_str,$addr3_str);
 
 		$return_txt = json_encode(
 			$return_array
@@ -1659,13 +1665,25 @@
 
 	function get_message()
 	{
-		$addr_str = $_POST['addr'];
+		$fu = $_POST['addr1'];
+		$shi = $_POST['addr2'];
+		$ku = $_POST['addr3'];
 
-		$addr_data = decode_str($addr_str);
+		if($fu=='------')
+		{
+			$fu=null;
+		}
+		if($shi=='------')
+		{
+			$shi=null;
+		}
+		if($ku=='------')
+		{
+			$ku=null;
+		}		
 
-		$return_array['test'] = $addr_str;
 
-		$return_array['data'] = getMessage($addr_data['fushiku'],$addr_data['addr']);
+		$return_array['data'] = getMessage($fu,$shi,$ku);
 
 		$return_txt = json_encode(
 			$return_array
@@ -1676,46 +1694,26 @@
 
 	function add_message()
 	{
-		$addr_str = $_POST['addr'];
+		$fu = $_POST['addr1'];
+		$shi = $_POST['addr2'];
+		$ku = $_POST['addr3'];
 		$user_id = $_POST['user_id'];
 		$txt = $_POST['txt'];
 		$now = strval(time());
 		$user_name = UserId_get_UserName($user_id);
 
-		if(preg_match('/^-{6}/i',$addr_str))
+		if($fu=='------')
 		{
-			$fushiku='all';
-			$addr = 'all';
-			$fu = null;
-			$shi = null;
-			$ku = null;
+			$fu=null;
 		}
-		elseif(preg_match('/^-{4}/i',$addr_str))
+		if($shi=='------')
 		{
-			$fushiku='ku';
-			$addr = str_replace('----',' ',$addr_str);
-			$addr_array = ku_search_shi_and_fu($addr);
-			$fu = $addr_array['fu'];
-			$shi = $addr_array['shi'];
-			$ku = $addr_array['ku'];
+			$shi=null;
 		}
-		elseif(preg_match('/^-{2}/i',$addr_str))
+		if($ku=='------')
 		{
-			$fushiku='shi';
-			$addr = str_replace('--',' ',$addr_str);
-			$addr_array = shi_search_fu($addr);
-			$fu = $addr_array['fu'];
-			$shi = $addr_array['shi'];
-			$ku = $addr_array['ku'];
-		}
-		else
-		{
-			$fushiku='fu';
-			$addr = ' '.$addr_str;
-			$fu = $addr;
-			$shi = null;
-			$ku = null;
-		}
+			$ku=null;
+		}		
 
 		addMessage($user_name,$txt,$now,$fu,$shi,$ku);
 
@@ -1776,9 +1774,12 @@
 	{		
 		if(isset($_POST['addr']))
 		{
-			$addr_str = $_POST['addr'];
-			$addr_data = decode_str($addr_str);
-			$data['addr'] = getTnrArray($addr_data['fushiku'],$addr_data['addr']);
+			//$addr_str = $_POST['addr'];
+			$addr1_str = $_POST['addr1'];
+			$addr2_str = $_POST['addr2'];
+			$addr3_str = $_POST['addr3'];
+			//$addr_data = decode_str($addr_str);
+			$data['addr'] = getTnrArray('fushiku','addr',$addr1_str,$addr2_str,$addr3_str);
 			$data['z'] = 0.1;
 			$return_txt = json_encode(
 				$data
