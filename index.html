@@ -1015,14 +1015,14 @@
 			let menu_list  = [ 'ログイン',  'マイキャット' ];
 			let ImgId_list = [ 'acct', 'up_cat_list' ];
 			let func_list  = [ acct_func,  UpCatList_func ];
-			let icon = ['—Pngtree—cat-icon.png','mycat.png'];
+			let icon = ['login.png','mycat.png'];
 			
 			if($.cookie('root_level') < 10)
 			{
 				menu_list  = [ 'ログイン', 'マイキャット', 'アカウント管理', 'メッセージ' ];
 			    ImgId_list = [ 'acct',  'up_cat_list', 'search','message' ];
 				func_list  = [ acct_func,  UpCatList_func, search_func, message_func ];
-				icon = ['—Pngtree—cat-icon.png','mycat.png','log.png','use_icon.png'];
+				icon = ['login.png','mycat.png','acc.png','msg.png'];
 			}
 			
 			let t          = 500;
@@ -1666,9 +1666,9 @@
 			{
 				css_dict={
 					'left'   :mbox_width*0.02,
-					'top'    :btn_top*2+btn_hight,
+					'top'    :btn_top*2+btn_hight+mbox_height*0.05,
 					'width'  :mbox_width*0.96,
-					'height' :mbox_height*0.98-( btn_top*2+btn_hight ),
+					'height' :mbox_height*0.93-( btn_top*2+btn_hight ),
 				}
 			}
 			return(css_dict);
@@ -2184,7 +2184,7 @@
 			}
 			else
 			{
-				let btn_width_hight = ( mbox_width*0.60 )/( ( ( 3*len )-1 )/2 );
+				let btn_width_hight = ( mbox_width*0.60 )/( ( ( 3*4 )-1 )/2 );
 				let btn_padding     = btn_width_hight/2;
 				let start_left      = ( mbox_width-( btn_width_hight*len )-( btn_padding*( len-1 ) ) )/2
 				//console.log(start_left+(btn_width_hight+btn_padding)*index);
