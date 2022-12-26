@@ -120,7 +120,29 @@ html,body {
 	align-items     : center ;
 }
 
+#check_tnr{
+	margin          : 0px    ;
+	top             : 5%     ;
+	left            : 50%     ;
+	padding         : 0px    ;
+	width           : 20%    ;
+	height          : 20%    ;
+	text-align      : center ;
+	display         : flex   ;
+	justify-content : center ;
+	align-items     : center ;
+}
+
 #check_img img{
+	margin     : 0px ;
+	padding    : 0px ;
+	max-height : 100%;  
+    max-width  : 100%;
+	width      : auto;
+    height     : auto;
+}
+
+#check_tnr img{
 	margin     : 0px ;
 	padding    : 0px ;
 	max-height : 100%;  
@@ -499,4 +521,13 @@ html,body {
 .btn_css div{
 	bottom: -24%;
 	white-space: nowrap;
+}
+
+#txt_box{
+	top:55%;
+	width: 30%;
+	height: 40%;
+	left: 50%;
+	background-color: aliceblue;
+	overflow-y: auto;
 }
