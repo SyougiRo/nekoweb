@@ -783,4 +783,19 @@
 
         do_data($table_name,$work,$data);
     }
+
+    function deleteCatDeta($img_id)
+    {
+        global $database;
+        $table_name = $database.'.cat';
+        $work='delete';
+
+        $data = [
+            '_id'=>do_id($img_id)
+        ];
+
+        $opt = ['limit' => 1];
+
+        do_data($table_name,$work,$data,$opt);
+    }
 ?>

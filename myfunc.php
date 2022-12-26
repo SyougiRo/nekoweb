@@ -1436,6 +1436,7 @@
 	{
 		$color   = $_POST['color'];
 		$gps     = $_POST['gps'];
+		$do_new     = $_POST['do_new'];
 		if (DIRECTORY_SEPARATOR == '\\')
 		{
 			exec('python get_GpsLimit.py '.$gps['0'].' '.$gps['1'],$limitoutput);
@@ -1459,7 +1460,13 @@
 		{
 			save_data();
 			return(1);
+		}elseif($do_new == 'yes')
+		{
+			save_data();
+			return(1);
 		}
+
+		
 		//echo json_encode(['test'=>'isok']);
 		//exit();
 		$return_txt = json_encode(
@@ -1892,6 +1899,18 @@
 		echo $return_txt;
 	}
 
+	function delete_cat_deta()
+	{
+		$img_id=$_POST['img_id'];
+		deleteCatDeta($img_id);
+		$return_data['ans'] = 'ok';
+		$return_txt = json_encode(
+			$return_data
+		);
+	
+		echo $return_txt;
+	}
+
     if(isset($_POST['action']))
     {
         $action = $_POST['action'];
@@ -1921,6 +1940,7 @@
 			case 'add_message':return(add_message());
 			case 'get_tnr_map':return(get_tnr_map());
 			case 'upload_tnr_data':return(upload_tnr_data());
+			case 'delete_cat_deta':return(delete_cat_deta());
         }
     }
 ?>

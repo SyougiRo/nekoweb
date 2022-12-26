@@ -1406,6 +1406,17 @@
 			});
 		}
 		
+		function show_cat_img_no_info(input)
+		{
+			console.log(input);
+			$.each(input,function( key, value ){
+				let cat_id = value['_id']['$oid'];
+				let box = $('#'+cat_id);
+				let img_box = $('<img class="img_list" src="'+ value['src'] +'" />');
+				box.append(img_box);
+			});
+		}
+		
 		function CatImg_list_resize(index,len)
 		{
 			let mbox        = $('#thr_box');
@@ -1761,8 +1772,8 @@
 			let top      = btn_css.top+btn_css.height/2;
 			let left     = btn_css.left+btn_css.width/2;
 			
-			let tnr_box  = $('<div id="tnr_box" class="abs pritest tnr_chose" is_tnr="1" style="top:'+ top +'px;left:'+ left +'px;width:0px;height:0px">is tnr</div>');
-			let nol_box  = $('<div id="nol_box" class="abs pritest tnr_chose" is_tnr="0" style="top:'+ top +'px;left:'+ left +'px;width:0px;height:0px">no tnr</div>');
+			let tnr_box  = $('<div id="tnr_box" class="abs pritest tnr_chose" is_tnr="1" style="top:'+ top +'px;left:'+ left +'px;width:0px;height:0px"><img class="abs btn_icon" src="img/ytnr.png"><div>TNR済み</div></div>');
+			let nol_box  = $('<div id="nol_box" class="abs pritest tnr_chose" is_tnr="0" style="top:'+ top +'px;left:'+ left +'px;width:0px;height:0px"><img class="abs btn_icon" src="img/ntnr.png"><div>TNR無し</div></div>');
 			
 			$('#thr_box').append(tnr_box).append(nol_box);
 			
@@ -1888,10 +1899,19 @@
 			$('*').finish();
 			$('.sec_btn').removeClass('check');
 			$('#map').remove();
+			
+			let tnr_box  = $('<div id="check_tnr" class="abs show_tnr" is_tnr="1" ><img class="abs btn_icon" src="img/ytnr.png"><div>TNR済み</div></div>');
+			let tnr_check  = $('<div id="check_tnr" class="abs show_tnr" is_tnr="0" ><img class="abs btn_icon" src="img/ntnr.png"><div>TNR無し</div></div>');
+			
 			let mbox       = $('#thr_box');
 			let img_box    = $('<div class="abs" id="check_img"><img src="'+src+'"></div>');
 			let color_box  = $('<div class="abs" id="check_color"><img src="img/color/'+color+'.png"></div>');
-			let tnr_check  = $('<div class="abs" id="check_tnr">'+tnr+'</div>');
+			
+			if(tnr){
+				let tnr_check  = tnr_box;
+			}
+			
+			
 			let map_check  = $('<div id="map" class="gps_check" class="abs pritest"></div>');
 			let submit_btn = $('<input id="check_btn" type="button" value="転送">');
 			
@@ -1899,7 +1919,7 @@
 			submit_btn.click(func);
 			map_reset( lat, lng );
 		}
-		
+		//123
 		function show_cat_info(input)
 		{
 			console.log('test',input)
@@ -1909,20 +1929,43 @@
 			let tnr = input['tnr'];
 			let lat = input['lat'];
 			let lng = input['lng'];
+			let msg = input['msg'];
 			
 			$('#thr_box *').remove();
 			$('*').finish();
 			$('.sec_btn').removeClass('check');
 			$('#map').remove();
+			
+			let tnr_box  = $('<div id="check_tnr" class="abs show_tnr" is_tnr="1" ><img class="abs btn_icon" src="img/ytnr.png"><div>TNR済み</div></div>');
+			let tnr_check  = $('<div id="check_tnr" class="abs show_tnr" is_tnr="0" ><img class="abs btn_icon" src="img/ntnr.png"><div>TNR無し</div></div>');
+			
 			let mbox       = $('#thr_box');
 			let img_box    = $('<div class="abs" id="check_img"><img src="'+src+'"></div>');
 			let color_box  = $('<div class="abs" id="check_color"><img src="img/color/'+color+'.png"></div>');
-			let tnr_check  = $('<div class="abs" id="check_tnr">'+tnr+'</div>');
-			let map_check  = $('<div id="map" class="gps_check" class="abs pritest"></div>');
-			let submit_btn = $('<input id="check_btn" type="button" value="btn">');
 			
-			mbox.append(map_check).append(color_box).append(tnr_check).append(img_box).append(submit_btn);
-			//submit_btn.click(func);
+			if(tnr){
+				let tnr_check  = tnr_box;
+			}
+			let txt_box  = $('<div class="abs" id="txt_box">'+msg+'</div>');
+			
+			let map_check  = $('<div id="map" class="gps_check" class="abs pritest"></div>');
+			let submit_btn = $('<input id="check_btn" type="button" value="消去">');
+			
+			mbox.append(map_check).append(color_box).append(tnr_check).append(img_box).append(submit_btn).append(txt_box);
+			submit_btn.click(function(){
+				console.log('test',input['_id']);
+				const post_data = {
+					action  : "delete_cat_deta",
+					img_id : input['_id']['$oid']
+				}
+				
+				get_data( post_data, function(o_input){
+					console.log(o_input);
+					if(o_input['ans']=='ok'){
+						$('#up_cat_list').click();
+					}
+				});
+			});
 			map_reset( lat, lng );
 		}
 		
@@ -1944,7 +1987,7 @@
 			
 		}
 		
-		function get_some_cat_list()
+		function get_some_cat_list(do_new="no")
 		{
 			let src     = now_src;
 			let color   = session.getItem('cat_color');
@@ -1954,7 +1997,7 @@
 			let checker = $.cookie('checker');
 			let msg  = session.getItem('cat_msg');
 			console.log(checker);
-			const post_data = { 
+			let post_data = { 
 				action  : "get_some_cat_array",
 				src     : src,
 				color   : color,
@@ -1963,8 +2006,24 @@
 				user_id : user_id,
 				msg     : msg,
 				is_first: 'true',
-				checker : checker
+				checker : checker,
+				do_new  : "no"
 			};
+			
+			if(do_new=="yes"){
+				post_data = { 
+					action  : "get_some_cat_array",
+					src     : src,
+					color   : color,
+					tnr     : tnr,
+					gps     : gps,
+					user_id : user_id,
+					msg     : msg,
+					is_first: 'true',
+					checker : checker,
+					do_new  : "yes"
+				};
+			}
 			const work_func = show_some_cat_list;
 				
 			get_data( post_data, work_func);
@@ -1977,7 +2036,7 @@
 			//let box = $('<div id="gray_window" class="abs"></div>');
 			let message_box = $('<div id="message_box" class="abs"></div>');
 			let msg_box = $('<textarea  id="msg_box" class="abs"></textarea >');
-			let btn = $('<input id="msg_btn" type="submit" class="abs" val="確認"></input>');
+			let btn = $('<input id="msg_btn" type="submit" class="abs" value="確認"></input>');
 			message_box.append(msg_box).append(btn);
 			mbox.append(message_box);
 			btn.click(function(){
@@ -2013,22 +2072,29 @@
 					let cat_id= value['_id']['$oid'];
 					let box   = $('<div id="'+cat_id+'" style="top:'+btn_css.top+'px;left:'+btn_css.left+'px;height:0px;width:0px" class="img_list_box pritest abs"></div>');
 					mbox.append(box);
-					//let img   = $('<img class="img_list" src="'+ src +'" />');
+					
 					const post_data = { 
 						action  : "id_gat_img",
 						cat_id : cat_id
 					};
 
-					const work_func = show_cat_img;
+					const work_func = show_cat_img_no_info;
 
 					get_data( post_data, work_func, false);
 					
 					box.css(CatImg_list_resize(key,len));
 					session.removeItem('cat_id');
+					
+					
 					box.click(function(){
 						get_same_cat(cat_id);
 						session.setItem( 'cat_id', cat_id );
 					});
+				});
+				let new_btn   = $('<input id="check_btn" type="button" value="無し">');
+				mbox.append(new_btn);
+				new_btn.click(function(){
+						get_some_cat_list("yes");
 				});
 			}
 		}
@@ -2051,7 +2117,7 @@
 			let under_box = $('<div id="show_some_cat" class="abs"></div>');
 			let show_box = $('<div id="show_some_cat_box" class="abs"></div>');
 			let scroll_box = $('<div id="scroll_box" class="abs"></div>');
-			let btn = $('<input id="show_some_cat_btn" class="abs" type="submit" val="転送"/>');
+			let btn = $('<input id="show_some_cat_btn" class="abs" type="submit" value="転送">');
 			
 			show_box.append(scroll_box).append(btn);
 			under_box.append(show_box);
